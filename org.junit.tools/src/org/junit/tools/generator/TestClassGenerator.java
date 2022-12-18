@@ -2,40 +2,22 @@ package org.junit.tools.generator;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IImportDeclaration;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MemberValuePair;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.StringLiteral;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.internal.core.Annotation;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.TextEdit;
-import org.junit.tools.base.MethodRef;
 import org.junit.tools.generator.model.GeneratorModel;
 import org.junit.tools.generator.model.JUTElements.JUTClassesAndPackages;
 import org.junit.tools.generator.model.tml.Assertion;
 import org.junit.tools.generator.model.tml.AssertionType;
-import org.junit.tools.generator.model.tml.Constructor;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.model.tml.Mocks;
 import org.junit.tools.generator.model.tml.Param;
@@ -44,9 +26,7 @@ import org.junit.tools.generator.model.tml.Result;
 import org.junit.tools.generator.model.tml.Settings;
 import org.junit.tools.generator.model.tml.Test;
 import org.junit.tools.generator.model.tml.TestBase;
-import org.junit.tools.generator.model.tml.TestBases;
 import org.junit.tools.generator.model.tml.TestCase;
-import org.junit.tools.generator.model.tml.Testprio;
 import org.junit.tools.generator.utils.GeneratorUtils;
 import org.junit.tools.generator.utils.JDTUtils;
 import org.junit.tools.preferences.JUTPreferences;
@@ -58,8 +38,7 @@ import org.junit.tools.preferences.JUTPreferences;
  * @author Robert Streng
  * 
  */
-@SuppressWarnings("restriction")
-// TODO avoid restrictions
+// @SuppressWarnings("restriction")
 public class TestClassGenerator implements ITestClassGenerator, IGeneratorConstants {
 
     protected String testmethodPrefix;
@@ -75,7 +54,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     @Override
     public ICompilationUnit generate(GeneratorModel model, List<ITestDataFactory> testDataFactories,
 	    IProgressMonitor monitor) throws Exception {
-	boolean writeTML = JUTPreferences.isWriteTML();
+	// boolean writeTML = JUTPreferences.isWriteTML();
 
 	defaultTestbaseMethodCreated = false;
 
@@ -87,7 +66,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	utmClassesAndPackages.getTestPackage(true);
 	ICompilationUnit testClass = utmClassesAndPackages.getTestClass(true);
 	String testClassName = utmClassesAndPackages.getTestClassName();
-	ICompilationUnit baseClass = utmClassesAndPackages.getBaseClass();
+	// ICompilationUnit baseClass = utmClassesAndPackages.getBaseClass();
 	String baseClassName = utmClassesAndPackages.getBaseClassName();
 	IType type;
 
@@ -116,9 +95,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// delete generated elements
-	if (testClass.exists()) {
-	    deleteGeneratedElements(testClass, tmlSettings);
-	}
+//	if (testClass.exists()) {
+//	    deleteGeneratedElements(testClass, tmlSettings);
+//	}
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -141,7 +120,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    return null;
 	}
 
-	// create standard-methods
+	// create standard-methods (setup, teardown, ..., only if creation is enabled)
 	createStandardMethods(type, tmlSettings);
 
 	// increment task
@@ -149,13 +128,14 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    return null;
 	}
 
-	// create test-base-methods
-	if (writeTML) {
-	    createTestBaseMethods(type, tmlTest, baseClassName);
-	} else {
-	    createTestBaseMethods(type, baseClass, baseClassName,
-		    model.getJUTElements().getConstructorsAndMethods().getBaseClassConstructors(), testDataFactories);
-	}
+	// create test-base-methods - this is not needed because we use InjectMocks or
+	// Autowired
+//	if (writeTML) {
+//	    createTestBaseMethods(type, tmlTest, baseClassName);
+//	} else {
+//	    createTestBaseMethods(type, baseClass, baseClassName,
+//		    model.getJUTElements().getConstructorsAndMethods().getBaseClassConstructors(), testDataFactories);
+//	}
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -163,9 +143,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// delete test-methods
-	for (IMethod methodToDelete : model.getMethodsToDelete()) {
-	    methodToDelete.delete(true, null);
-	}
+//	for (IMethod methodToDelete : model.getMethodsToDelete()) {
+//	    methodToDelete.delete(true, null);
+//	}
 
 	// create test-methods
 	if (createTestMethods(type, model.getMethodMap(), model.getMethodsToCreate(), tmlSettings, baseClassName,
@@ -174,7 +154,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// update test-methods (method-ref)
-	updateExistingMethods(type.getCompilationUnit(), type, model.getExistingMethods());
+//	updateExistingMethods(type.getCompilationUnit(), type, model.getExistingMethods());
 
 	// create the test-source-folder and -package
 	IPackageFragment testPackage = model.getJUTElements().getClassesAndPackages().getTestPackage();
@@ -196,87 +176,85 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return testClass;
     }
 
-    @SuppressWarnings("unchecked")
-    protected void updateExistingMethods(ICompilationUnit cu, IType cuType, HashMap<MethodRef, IMethod> existingMethods)
-	    throws JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
-	MethodRef methodRef;
-	Annotation annotation;
+//    @SuppressWarnings("unchecked")
+//    protected void updateExistingMethods(ICompilationUnit cu, IType cuType, HashMap<MethodRef, IMethod> existingMethods)
+//	    throws JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+//	MethodRef methodRef;
+//	Annotation annotation;
+//
+//	for (Entry<MethodRef, IMethod> entry : existingMethods.entrySet()) {
+//	    // update method reference
+//	    methodRef = entry.getKey();
+//	    if (methodRef.isSignatureChanged()) {
+//		// delete old annotation
+//		for (IAnnotation iAnnotation : entry.getValue().getAnnotations()) {
+//		    if (iAnnotation instanceof Annotation) {
+//			annotation = (Annotation) iAnnotation;
+//
+//			if (ANNO_METHOD_REF_NAME.equals(iAnnotation.getElementName())) {
+//			    if (annotation.exists()) {
+//				annotation.delete(true, null);
+//			    }
+//			}
+//
+//		    }
+//		}
+//
+//		// create new annotation
+//		CompilationUnit astRoot = JDTUtils.createASTRoot(cu);
+//		MethodDeclaration md = JDTUtils.createMethodDeclaration(astRoot, entry.getValue());
+//
+//		final ASTRewrite rewriter = ASTRewrite.create(md.getAST());
+//
+//		NormalAnnotation newNormalAnnotation = rewriter.getAST().newNormalAnnotation();
+//
+//		newNormalAnnotation.setTypeName(astRoot.getAST().newName("MethodRef"));
+//
+//		newNormalAnnotation.values()
+//			.add(createAnnotationMemberValuePair(astRoot.getAST(), "name", methodRef.getName()));
+//		newNormalAnnotation.values().add(
+//			createAnnotationMemberValuePair(astRoot.getAST(), "signature", methodRef.getSignatureNew()));
+//
+//		rewriter.getListRewrite(md, MethodDeclaration.MODIFIERS2_PROPERTY).insertFirst(newNormalAnnotation,
+//			null);
+//
+//		// apply changes
+//		TextEdit textEdit = rewriter.rewriteAST();
+//		Document document = new Document(cu.getSource());
+//		textEdit.apply(document);
+//		String newSource = document.get();
+//		// update of the compilation unit
+//		cu.getBuffer().setContents(newSource);
+//	    }
+//	}
+//
+//    }
 
-	for (Entry<MethodRef, IMethod> entry : existingMethods.entrySet()) {
-	    // update method reference
-	    methodRef = entry.getKey();
-	    if (methodRef.isSignatureChanged()) {
-		// delete old annotation
-		for (IAnnotation iAnnotation : entry.getValue().getAnnotations()) {
-		    if (iAnnotation instanceof Annotation) {
-			annotation = (Annotation) iAnnotation;
+//    private MemberValuePair createAnnotationMemberValuePair(final AST ast, final String name, final String value) {
+//
+//	final MemberValuePair mvp = ast.newMemberValuePair();
+//	mvp.setName(ast.newSimpleName(name));
+//	StringLiteral stringLiteral = ast.newStringLiteral();
+//	stringLiteral.setLiteralValue(value);
+//	mvp.setValue(stringLiteral);
+//	return mvp;
+//    }
 
-			if (ANNO_METHOD_REF_NAME.equals(iAnnotation.getElementName())) {
-			    if (annotation.exists()) {
-				annotation.delete(true, null);
-			    }
-			}
-
-		    }
-		}
-
-		// create new annotation
-		CompilationUnit astRoot = JDTUtils.createASTRoot(cu);
-		MethodDeclaration md = JDTUtils.createMethodDeclaration(astRoot, entry.getValue());
-
-		final ASTRewrite rewriter = ASTRewrite.create(md.getAST());
-
-		NormalAnnotation newNormalAnnotation = rewriter.getAST().newNormalAnnotation();
-
-		newNormalAnnotation.setTypeName(astRoot.getAST().newName("MethodRef"));
-
-		newNormalAnnotation.values()
-			.add(createAnnotationMemberValuePair(astRoot.getAST(), "name", methodRef.getName()));
-		newNormalAnnotation.values().add(
-			createAnnotationMemberValuePair(astRoot.getAST(), "signature", methodRef.getSignatureNew()));
-
-		rewriter.getListRewrite(md, MethodDeclaration.MODIFIERS2_PROPERTY).insertFirst(newNormalAnnotation,
-			null);
-
-		// apply changes
-		TextEdit textEdit = rewriter.rewriteAST();
-		Document document = new Document(cu.getSource());
-		textEdit.apply(document);
-		String newSource = document.get();
-		// update of the compilation unit
-		cu.getBuffer().setContents(newSource);
-	    }
-	}
-
-    }
-
-    protected MemberValuePair createAnnotationMemberValuePair(final AST ast, final String name, final String value) {
-
-	final MemberValuePair mvp = ast.newMemberValuePair();
-	mvp.setName(ast.newSimpleName(name));
-	StringLiteral stringLiteral = ast.newStringLiteral();
-	stringLiteral.setLiteralValue(value);
-	mvp.setValue(stringLiteral);
-	return mvp;
-    }
-
-    protected void createTestBaseMethods(IType type, ICompilationUnit baseClass, String baseClassName,
-	    Vector<IMethod> constructors, List<ITestDataFactory> testDataFactories) throws JavaModelException {
-	String testBaseMethodBody;
-	StringBuilder classCreationChain;
-	classCreationChain = new StringBuilder();
-
-	String testBaseMethodName = "createTestSubject";
-	if (type.getMethod(testBaseMethodName, null).exists()) {
-	    return;
-	}
-
-	JDTUtils.createClassCreationChain(baseClass.findPrimaryType(), classCreationChain, testDataFactories);
-	testBaseMethodBody = " return " + classCreationChain.toString() + ";";
-
-	JDTUtils.createMethod(type, MOD_PRIVATE, baseClassName, testBaseMethodName, null, null, testBaseMethodBody,
-		false);
-    }
+//    protected void createTestBaseMethods(IType type, ICompilationUnit baseClass, String baseClassName,
+//	    Vector<IMethod> constructors, List<ITestDataFactory> testDataFactories) throws JavaModelException {
+//
+//	String testBaseMethodName = "initUnderTest";
+//	if (type.getMethod(testBaseMethodName, null).exists()) {
+//	    return;
+//	}
+//
+//	StringBuilder classCreationChain = new StringBuilder();
+//	JDTUtils.createClassCreationChain(baseClass.findPrimaryType(), classCreationChain, testDataFactories);
+//	String testBaseMethodBody = " return " + classCreationChain.toString() + ";";
+//
+//	JDTUtils.createMethod(type, MOD_PRIVATE, baseClassName, testBaseMethodName, null, null, testBaseMethodBody,
+//		false);
+//    }
 
     /**
      * Creates test base methods.
@@ -286,33 +264,33 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param testBaseName
      * @throws JavaModelException
      */
-    protected void createTestBaseMethods(IType type, Test tmlTest, String testBaseName) throws JavaModelException {
-	Settings tmlSettings = tmlTest.getSettings();
-	TestBases tmlTestbases = tmlTest.getTestBases();
-	if (tmlSettings == null || tmlTestbases == null) {
-	    return;
-	}
-
-	String testBaseMethodBody;
-	String testBaseMethodName;
-
-	for (Constructor tmlConstructor : tmlTestbases.getConstructor()) {
-
-	    for (TestBase tmlTestbase : tmlConstructor.getTestBase()) {
-		testBaseMethodName = createTestBaseMethodName(tmlTestbase.getName());
-
-		testBaseMethodBody = createTestBaseMethodBody(tmlTestbase, testBaseName, testBaseMethodName,
-			tmlConstructor.getParam(), tmlSettings);
-
-		JDTUtils.createMethod(type, MOD_PRIVATE, testBaseName, testBaseMethodName, "Exception", null,
-			testBaseMethodBody, false);
-	    }
-
-	    if (tmlConstructor.getTestBase().size() == 0) {
-		createTestBaseMethodDefault(type, testBaseName, tmlConstructor.getParam());
-	    }
-	}
-    }
+//    protected void createTestBaseMethods(IType type, Test tmlTest, String testBaseName) throws JavaModelException {
+//	Settings tmlSettings = tmlTest.getSettings();
+//	TestBases tmlTestbases = tmlTest.getTestBases();
+//	if (tmlSettings == null || tmlTestbases == null) {
+//	    return;
+//	}
+//
+//	String testBaseMethodBody;
+//	String testBaseMethodName;
+//
+//	for (Constructor tmlConstructor : tmlTestbases.getConstructor()) {
+//
+//	    for (TestBase tmlTestbase : tmlConstructor.getTestBase()) {
+//		testBaseMethodName = createTestBaseMethodName(tmlTestbase.getName());
+//
+//		testBaseMethodBody = createTestBaseMethodBody(tmlTestbase, testBaseName, testBaseMethodName,
+//			tmlConstructor.getParam(), tmlSettings);
+//
+//		JDTUtils.createMethod(type, MOD_PRIVATE, testBaseName, testBaseMethodName, "Exception", null,
+//			testBaseMethodBody, false);
+//	    }
+//
+//	    if (tmlConstructor.getTestBase().size() == 0) {
+//		createTestBaseMethodDefault(type, testBaseName, tmlConstructor.getParam());
+//	    }
+//	}
+//    }
 
     /**
      * Creates the standard methods.
@@ -321,7 +299,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param tmlSettings
      * @throws JavaModelException
      */
-    protected void createStandardMethods(IType type, Settings tmlSettings) throws JavaModelException {
+    private void createStandardMethods(IType type, Settings tmlSettings) throws JavaModelException {
 	if (tmlSettings == null) {
 	    return;
 	}
@@ -355,10 +333,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param param
      * @throws JavaModelException
      */
-    protected void createHookAfterMethodCall(IType type, String hookMethodName, String param)
-	    throws JavaModelException {
-	JDTUtils.createMethod(type, MOD_PRIVATE, TYPE_VOID, hookMethodName, "Exception", param, "", false);
-    }
+//    protected void createHookAfterMethodCall(IType type, String hookMethodName, String param)
+//	    throws JavaModelException {
+//	JDTUtils.createMethod(type, MOD_PRIVATE, TYPE_VOID, hookMethodName, "Exception", param, "", false);
+//    }
 
     /**
      * Increments the task.
@@ -392,61 +370,61 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param tmlSettings
      * @throws JavaModelException
      */
-    protected void deleteGeneratedElements(ICompilationUnit testClass, Settings tmlSettings) throws JavaModelException {
-	IType[] types = testClass.getTypes();
-	IMethod method;
-	IField field;
-
-	for (IType type : types) {
-	    for (IJavaElement element : type.getChildren()) {
-		if (element instanceof IMethod) {
-		    method = (IMethod) element;
-
-		    if (!deleteStandardMethod(method.getElementName().replace(".java", ""), tmlSettings)) {
-			continue;
-		    }
-		} else if (element instanceof IField) {
-		    field = (IField) element;
-		    if (isGenerated(field.getAnnotations())) {
-			field.delete(true, null);
-		    }
-		}
-	    }
-	}
-    }
+//    protected void deleteGeneratedElements(ICompilationUnit testClass, Settings tmlSettings) throws JavaModelException {
+//	IType[] types = testClass.getTypes();
+//	IMethod method;
+//	IField field;
+//
+//	for (IType type : types) {
+//	    for (IJavaElement element : type.getChildren()) {
+//		if (element instanceof IMethod) {
+//		    method = (IMethod) element;
+//
+//		    if (!deleteStandardMethod(method.getElementName().replace(".java", ""), tmlSettings)) {
+//			continue;
+//		    }
+//		} else if (element instanceof IField) {
+//		    field = (IField) element;
+//		    if (isGenerated(field.getAnnotations())) {
+//			field.delete(true, null);
+//		    }
+//		}
+//	    }
+//	}
+//    }
 
     /**
      * @param tmlSettings
      * @return isStandardMethod
      */
-    protected boolean deleteStandardMethod(String methodName, Settings tmlSettings) {
-	if (STANDARD_METHOD_BEFORE.equals(methodName)) {
-	    if (!tmlSettings.isSetUp()) {
-		return true;
-	    } else {
-		return false;
-	    }
-	} else if (STANDARD_METHOD_BEFORE_ClASS.equals(methodName)) {
-	    if (!tmlSettings.isSetUpBeforeClass()) {
-		return true;
-	    } else {
-		return false;
-	    }
-	} else if (STANDARD_METHOD_AFTER.equals(methodName)) {
-	    if (!tmlSettings.isTearDown()) {
-		return true;
-	    } else {
-		return false;
-	    }
-	} else if (STANDARD_METHOD_AFTER_CLASS.equals(methodName)) {
-	    if (!tmlSettings.isTearDownBeforeClass()) {
-		return true;
-	    } else {
-		return false;
-	    }
-	}
-	return true;
-    }
+//    protected boolean deleteStandardMethod(String methodName, Settings tmlSettings) {
+//	if (STANDARD_METHOD_BEFORE.equals(methodName)) {
+//	    if (!tmlSettings.isSetUp()) {
+//		return true;
+//	    } else {
+//		return false;
+//	    }
+//	} else if (STANDARD_METHOD_BEFORE_ClASS.equals(methodName)) {
+//	    if (!tmlSettings.isSetUpBeforeClass()) {
+//		return true;
+//	    } else {
+//		return false;
+//	    }
+//	} else if (STANDARD_METHOD_AFTER.equals(methodName)) {
+//	    if (!tmlSettings.isTearDown()) {
+//		return true;
+//	    } else {
+//		return false;
+//	    }
+//	} else if (STANDARD_METHOD_AFTER_CLASS.equals(methodName)) {
+//	    if (!tmlSettings.isTearDownBeforeClass()) {
+//		return true;
+//	    } else {
+//		return false;
+//	    }
+//	}
+//	return true;
+//    }
 
     /**
      * Creates the test class frame.
@@ -463,19 +441,19 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	if (!type.exists()) {
 	    return createTestClassFrame(testCompilationUnit, tmlTest, testClassName, null);
-	} else {
-	    // check if recreation of test-class-frame is necessary
-	    Vector<Annotation> annotationsToDelete = getAnnotationsToDelete(type, tmlTest);
-
-	    if (annotationsToDelete != null) {
-		for (Annotation annotation : annotationsToDelete) {
-		    annotation.delete(true, null);
-		}
-
-		String source = type.getSource();
-		type.delete(true, null);
-		return createTestClassFrame(testCompilationUnit, tmlTest, testClassName, source);
-	    }
+//	} else {
+//	    // check if recreation of test-class-frame is necessary
+//	    Vector<Annotation> annotationsToDelete = getAnnotationsToDelete(type, tmlTest);
+//
+//	    if (annotationsToDelete != null) {
+//		for (Annotation annotation : annotationsToDelete) {
+//		    annotation.delete(true, null);
+//		}
+//
+//		String source = type.getSource();
+//		type.delete(true, null);
+//		return createTestClassFrame(testCompilationUnit, tmlTest, testClassName, source);
+//	    }
 	}
 
 	return type;
@@ -488,50 +466,50 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param tmlTest
      * @throws JavaModelException
      */
-    protected Vector<Annotation> getAnnotationsToDelete(IType type, Test tmlTest) throws JavaModelException {
-	Vector<Annotation> annotationsToDelete = new Vector<Annotation>();
-	Annotation annotation;
-	boolean recreationNecessary = false;
-
-	for (IAnnotation iAnnotation : type.getAnnotations()) {
-	    if (iAnnotation instanceof Annotation) {
-		annotation = (Annotation) iAnnotation;
-
-		if (ANNO_GENERATED_NAME.equals(iAnnotation.getElementName())) {
-		    annotationsToDelete.add(annotation);
-		    IMemberValuePair[] memberValuePairs = annotation.getMemberValuePairs();
-		    for (IMemberValuePair valuePair : memberValuePairs) {
-			if (!VERSION.equals(valuePair.getValue())) {
-			    recreationNecessary = true;
-			    break;
-			}
-		    }
-		} else if (ANNO_TESTPRIO_NAME.equals(iAnnotation.getElementName())) {
-		    annotationsToDelete.add(annotation);
-		    IMemberValuePair[] memberValuePairs = annotation.getMemberValuePairs();
-
-		    if (memberValuePairs.length == 0) {
-			if (tmlTest.getTestPrio().compareTo(Testprio.DEFAULT) != 0) {
-			    recreationNecessary = true;
-			}
-		    }
-
-		    for (IMemberValuePair valuePair : memberValuePairs) {
-			if (!valuePair.getValue().toString().endsWith(tmlTest.getTestPrio().toString())) {
-			    recreationNecessary = true;
-			    break;
-			}
-		    }
-		}
-	    }
-	}
-
-	if (!recreationNecessary) {
-	    return null;
-	}
-
-	return annotationsToDelete;
-    }
+//    protected Vector<Annotation> getAnnotationsToDelete(IType type, Test tmlTest) throws JavaModelException {
+//	Vector<Annotation> annotationsToDelete = new Vector<Annotation>();
+//	Annotation annotation;
+//	boolean recreationNecessary = false;
+//
+//	for (IAnnotation iAnnotation : type.getAnnotations()) {
+//	    if (iAnnotation instanceof Annotation) {
+//		annotation = (Annotation) iAnnotation;
+//
+//		if (ANNO_GENERATED_NAME.equals(iAnnotation.getElementName())) {
+//		    annotationsToDelete.add(annotation);
+//		    IMemberValuePair[] memberValuePairs = annotation.getMemberValuePairs();
+//		    for (IMemberValuePair valuePair : memberValuePairs) {
+//			if (!VERSION.equals(valuePair.getValue())) {
+//			    recreationNecessary = true;
+//			    break;
+//			}
+//		    }
+//		} else if (ANNO_TESTPRIO_NAME.equals(iAnnotation.getElementName())) {
+//		    annotationsToDelete.add(annotation);
+//		    IMemberValuePair[] memberValuePairs = annotation.getMemberValuePairs();
+//
+//		    if (memberValuePairs.length == 0) {
+//			if (tmlTest.getTestPrio().compareTo(Testprio.DEFAULT) != 0) {
+//			    recreationNecessary = true;
+//			}
+//		    }
+//
+//		    for (IMemberValuePair valuePair : memberValuePairs) {
+//			if (!valuePair.getValue().toString().endsWith(tmlTest.getTestPrio().toString())) {
+//			    recreationNecessary = true;
+//			    break;
+//			}
+//		    }
+//		}
+//	    }
+//	}
+//
+//	if (!recreationNecessary) {
+//	    return null;
+//	}
+//
+//	return annotationsToDelete;
+//    }
 
     /**
      * Creates a test class frame.
@@ -546,7 +524,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     protected IType createTestClassFrame(ICompilationUnit testCompilationUnit, Test tmlTest, String testclassName,
 	    String source) throws JavaModelException {
 	// create annotations
-	String annotations = createTestClassFrameAnnotations(tmlTest.getTestPrio());
+	String annotations = createTestClassFrameAnnotations();
 
 	// create type
 	String superType = "";
@@ -586,15 +564,21 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     /**
      * Creates the test class annotations.
      * 
-     * @param testprio
+     * @param tmlTest
+     * 
      * @return the created annotations
      */
-    protected String createTestClassFrameAnnotations(Testprio testprio) {
+    protected String createTestClassFrameAnnotations() {
 	// create annotations
 	StringBuilder annotations = new StringBuilder();
 
+	// TODO depending on the method/class we might need different annotations
+	// @ExtendWith(MockitoExtension.class) for general usage
+	// @ExtendWith(SpringExtension.class) for Spring rest controllers maybe
+	// none for class with static methods only
+	annotations.append(createAnnoExtendWith("MockitoExtension"));
 	// create generator-annotation
-	annotations.append(createAnnoGenerated());
+	// annotations.append(createAnnoGenerated());
 
 	String[] testClassAnnotations = JUTPreferences.getTestClassAnnotations();
 	for (String additionalAnno : testClassAnnotations) {
@@ -621,6 +605,13 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    annoGenerated = GeneratorUtils.createAnnoGenerated();
 	}
 	return annoGenerated;
+    }
+
+    /**
+     * Creates the annotation ExtendWith.
+     */
+    private String createAnnoExtendWith(String extension) {
+	return GeneratorUtils.createAnnoExtendWith(extension);
     }
 
     /**
@@ -655,15 +646,16 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * 
      * @param type
      * @param tmlTest
-     * @param testclassName
+     * @param testClassName
      * @throws JavaModelException
      */
-    protected void createStandardClassFields(IType type, Test tmlTest, String testclassName) throws JavaModelException {
+    protected void createStandardClassFields(IType type, Test tmlTest, String testClassName) throws JavaModelException {
 	if (tmlTest.getSettings().isLogger()) {
-	    String logger = createAnnoGenerated() + " " + MOD_PRIVATE + " Logger logger = Logger.getLogger("
-		    + testclassName + ".class.toString());";
+	    String logger = "Logger logger = Logger.getLogger("
+		    + testClassName + ".class.toString());";
 	    type.createField(logger, null, false, null);
 	}
+	type.createField(GeneratorUtils.createAnnoInjectMocks() + testClassName + " " + UNDER_TEST + ";", null, false, null);
     }
 
     /**
@@ -674,27 +666,27 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param params
      * @throws JavaModelException
      */
-    protected void createTestBaseMethodDefault(IType type, String testbaseName, List<Param> params)
-	    throws JavaModelException {
-	if (defaultTestbaseMethodCreated) {
-	    return;
-	}
-
-	String paramValueList;
-	if (params != null) {
-	    paramValueList = createParamValueList(params, null);
-	} else {
-	    paramValueList = "";
-	}
-
-	StringBuilder sbMethodBody = new StringBuilder();
-	sbMethodBody.append("return new ").append(testbaseName).append("(").append(paramValueList).append(");");
-
-	JDTUtils.createMethod(type, MOD_PRIVATE, testbaseName, TESTSUBJECT_METHOD_PREFIX, null, null,
-		sbMethodBody.toString());
-
-	defaultTestbaseMethodCreated = true;
-    }
+//    protected void createTestBaseMethodDefault(IType type, String testbaseName, List<Param> params)
+//	    throws JavaModelException {
+//	if (defaultTestbaseMethodCreated) {
+//	    return;
+//	}
+//
+//	String paramValueList;
+//	if (params != null) {
+//	    paramValueList = createParamValueList(params, null);
+//	} else {
+//	    paramValueList = "";
+//	}
+//
+//	StringBuilder sbMethodBody = new StringBuilder();
+//	sbMethodBody.append("return new ").append(testbaseName).append("(").append(paramValueList).append(");");
+//
+//	JDTUtils.createMethod(type, MOD_PRIVATE, testbaseName, TESTSUBJECT_METHOD_PREFIX, null, null,
+//		sbMethodBody.toString());
+//
+//	defaultTestbaseMethodCreated = true;
+//    }
 
     /**
      * Creates the test base method name.
@@ -878,14 +870,13 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param hookAfterMethodCall
      * @throws JavaModelException
      */
-    protected void createTestMethod(IType type, Method tmlMethod, String baseClassName, boolean failAssertions)
+    private void createTestMethod(IType type, Method tmlMethod, String baseClassName, boolean failAssertions)
 	    throws JavaModelException {
-	String testMethodNamePrefix = getTestmethodPrefix();
-	String testMethodNamePostfix = getTestmethodPostfix();
-	String testMethodName;
-	String testMethodBody;
 
 	// create test-method-name
+	String testMethodName;
+	String testMethodNamePrefix = getTestmethodPrefix();
+	String testMethodNamePostfix = getTestmethodPostfix();
 	if (testMethodNamePrefix != null && testMethodNamePrefix.length() > 0) {
 	    testMethodName = testMethodNamePrefix + GeneratorUtils.firstCharToUpper(tmlMethod.getName())
 		    + testMethodNamePostfix;
@@ -894,13 +885,16 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-method-body
-	testMethodBody = createTestMethodBody(type, tmlMethod, testMethodName, baseClassName, failAssertions);
+	String testMethodBody = createTestMethodBody(type, tmlMethod, testMethodName, baseClassName, failAssertions);
 
 	// create method ref
-	String annoMethodRef = GeneratorUtils.createAnnoMethodRef(tmlMethod.getName(), tmlMethod.getSignature());
+	// String annoMethodRef =
+	// GeneratorUtils.createAnnoMethodRef(tmlMethod.getName(),
+	// tmlMethod.getSignature());
 
-	JDTUtils.createMethod(type, MOD_PUBLIC, TYPE_VOID, testMethodName, "Exception", null, testMethodBody, true,
-		annoMethodRef, ANNO_JUNIT_TEST);
+	JDTUtils.createMethod(type, MOD_PUBLIC, TYPE_VOID, testMethodName, "Exception", null, testMethodBody, false,
+		// annoMethodRef,
+		ANNO_JUNIT_TEST);
     }
 
     /**
@@ -920,15 +914,15 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	StringBuilder sbTestMethodBody = new StringBuilder();
 	List<Param> params = tmlMethod.getParam();
 	String testbaseMethodName = "";
-	String testBaseVariableName = "testSubject"; // GeneratorUtils.firstCharToLower(baseClassName);
+	String testBaseVariableName = UNDER_TEST; // GeneratorUtils.firstCharToLower(baseClassName);
 
 	// test-base-variable
-	if (!tmlMethod.isStatic()) {
-	    sbTestMethodBody.append(baseClassName).append(" ").append(testBaseVariableName).append(";");
-	}
+//	if (!tmlMethod.isStatic()) {
+//	    sbTestMethodBody.append(baseClassName).append(" ").append(testBaseVariableName).append(";").append(RETURN);
+//	}
 
 	// create param initializations
-	createParamInitializations(params, sbTestMethodBody);
+	// createParamInitializations(params, sbTestMethodBody);
 
 	// create result-variable
 	Result result = tmlMethod.getResult();
@@ -938,14 +932,16 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    resultVariableName = result.getName();
 	    resultType = result.getType();
 
-	    sbTestMethodBody.append(resultType).append(" ").append(resultVariableName).append(";");
+	    // sbTestMethodBody.append(resultType).append("
+	    // ").append(resultVariableName).append(";");
 	}
 
 	List<TestCase> testCases = tmlMethod.getTestCase();
 	boolean isPublic = MOD_PUBLIC.equals(tmlMethod.getModifier());
 
 	for (TestCase tmlTestcase : testCases) {
-	    sbTestMethodBody.append(RETURN + RETURN + "// ").append(tmlTestcase.getName()).append(RETURN);
+	    // sbTestMethodBody.append(RETURN + RETURN + "//
+	    // ").append(tmlTestcase.getName()).append(RETURN);
 
 	    testbaseMethodName = createTestBaseMethodName(tmlTestcase.getTestBase());
 
@@ -1007,7 +1003,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	if (resultVariableName.length() > 0) {
-	    sbTestMethodBody.append(resultVariableName).append("=");
+	    sbTestMethodBody.append(resultType).append(" ").append(resultVariableName).append("=");
 	}
 
 	String paramNameList;
@@ -1079,14 +1075,14 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
     }
 
-    protected void createParamInitializations(List<Param> params, StringBuilder methodBody) {
-	// variable declaration and default initialization
-	for (Param param : params) {
-	    methodBody.append(param.getType()).append(" ").append(param.getName()).append(" = ")
-		    .append(JDTUtils.createInitValue(param.getType(), true)).append(";").append(RETURN);
-	}
-
-    }
+//    protected void createParamInitializations(List<Param> params, StringBuilder methodBody) {
+//	// variable declaration and default initialization
+//	for (Param param : params) {
+//	    methodBody.append(param.getType()).append(" ").append(param.getName()).append(" = ")
+//		    .append(JDTUtils.createInitValue(param.getType(), true)).append(";").append(RETURN);
+//	}
+//
+//    }
 
     /**
      * Creates the param assignments
@@ -1096,7 +1092,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      */
     protected void createParamAssignments(List<ParamAssignment> paramAssignments, StringBuilder methodBody) {
 	for (ParamAssignment pa : paramAssignments) {
-	    methodBody.append(pa.getParamName()).append(" = ").append(pa.getAssignment()).append(";\n");
+	    methodBody.append(pa.getParamType()).append(" ")
+		    .append(pa.getParamName()).append(" = ")
+		    .append(pa.getAssignment()).append(";\n");
 	}
     }
 
@@ -1311,13 +1309,13 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * 
      * @return the created annotations
      */
-    protected String createAnnoTestprio(Testprio testprio) {
-	if (testprio == Testprio.DEFAULT) {
-	    return ANNO_TESTPRIO + RETURN;
-	}
-
-	return ANNO_TESTPRIO + "(prio=org.junit.tools.generator.model.tml.Testprio." + testprio + ")" + RETURN;
-    }
+//    protected String createAnnoTestprio(Testprio testprio) {
+//	if (testprio == Testprio.DEFAULT) {
+//	    return ANNO_TESTPRIO + RETURN;
+//	}
+//
+//	return ANNO_TESTPRIO + "(prio=org.junit.tools.generator.model.tml.Testprio." + testprio + ")" + RETURN;
+//    }
 
     /**
      * Returns if the annotation generated is set.

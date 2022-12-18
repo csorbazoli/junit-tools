@@ -749,7 +749,7 @@ public class JDTUtils implements IGeneratorConstants {
 	    String params, String body, boolean increment,
 	    String... annotations) throws JavaModelException {
 	return createMethod(type, modifier, returnType, methodName,
-		throwsClause, params, body, true, false, annotations);
+		throwsClause, params, body, false, false, annotations);
     }
 
     /**
@@ -839,12 +839,10 @@ public class JDTUtils implements IGeneratorConstants {
 		methodName = increment(methodName, "_"); //$NON-NLS-1$
 		tmpMethod = type.getMethod(methodName, null);
 	    }
+	} else if (tmpMethod.exists()) {
+	    logger.fine(Messages.GeneratorUtils_MethodExists + methodName);
+	    return tmpMethod;
 	}
-
-	// if (tmpMethod.exists()) {
-	// logger.fine(Messages.GeneratorUtils_MethodExists + methodName);
-	// return tmpMethod;
-	// }
 
 	if (annotations != null) {
 	    for (String annotation : annotations) {

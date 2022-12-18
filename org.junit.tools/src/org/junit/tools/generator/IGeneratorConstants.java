@@ -35,9 +35,14 @@ public interface IGeneratorConstants {
 
     public static final String ANNO_GENERATED_NAME = "Generated";
     public static final String ANNO_GENERATED = "@" + ANNO_GENERATED_NAME;
+    public static final String ANNO_EXTEND_WITH = "@ExtendWith";
+    public static final String ANNO_INJECTMOCKS = "@InjectMocks";
 
     public static final String ANNO_METHOD_REF_NAME = "MethodRef";
     public static final String ANNO_METHOD_REF = "@";
 
     public static final String INCREMENT_SEPERATOR = "_";
+
+    public static final String UNDER_TEST = "underTest";
+
 }

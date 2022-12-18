@@ -117,7 +117,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	JUTPreferences.mockClassAnnotations = mockClassAnnotations;
     }
 
-    protected static void setTestClassAnnotations(String[] testClassAnnotations) {
+    public static void setTestClassAnnotations(String[] testClassAnnotations) {
 	JUTPreferences.testClassAnnotations = testClassAnnotations;
     }
 
