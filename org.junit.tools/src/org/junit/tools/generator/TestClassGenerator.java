@@ -1132,7 +1132,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    String assertionType = createAssertionType(type, baseType);
 
 	    if (isGherkinStyle()) {
-		sbTestMethodBody.append("// then");
+		sbTestMethodBody.append(RETURN).append("// then");
 	    }
 	    // Assertion
 	    if (type.isJUnit5()) {
