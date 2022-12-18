@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IAnnotation;
@@ -68,6 +69,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     protected boolean defaultTestbaseMethodCreated = false;
 
     private String annoGenerated = null;
+
+    protected Boolean gherkinStyle = null;
 
     @Override
     public ICompilationUnit generate(GeneratorModel model, List<ITestDataFactory> testDataFactories,
@@ -982,20 +985,27 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    String testBaseVariableName, String testBaseMethodName, String resultVariableName, String resultType,
 	    List<Param> params, List<ParamAssignment> paramAssignments, boolean isPublic, boolean isStatic) {
 
-	String baseName;
+	String baseName = testBaseVariableName;
+
+	if (isGherkinStyle()) {
+	    sbTestMethodBody.append("// given").append(RETURN);
+	}
 
 	// create test-base
-	if (!isStatic) {
-	    baseName = testBaseVariableName;
-	    sbTestMethodBody.append(testBaseVariableName).append("=").append(testBaseMethodName).append("();");
-	} else {
+	if (isStatic) {
 	    baseName = baseClassName;
+	} else if (StringUtils.isNotBlank(testBaseMethodName)) {
+	    sbTestMethodBody.append(testBaseVariableName).append("=").append(testBaseMethodName).append("();").append(RETURN);
 	}
 
 	// create param assignments
 	createParamAssignments(paramAssignments, sbTestMethodBody);
 
 	// result
+	if (isGherkinStyle()) {
+	    sbTestMethodBody.append("// when").append(RETURN);
+	}
+
 	if (resultVariableName.length() > 0) {
 	    sbTestMethodBody.append(resultVariableName).append("=");
 	}
@@ -1047,11 +1057,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	    sbParamList.append(comma);
 	    if (useTypeForNull) {
-		String initValue = JDTUtils.createInitValue(param.getType());
+		String initValue = "null";
 		if (param.getType() != null) {
 		    initValue = JDTUtils.createInitValue(param.getType());
-		} else {
-		    initValue = "null";
 		}
 
 		if (initValue.equals("null")) {
@@ -1125,6 +1133,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    AssertionType type = tmlAssertion.getType();
 	    String assertionType = createAssertionType(type, baseType);
 
+	    if (isGherkinStyle()) {
+		sbTestMethodBody.append("// then");
+	    }
 	    // Assertion
 	    if (type.isJUnit5()) {
 		sbTestMethodBody.append(RETURN + "assertThat(" + base + ").");
@@ -1266,6 +1277,14 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    sbParamList.append(value);
 	}
 	return sbParamList.toString();
+    }
+
+    private boolean isGherkinStyle() {
+	if (gherkinStyle == null) {
+	    gherkinStyle = JUTPreferences.isGherkinStyleEnabled();
+	}
+
+	return gherkinStyle;
     }
 
     protected String getTestmethodPrefix() {
