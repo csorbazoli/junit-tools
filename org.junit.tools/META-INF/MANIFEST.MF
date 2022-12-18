@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.junit.tools
 Bundle-SymbolicName: org.junit.tools;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.1.2
 Bundle-Activator: org.junit.tools.Activator
 Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.eclipse.core.runtime;visibility:=reexport,
@@ -13,9 +13,10 @@ Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.eclipse.jface.text;visibility:=reexport,
  org.apache.commons.lang;visibility:=reexport,
  org.eclipse.ltk.core.refactoring;visibility:=reexport,
- org.eclipse.ui.editors;visibility:=reexport
+ org.eclipse.ui.editors;visibility:=reexport,
+ org.junit
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.junit.tools,
  org.junit.tools.base,
  org.junit.tools.configuration.base,
