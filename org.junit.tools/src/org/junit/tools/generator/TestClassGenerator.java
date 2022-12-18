@@ -108,8 +108,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	type = createTestClassFrame(testClass, tmlTest, testClassName);
 
 	// increment task
-	if (incrementTask(monitor))
+	if (incrementTask(monitor)) {
 	    return null;
+	}
 
 	// delete generated elements
 	if (testClass.exists()) {
@@ -117,29 +118,33 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// increment task
-	if (incrementTask(monitor))
+	if (incrementTask(monitor)) {
 	    return null;
+	}
 
 	// create standard-imports
 	createStandardImports(testClass, tmlTest);
 
 	// increment task
-	if (incrementTask(monitor))
+	if (incrementTask(monitor)) {
 	    return null;
+	}
 
 	// create standard-class-fields
 	createStandardClassFields(type, tmlTest, testClassName);
 
 	// increment task
-	if (incrementTask(monitor))
+	if (incrementTask(monitor)) {
 	    return null;
+	}
 
 	// create standard-methods
 	createStandardMethods(type, tmlSettings);
 
 	// increment task
-	if (incrementTask(monitor))
+	if (incrementTask(monitor)) {
 	    return null;
+	}
 
 	// create test-base-methods
 	if (writeTML) {
@@ -150,8 +155,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// increment task
-	if (incrementTask(monitor))
+	if (incrementTask(monitor)) {
 	    return null;
+	}
 
 	// delete test-methods
 	for (IMethod methodToDelete : model.getMethodsToDelete()) {
@@ -171,7 +177,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	IPackageFragment testPackage = model.getJUTElements().getClassesAndPackages().getTestPackage();
 
 	if (!testPackage.isDefaultPackage()) {
-		testClass.createPackageDeclaration(testPackage.getElementName(), null);
+	    testClass.createPackageDeclaration(testPackage.getElementName(), null);
 	}
 
 	// create static standard-imports
@@ -369,8 +375,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @return true if not canceled
      */
     protected boolean incrementTask(IProgressMonitor monitor, int i) {
-	if (monitor.isCanceled())
+	if (monitor.isCanceled()) {
 	    return true;
+	}
 	monitor.worked(i);
 	return false;
     }
@@ -458,8 +465,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    Vector<Annotation> annotationsToDelete = getAnnotationsToDelete(type, tmlTest);
 
 	    if (annotationsToDelete != null) {
-		for (Annotation annotation : annotationsToDelete)
+		for (Annotation annotation : annotationsToDelete) {
 		    annotation.delete(true, null);
+		}
 
 		String source = type.getSource();
 		type.delete(true, null);
@@ -500,8 +508,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		    IMemberValuePair[] memberValuePairs = annotation.getMemberValuePairs();
 
 		    if (memberValuePairs.length == 0) {
-			if (tmlTest.getTestPrio().compareTo(Testprio.DEFAULT) != 0)
+			if (tmlTest.getTestPrio().compareTo(Testprio.DEFAULT) != 0) {
 			    recreationNecessary = true;
+			}
 		    }
 
 		    for (IMemberValuePair valuePair : memberValuePairs) {
@@ -514,8 +523,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    }
 	}
 
-	if (!recreationNecessary)
+	if (!recreationNecessary) {
 	    return null;
+	}
 
 	return annotationsToDelete;
     }
@@ -582,7 +592,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	// create generator-annotation
 	annotations.append(createAnnoGenerated());
-	
+
 	String[] testClassAnnotations = JUTPreferences.getTestClassAnnotations();
 	for (String additionalAnno : testClassAnnotations) {
 	    if (!additionalAnno.startsWith("@")) {
@@ -663,8 +673,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      */
     protected void createTestBaseMethodDefault(IType type, String testbaseName, List<Param> params)
 	    throws JavaModelException {
-	if (defaultTestbaseMethodCreated)
+	if (defaultTestbaseMethodCreated) {
 	    return;
+	}
 
 	String paramValueList;
 	if (params != null) {
@@ -784,8 +795,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @return test base mocks
      */
     protected String createTestBaseMocks(Mocks mocks) {
-	if (mocks == null)
+	if (mocks == null) {
 	    return "";
+	}
 
 	StringBuilder sbMockMethods = new StringBuilder();
 	String resultType;
@@ -831,7 +843,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      */
     protected boolean createTestMethods(IType type, HashMap<IMethod, Method> methodMap, List<IMethod> methodsToCreate,
 	    Settings tmlSettings, String baseClassName, IProgressMonitor monitor, int increment)
-		    throws JavaModelException {
+	    throws JavaModelException {
 
 	int i = 0;
 
@@ -844,8 +856,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    if (i++ == increment) {
 		i = 0;
 		// increment task
-		if (incrementTask(monitor))
+		if (incrementTask(monitor)) {
 		    return true;
+		}
 	    }
 	}
 
@@ -1011,12 +1024,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    // check if powermock or jmockit
 	    String mockFramework = JUTPreferences.getMockFramework();
 	    if (mockFramework == null || mockFramework == "powermock") {
-		    	sbTestMethodBody.append("Whitebox.invokeMethod(").append(baseName).append(",").append(QUOTES)
-		    	.append(methodName).append(QUOTES).append(paramNameList).append(");");	    	
-	    }
-	    else {
-		    sbTestMethodBody.append("Deencapsulation.invoke(").append(baseName).append(", ").append(QUOTES)
-			    .append(methodName).append(QUOTES).append(paramNameList).append(");");	    	
+		sbTestMethodBody.append("Whitebox.invokeMethod(").append(baseName).append(",").append(QUOTES)
+			.append(methodName).append(QUOTES).append(paramNameList).append(");");
+	    } else {
+		sbTestMethodBody.append("Deencapsulation.invoke(").append(baseName).append(", ").append(QUOTES)
+			.append(methodName).append(QUOTES).append(paramNameList).append(");");
 	    }
 
 	}
@@ -1102,7 +1114,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		    continue;
 		}
 
-		base = "result";
+		base = "actual";
 		baseType = resultType;
 	    } else {
 		base = testBaseVariableName + "." + tmlAssertion.getBase() + "()";
@@ -1114,32 +1126,46 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    String assertionType = createAssertionType(type, baseType);
 
 	    // Assertion
-	    sbTestMethodBody.append(RETURN + "Assert.").append(assertionType).append("(");
+	    if (type.isJUnit5()) {
+		sbTestMethodBody.append(RETURN + "assertThat(" + base + ").");
+		if (tmlAssertion.getMessage() != null && tmlAssertion.getMessage().length() > 0) {
+		    String message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
+		    sbTestMethodBody.append("withFailMessage(").append(QUOTES).append(message).append(QUOTES).append(").");
+		}
+		sbTestMethodBody.append(assertionType)
+			.append("(null"); // TODO this should be a test value or TestUtils.readTestFile()
+	    } else {
+		sbTestMethodBody.append(RETURN + "Assert.").append(assertionType).append("(");
+	    }
 
 	    // message
 	    String message = "";
 	    if (tmlAssertion.getMessage() != null && tmlAssertion.getMessage().length() > 0) {
-		message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
-		sbTestMethodBody.append(QUOTES).append(message).append(QUOTES).append(", ");
+		if (!type.isJUnit5()) {
+		    message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
+		    sbTestMethodBody.append(QUOTES).append(message).append(QUOTES).append(", ");
+		}
 	    }
 
 	    // actual
-	    if (type == AssertionType.EQUALS || type == AssertionType.NOT_EQUALS) {
-		// test-value
-		String testValue = tmlAssertion.getValue();
-		testValue = JDTUtils.formatValue(testValue, baseType);
-		sbTestMethodBody.append(testValue).append(", ");
+	    if (!type.isJUnit5()) {
+		if (type == AssertionType.EQUALS || type == AssertionType.NOT_EQUALS) {
+		    // test-value
+		    String testValue = tmlAssertion.getValue();
+		    testValue = JDTUtils.formatValue(testValue, baseType);
+		    sbTestMethodBody.append(testValue).append(", ");
 
-		// expected
-		sbTestMethodBody.append(base);
+		    // expected
+		    sbTestMethodBody.append(base);
 
-		// delta
-		if (JDTUtils.isNumber(baseType) && !JDTUtils.isArray(baseType)) {
-		    sbTestMethodBody.append(", 0");
+		    // delta
+		    if (JDTUtils.isNumber(baseType) && !JDTUtils.isArray(baseType)) {
+			sbTestMethodBody.append(", 0");
+		    }
+		} else {
+		    // expected
+		    sbTestMethodBody.append(base);
 		}
-	    } else {
-		// expected
-		sbTestMethodBody.append(base);
 	    }
 
 	    sbTestMethodBody.append(");");
@@ -1173,6 +1199,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    assertionType = "assertTrue";
 	} else if (type == AssertionType.IS_FALSE) {
 	    assertionType = "assertFalse";
+	} else if (type == AssertionType.EQUALS_J5) {
+	    assertionType = "isEqualTo";
 	}
 	return assertionType;
     }
@@ -1189,10 +1217,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	boolean firstInit = true;
 
 	for (int i = 0; i < params.size(); i++) {
-	    if (!firstInit)
+	    if (!firstInit) {
 		sbParamList.append(", ");
-	    else
+	    } else {
 		firstInit = false;
+	    }
 
 	    tmlParam = params.get(i);
 
@@ -1217,10 +1246,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	String value, type;
 
 	for (int i = 0; i < params.size() && (paramValues == null || i < paramValues.size()); i++) {
-	    if (!firstInit)
+	    if (!firstInit) {
 		sbParamList.append(", ");
-	    else
+	    } else {
 		firstInit = false;
+	    }
 
 	    tmlParam = params.get(i);
 	    type = tmlParam.getType();
@@ -1239,8 +1269,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     protected String getTestmethodPrefix() {
-	if (testmethodPrefix == null)
+	if (testmethodPrefix == null) {
 	    testmethodPrefix = JUTPreferences.getTestMethodPrefix();
+	}
 
 	return testmethodPrefix;
     }
@@ -1249,8 +1280,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @return the test method post fix
      */
     protected String getTestmethodPostfix() {
-	if (testmethodPostfix == null)
+	if (testmethodPostfix == null) {
 	    testmethodPostfix = JUTPreferences.getTestMethodPostfix();
+	}
 
 	return testmethodPostfix;
     }
@@ -1261,8 +1293,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @return the created annotations
      */
     protected String createAnnoTestprio(Testprio testprio) {
-	if (testprio == Testprio.DEFAULT)
+	if (testprio == Testprio.DEFAULT) {
 	    return ANNO_TESTPRIO + RETURN;
+	}
 
 	return ANNO_TESTPRIO + "(prio=org.junit.tools.generator.model.tml.Testprio." + testprio + ")" + RETURN;
     }
@@ -1275,8 +1308,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      */
     protected boolean isGenerated(IAnnotation[] annotations) {
 	for (IAnnotation annotation : annotations) {
-	    if (ANNO_GENERATED_NAME.equals(annotation.getElementName()))
+	    if (ANNO_GENERATED_NAME.equals(annotation.getElementName())) {
 		return true;
+	    }
 	}
 
 	return false;

@@ -5,18 +5,20 @@
 // Generated on: 2015.11.22 at 02:08:56 AM CET 
 //
 
-
 package org.junit.tools.generator.model.tml;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for AssertionType.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for AssertionType.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="AssertionType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -44,14 +46,29 @@ public enum AssertionType {
     IS_TRUE,
     IS_FALSE,
     CREATER_THAN,
-    LOWER_THAN;
+    LOWER_THAN,
+    EQUALS_J5(true);
+
+    private final boolean junit5;
+
+    AssertionType() {
+	this(false);
+    }
+
+    AssertionType(boolean isJunit5) {
+	this.junit5 = isJunit5;
+    }
 
     public String value() {
-        return name();
+	return name();
+    }
+
+    public boolean isJUnit5() {
+	return junit5;
     }
 
     public static AssertionType fromValue(String v) {
-        return valueOf(v);
+	return valueOf(v);
     }
 
 }
