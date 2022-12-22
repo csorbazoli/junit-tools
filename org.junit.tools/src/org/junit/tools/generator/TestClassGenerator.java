@@ -937,7 +937,6 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	List<TestCase> testCases = tmlMethod.getTestCase();
-	boolean isPublic = MOD_PUBLIC.equals(tmlMethod.getModifier());
 
 	for (TestCase tmlTestcase : testCases) {
 	    // sbTestMethodBody.append(RETURN + RETURN + "//
@@ -947,7 +946,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	    createTestCaseBody(sbTestMethodBody, tmlMethod.getName(), baseClassName, testBaseVariableName,
 		    testbaseMethodName, resultVariableName, resultType, params, tmlTestcase.getParamAssignments(),
-		    isPublic, tmlMethod.isStatic());
+		    tmlMethod.isStatic());
 
 	    // assertions
 	    createAssertionsMethodBody(sbTestMethodBody, resultVariableName, resultType, testBaseVariableName,
@@ -974,12 +973,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param resultType
      * @param params
      * @param paramAssignments
-     * @param isPublic
      * @param isStatic
      */
     protected void createTestCaseBody(StringBuilder sbTestMethodBody, String methodName, String baseClassName,
 	    String testBaseVariableName, String testBaseMethodName, String resultVariableName, String resultType,
-	    List<Param> params, List<ParamAssignment> paramAssignments, boolean isPublic, boolean isStatic) {
+	    List<Param> params, List<ParamAssignment> paramAssignments, boolean isStatic) {
 
 	String baseName = testBaseVariableName;
 
@@ -1008,36 +1006,13 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	String paramNameList;
 
-	if (isPublic) {
-	    // create parameter list
-	    paramNameList = createParamNameList(params);
+	// create parameter list
+	paramNameList = createParamNameList(params);
 
-	    // method-call
-	    sbTestMethodBody.append(baseName).append(".").append(methodName).append("(").append(paramNameList)
-		    .append(");");
-	} else {
-	    // create parameter list for private call
-	    paramNameList = createParamNameList(params, true);
+	// method-call
+	sbTestMethodBody.append(baseName).append(".").append(methodName).append("(").append(paramNameList)
+		.append(");");
 
-	    if (paramNameList.length() > 0) {
-		paramNameList = ", new Object[]{" + paramNameList + "}";
-	    }
-
-	    if (isStatic) {
-		baseName += ".class";
-	    }
-
-	    // check if powermock or jmockit
-	    String mockFramework = JUTPreferences.getMockFramework();
-	    if (mockFramework == null || mockFramework == "powermock") {
-		sbTestMethodBody.append("Whitebox.invokeMethod(").append(baseName).append(",").append(QUOTES)
-			.append(methodName).append(QUOTES).append(paramNameList).append(");");
-	    } else {
-		sbTestMethodBody.append("Deencapsulation.invoke(").append(baseName).append(", ").append(QUOTES)
-			.append(methodName).append(QUOTES).append(paramNameList).append(");");
-	    }
-
-	}
     }
 
     protected String createParamNameList(List<Param> params) {
