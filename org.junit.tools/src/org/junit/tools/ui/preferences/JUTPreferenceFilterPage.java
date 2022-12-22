@@ -45,6 +45,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
      * @see PreferencePage#createContents(Composite)
      * @param parent
      */
+    @Override
     protected Control createContents(Composite parent) {
 	Composite cmpMain = new Composite(parent, SWT.NONE);
 
@@ -92,6 +93,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 
 	addButton.setText("Add to List"); //$NON-NLS-1$
 	addButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
 	    public void widgetSelected(SelectionEvent event) {
 		String newEntry = newMethodFilterName.getText();
 		for (String item : listMethodFilterName.getItems()) {
@@ -99,7 +101,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 			return;
 		    }
 		}
-		
+
 		listMethodFilterName.add(newEntry,
 			listMethodFilterName.getItemCount());
 	    }
@@ -116,6 +118,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 
 	removeButton.setText("Remove Selection"); //$NON-NLS-1$
 	removeButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
 	    public void widgetSelected(SelectionEvent event) {
 		listMethodFilterName.remove(listMethodFilterName
 			.getSelectionIndex());
@@ -169,6 +172,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 
 	addButton.setText("Add to List"); //$NON-NLS-1$
 	addButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
 	    public void widgetSelected(SelectionEvent event) {
 		String newEntry = newMethodFilterModifier.getText();
 		for (String item : listMethodFilterModifier.getItems()) {
@@ -176,7 +180,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 			return;
 		    }
 		}
-		
+
 		listMethodFilterModifier.add(newEntry,
 			listMethodFilterModifier.getItemCount());
 	    }
@@ -192,6 +196,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 
 	removeButton.setText("Remove Selection"); //$NON-NLS-1$
 	removeButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
 	    public void widgetSelected(SelectionEvent event) {
 		listMethodFilterModifier.remove(listMethodFilterModifier
 			.getSelectionIndex());
@@ -208,17 +213,20 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
     /**
      * @see IWorkbenchPreferencePage#init(IWorkbench)
      */
+    @Override
     public void init(IWorkbench workbench) {
 	// Initialize the preference store we wish to use
 	setPreferenceStore(Activator.getDefault().getPreferenceStore());
 	setDescription(Messages.JUTPreferenceFilterPage_description_filters);
     }
 
+    @Override
     protected void performDefaults() {
 	listMethodFilterName.setItems(getDefaultMethodFilterNamePref());
 	listMethodFilterModifier.setItems(getDefaultMethodFilterModifierPref());
     }
 
+    @Override
     public boolean performOk() {
 	setMethodFilterNamePref(listMethodFilterName.getItems());
 	setMethodFilterModifierPref(listMethodFilterModifier.getItems());
