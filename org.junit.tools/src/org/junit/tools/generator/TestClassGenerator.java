@@ -370,8 +370,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    compilationUnit.createImport("org.junit.jupiter.api.Test", null, null);
 	    compilationUnit.createImport("org.junit.jupiter.api.extension.ExtendWith", null, null);
 	    // TODO JUTPreferences.getMockFramework() - EasyMock?
-	    compilationUnit.createImport("org.junit.jupiter.MockitoExtension", null, null);
+	    compilationUnit.createImport("org.mockito.junit.jupiter.MockitoExtension", null, null);
 	}
+	compilationUnit.createImport("org.mockito.InjectMocks", null, null);
 
 	if (tmlTest.getSettings().isLogger()) {
 	    compilationUnit.createImport("lombok.extern.slf4j.Slf4j", null, null);
