@@ -209,6 +209,11 @@ public class GeneratorUtils implements IGeneratorConstants {
 		+ RETURN;
     }
 
+    public static String createAnnoRunWith(String extension) {
+	return ANNO_RUN_WITH + "(" + extension + ".class)"
+		+ RETURN;
+    }
+
     public static String createAnnoInjectMocks() {
 	return ANNO_INJECTMOCKS
 		+ RETURN;

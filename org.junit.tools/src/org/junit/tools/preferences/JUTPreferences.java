@@ -46,6 +46,8 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     private static String mockFramework = null;
 
+    private static int junitVersion = 5;
+
     // from annotations-page
     private static String[] testClassAnnotations = null;
 
@@ -312,6 +314,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return mockFramework;
     }
 
+    public static int getJUnitVersion() {
+	return junitVersion;
+    }
+
     public static void setMockSaveInTestProject(Boolean mockSaveInTestProject) {
 	JUTPreferences.mockSaveInTestProject = mockSaveInTestProject;
     }
@@ -322,6 +328,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setMockFramework(String mockFramework) {
 	JUTPreferences.mockFramework = mockFramework;
+    }
+
+    public static void setJUnitVersion(int junitVersion) {
+	JUTPreferences.junitVersion = junitVersion;
     }
 
     /**

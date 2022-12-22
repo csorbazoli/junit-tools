@@ -25,13 +25,13 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 	store.setDefault(TML_CONTAINER, "test_files");
 
 	store.setDefault(TEST_PROJECT_POSTFIX, ".test");
-	
+
 	store.setDefault(TEST_SOURCE_FOLDER_NAME, "src");
 
 	store.setDefault(TEST_CLASS_SUPER_TYPE, "");
 
 	store.setDefault(TEST_CLASS_PREFIX, "");
-	
+
 	store.setDefault(TEST_CLASS_POSTFIX, "Test");
 
 	store.setDefault(TEST_PACKAGE_POSTFIX, "");
@@ -44,17 +44,17 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 		DEFAULT_METHOD_FILTER_MODIFIER);
 
 	store.setDefault(MOCK_PROJECT, "org.junit.tools.mock");
-	
+
 	store.setDefault(MOCK_SAVE_IN_TESTPROJECT, true);
-	
+
 	store.setDefault(MOCK_SAVE_IN_TESTPROJECT, "powermock");
 
 	store.setDefault(TEST_CLASS_ANNOTATIONS, "");
-	
+
 	store.setDefault(MOCK_CLASS_ANNOTATIONS, "");
-	
+
 	store.setDefault(STATIC_BINDINGS, "");
-	
+
 	// initialize JUT-preferences
 	JUTPreferences.initialize();
 
