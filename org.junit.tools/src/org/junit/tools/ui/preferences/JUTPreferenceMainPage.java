@@ -25,27 +25,27 @@ import org.junit.tools.preferences.IJUTPreferenceConstants;
 public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	IWorkbenchPreferencePage, IJUTPreferenceConstants {
 
-    private Label projectExample;
+//    private Label projectExample;
     private Label folderExample;
-    private Label packageExample;
+//    private Label packageExample;
     private Label classExample;
     private Label methodExample;
-    private Label superTypeExample;
+//    private Label superTypeExample;
 
-    private boolean projectIsEqual = false;
+//    private boolean projectIsEqual = false;
     private boolean srcFolderIsEqual = false;
-    private boolean packageIsEqual = false;
+//    private boolean packageIsEqual = false;
     private boolean classIsEqual = false;
-    private boolean methodIsEqual = false;
+//    private boolean methodIsEqual = false;
 
-    private StringFieldEditor fieldProject;
+//    private StringFieldEditor fieldProject;
     private StringFieldEditor fieldSrcFolder;
-    private StringFieldEditor fieldPackage;
+//    private StringFieldEditor fieldPackage;
     private StringFieldEditor fieldClassPre;
     private StringFieldEditor fieldClassPost;
     private StringFieldEditor fieldMethodPre;
     private StringFieldEditor fieldMethodPost;
-    private StringFieldEditor fieldSuperType;
+//    private StringFieldEditor fieldSuperType;
 
     public JUTPreferenceMainPage() {
 	super(FieldEditorPreferencePage.GRID);
@@ -62,44 +62,44 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
     protected void createFieldEditors() {
 
 	// project
-	fieldProject = new StringFieldEditor(TEST_PROJECT_POSTFIX,
-		Messages.JUTPreferenceMainPage_Test_project_postfix,
-		getFieldEditorParent()) {
-
-	    @Override
-	    protected void valueChanged() {
-		super.valueChanged();
-		setExampleValue();
-	    }
-
-	    @Override
-	    protected void doLoad() {
-		super.doLoad();
-		setExampleValue();
-	    }
-
-	    private void setExampleValue() {
-
-		if ("".equals(getStringValue())) {
-		    projectExample
-			    .setText("Project under test and test project is equal");
-		    projectIsEqual = true;
-		} else {
-		    projectExample
-			    .setText("If the project under test is \"org.example\" the test project is \"org.example"
-				    + getStringValue() + "\"");
-		    projectIsEqual = false;
-		}
-
-		projectExample.getParent().layout();
-
-		setExampleValueFolder();
-	    }
-	};
-	addField(fieldProject);
-
-	projectExample = new Label(getFieldEditorParent(), SWT.NONE);
-	projectExample.setLayoutData(createGridDataWithIndent());
+//	fieldProject = new StringFieldEditor(TEST_PROJECT_POSTFIX,
+//		Messages.JUTPreferenceMainPage_Test_project_postfix,
+//		getFieldEditorParent()) {
+//
+//	    @Override
+//	    protected void valueChanged() {
+//		super.valueChanged();
+//		setExampleValue();
+//	    }
+//
+//	    @Override
+//	    protected void doLoad() {
+//		super.doLoad();
+//		setExampleValue();
+//	    }
+//
+//	    private void setExampleValue() {
+//
+//		if ("".equals(getStringValue())) {
+//		    projectExample
+//			    .setText("Project under test and test project is equal");
+//		    projectIsEqual = true;
+//		} else {
+//		    projectExample
+//			    .setText("If the project under test is \"org.example\" the test project is \"org.example"
+//				    + getStringValue() + "\"");
+//		    projectIsEqual = false;
+//		}
+//
+//		projectExample.getParent().layout();
+//
+//		setExampleValueFolder();
+//	    }
+//	};
+//	addField(fieldProject);
+//
+//	projectExample = new Label(getFieldEditorParent(), SWT.NONE);
+//	projectExample.setLayoutData(createGridDataWithIndent());
 
 	// source folder
 	fieldSrcFolder = new StringFieldEditor(TEST_SOURCE_FOLDER_NAME,
@@ -125,25 +125,25 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	folderExample.setLayoutData(createGridDataWithIndent());
 
 	// package
-	fieldPackage = new StringFieldEditor(TEST_PACKAGE_POSTFIX,
-		Messages.JUTPreferenceMainPage_Test_package_postfix,
-		getFieldEditorParent()) {
-	    @Override
-	    protected void valueChanged() {
-		super.valueChanged();
-		setExampleValuePackage();
-	    }
-
-	    @Override
-	    protected void doLoad() {
-		super.doLoad();
-		setExampleValuePackage();
-	    }
-	};
-	addField(fieldPackage);
-
-	packageExample = new Label(getFieldEditorParent(), SWT.NONE);
-	packageExample.setLayoutData(createGridDataWithIndent());
+//	fieldPackage = new StringFieldEditor(TEST_PACKAGE_POSTFIX,
+//		Messages.JUTPreferenceMainPage_Test_package_postfix,
+//		getFieldEditorParent()) {
+//	    @Override
+//	    protected void valueChanged() {
+//		super.valueChanged();
+//		setExampleValuePackage();
+//	    }
+//
+//	    @Override
+//	    protected void doLoad() {
+//		super.doLoad();
+//		setExampleValuePackage();
+//	    }
+//	};
+//	addField(fieldPackage);
+//
+//	packageExample = new Label(getFieldEditorParent(), SWT.NONE);
+//	packageExample.setLayoutData(createGridDataWithIndent());
 
 	// class prefix
 	fieldClassPre = new StringFieldEditor(TEST_CLASS_PREFIX,
@@ -225,52 +225,69 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	methodExample.setLayoutData(createGridDataWithIndent());
 
 	// super type
-	fieldSuperType = new StringFieldEditor(TEST_CLASS_SUPER_TYPE,
-		Messages.JUTPreferenceMainPage_Testclass_supertype,
-		getFieldEditorParent()) {
-	    @Override
-	    protected void valueChanged() {
-		super.valueChanged();
-		setExampleValueSuperType();
-	    }
+//	fieldSuperType = new StringFieldEditor(TEST_CLASS_SUPER_TYPE,
+//		Messages.JUTPreferenceMainPage_Testclass_supertype,
+//		getFieldEditorParent()) {
+//	    @Override
+//	    protected void valueChanged() {
+//		super.valueChanged();
+//		setExampleValueSuperType();
+//	    }
+//
+//	    @Override
+//	    protected void doLoad() {
+//		super.doLoad();
+//		setExampleValueSuperType();
+//	    }
+//
+//	};
+//	addField(fieldSuperType);
 
-	    @Override
-	    protected void doLoad() {
-		super.doLoad();
-		setExampleValueSuperType();
-	    }
-
-	};
-	addField(fieldSuperType);
-
-	superTypeExample = new Label(getFieldEditorParent(), SWT.NONE);
-	superTypeExample.setLayoutData(createGridDataWithIndent());
+//	superTypeExample = new Label(getFieldEditorParent(), SWT.NONE);
+//	superTypeExample.setLayoutData(createGridDataWithIndent());
 
 	addBlankLine();
 
 	// mock project
-	Label label = new Label(getFieldEditorParent(), SWT.WRAP);
-	label.setLayoutData(createGridData());
-	label.setText("Here you can set the default target project for the generated mock-classes:");
+//	Label label = new Label(getFieldEditorParent(), SWT.WRAP);
+//	label.setLayoutData(createGridData());
+//	label.setText("Here you can set the default target project for the generated mock-classes:");
 
-	addField(new StringFieldEditor(MOCK_PROJECT,
-		Messages.JUTPreferenceMainPage_Mock_Project,
-		getFieldEditorParent()));
+//	addField(new StringFieldEditor(MOCK_PROJECT,
+//		Messages.JUTPreferenceMainPage_Mock_Project,
+//		getFieldEditorParent()));
 
-	addField(new BooleanFieldEditor(MOCK_SAVE_IN_TESTPROJECT,
-		Messages.JUTPreferenceMainPage_Mock_Save_In_Test_Project,
-		getFieldEditorParent()));
+//	addField(new BooleanFieldEditor(MOCK_SAVE_IN_TESTPROJECT,
+//		Messages.JUTPreferenceMainPage_Mock_Save_In_Test_Project,
+//		getFieldEditorParent()));
 
-	addBlankLine();
+//	addBlankLine();
 
 	// mock framework
 	addField(new RadioGroupFieldEditor(MOCK_FRAMEWORK, Messages.JUTPreferenceMainPage_Mock_Framework, 1,
-		new String[][] { { "EasyMock", "easymock" },
+		new String[][] {
 			{ "Mockito", "mockito" },
-			{ "PowerMock (EasyMock/Mockito)", "powermock" },
-			{ "JMockit (until version 1.34)", "jmockit" } },
+			{ "EasyMock", "easymock" }
+		// { "PowerMock (EasyMock/Mockito)", "powermock" },
+		// { "JMockit (until version 1.34)", "jmockit" }
+		},
 		getFieldEditorParent(),
 		true));
+
+	// JUnit version
+	addField(new RadioGroupFieldEditor(JUNIT_VERSION, Messages.JUTPreferenceMainPage_JUnit_Version, 1,
+		new String[][] {
+			{ "JUnit4", "4" },
+			{ "JUnit5", "5" }
+		},
+		getFieldEditorParent(),
+		true));
+
+	addField(new BooleanFieldEditor(SHOW_SETTINGS_BEFORE_GENERATE, Messages.JUTPreferenceMainPage_Show_Settings_Before_Generate,
+		getFieldEditorParent()));
+
+	addField(new BooleanFieldEditor(GHERKIN_STYLE_ENABLED, Messages.JUTPreferenceMainPage_Gherkin_Style_Enabled,
+		getFieldEditorParent()));
 
 	adjustGridLayout();
     }
@@ -281,13 +298,13 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 		|| "src".equals(fieldSrcFolder.getStringValue())) {
 	    srcFolderIsEqual = true;
 
-	    if (projectIsEqual) {
-		folderExample
-			.setText("Source folder and test source folder is equal");
-	    } else {
-		folderExample
-			.setText("The name of the test source folder is equal to the folder of the class under test");
-	    }
+//	    if (projectIsEqual) {
+	    folderExample
+		    .setText("Source folder and test source folder is equal");
+//	    } else {
+//		folderExample
+//			.setText("The name of the test source folder is equal to the folder of the class under test");
+//	    }
 	} else {
 	    srcFolderIsEqual = false;
 
@@ -298,32 +315,32 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 
 	folderExample.getParent().layout();
 
-	setExampleValuePackage();
+	// setExampleValuePackage();
     }
 
-    protected void setExampleValuePackage() {
-
-	if ("".equals(fieldPackage.getStringValue())) {
-	    packageIsEqual = true;
-
-	    if (projectIsEqual && srcFolderIsEqual) {
-		packageExample
-			.setText("Source package and test package is equal");
-	    } else {
-		packageExample
-			.setText("Package names are equal for base and test");
-	    }
-	} else {
-	    packageIsEqual = false;
-	    packageExample
-		    .setText("The package name for the package \"base.logic\"is \"base.logic"
-			    + fieldPackage.getStringValue() + "\"");
-	}
-
-	packageExample.getParent().layout();
-
-	setExampleValueClass();
-    }
+//    protected void setExampleValuePackage() {
+//
+//	if ("".equals(fieldPackage.getStringValue())) {
+//	    packageIsEqual = true;
+//
+//	    if (projectIsEqual && srcFolderIsEqual) {
+//		packageExample
+//			.setText("Source package and test package is equal");
+//	    } else {
+//		packageExample
+//			.setText("Package names are equal for base and test");
+//	    }
+//	} else {
+//	    packageIsEqual = false;
+//	    packageExample
+//		    .setText("The package name for the package \"base.logic\"is \"base.logic"
+//			    + fieldPackage.getStringValue() + "\"");
+//	}
+//
+//	packageExample.getParent().layout();
+//
+//	setExampleValueClass();
+//    }
 
     protected void setExampleValueClass() {
 
@@ -331,7 +348,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 		&& "".equals(fieldClassPost.getStringValue())) {
 	    classIsEqual = true;
 
-	    if (projectIsEqual && srcFolderIsEqual && packageIsEqual) {
+	    if (srcFolderIsEqual) {
 		classExample.setText("Class for base and test is equal");
 	    } else {
 		classExample
@@ -357,9 +374,9 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 
 	if ("".equals(fieldMethodPre.getStringValue())
 		&& "".equals(fieldMethodPost.getStringValue())) {
-	    methodIsEqual = true;
+//	    methodIsEqual = true;
 
-	    if (projectIsEqual && srcFolderIsEqual && packageIsEqual
+	    if (srcFolderIsEqual
 		    && classIsEqual) {
 		methodExample.setText("Base and test method is equal");
 	    } else {
@@ -367,7 +384,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 			.setText("Base method name and test method name are equal");
 	    }
 	} else {
-	    methodIsEqual = false;
+//	    methodIsEqual = false;
 
 	    String methodName = "";
 	    if (fieldMethodPre.getStringValue().equals("")) {
@@ -390,8 +407,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
     }
 
     private void checkValid() {
-	if (projectIsEqual && srcFolderIsEqual && packageIsEqual
-		&& classIsEqual) {
+	if (srcFolderIsEqual && classIsEqual) {
 	    setErrorMessage("Between the elements under test and the corresponding test elements must be a difference!");
 	    setValid(false);
 	} else {
@@ -401,20 +417,20 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	}
     }
 
-    protected void setExampleValueSuperType() {
-	checkValid();
-
-	if ("".equals(fieldSuperType.getStringValue())) {
-	    superTypeExample.setText("No super type is defined");
-	} else {
-	    superTypeExample
-		    .setText("The default super class for the test class is \""
-			    + fieldSuperType.getStringValue() + "\"");
-	}
-
-	superTypeExample.getParent().layout();
-	getFieldEditorParent().layout();
-    }
+//    protected void setExampleValueSuperType() {
+//	checkValid();
+//
+//	if ("".equals(fieldSuperType.getStringValue())) {
+//	    superTypeExample.setText("No super type is defined");
+//	} else {
+//	    superTypeExample
+//		    .setText("The default super class for the test class is \""
+//			    + fieldSuperType.getStringValue() + "\"");
+//	}
+//
+//	superTypeExample.getParent().layout();
+//	getFieldEditorParent().layout();
+//    }
 
     private void addBlankLine() {
 	Label label = new Label(getFieldEditorParent(), SWT.NONE);

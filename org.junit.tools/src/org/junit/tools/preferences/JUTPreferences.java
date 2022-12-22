@@ -18,44 +18,33 @@ import org.junit.tools.Activator;
 public class JUTPreferences implements IJUTPreferenceConstants {
 
     // from main-page
+
+    // TODO remove
     private static Boolean writeTML = null;
-
     private static String tmlContainer = null;
-
     private static String testProjectPostfix = null;
-
-    private static String testSourceFolderName = null;
-
     private static String testPackagePostfix = null;
-
-    private static String testMethodPrefix = null;
-
-    private static String testMethodPostfix = null;
-
     private static String testClassSuperType = null;
-
-    private static String testClassPrefix = null;
-
-    private static String testClassPostfix = null;
-
     private static String mockProject = null;
-
     private static Boolean mockSaveInTestProject = null;
 
-    private static Boolean gherkinStyleEnabled = null;
-
+    // USEFUL
+    private static String testSourceFolderName = null;
+    private static String testMethodPrefix = null;
+    private static String testMethodPostfix = null;
+    private static String testClassPrefix = null;
+    private static String testClassPostfix = null;
+    private static Boolean gherkinStyleEnabled = true;
+    private static Boolean showSettingsBeforeGenerate = false;
     private static String mockFramework = null;
-
     private static int junitVersion = 5;
 
     // from annotations-page
     private static String[] testClassAnnotations = null;
-
     private static String[] mockClassAnnotations = null;
 
     // from filter-page
     private static String[] testMethodFilterName = null;
-
     private static String[] testMethodFilterModifier = null;
 
     // from static-bindings-page
@@ -306,6 +295,13 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return gherkinStyleEnabled;
     }
 
+    public static Boolean isShowSettingsBeforeGenerate() {
+	if (showSettingsBeforeGenerate == null) {
+	    showSettingsBeforeGenerate = getPreferenceBoolean(SHOW_SETTINGS_BEFORE_GENERATE, true);
+	}
+	return showSettingsBeforeGenerate;
+    }
+
     public static void setMockProject(String mockProject) {
 	JUTPreferences.mockProject = mockProject;
     }
@@ -326,12 +322,20 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	JUTPreferences.gherkinStyleEnabled = gherkinStyleEnabled;
     }
 
+    public static void setShowSettingsBeforeGenerate(Boolean enabled) {
+	JUTPreferences.showSettingsBeforeGenerate = enabled;
+    }
+
     public static void setMockFramework(String mockFramework) {
 	JUTPreferences.mockFramework = mockFramework;
     }
 
     public static void setJUnitVersion(int junitVersion) {
 	JUTPreferences.junitVersion = junitVersion;
+    }
+
+    public static void setJUnitVersion(String junitVersion) {
+	JUTPreferences.junitVersion = Integer.parseInt(junitVersion);
     }
 
     /**
@@ -411,11 +415,17 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			} else if (event.getProperty() == MOCK_PROJECT) {
 			    setMockProject((String) event.getNewValue());
 			    return;
+			} else if (event.getProperty() == JUNIT_VERSION) {
+			    setJUnitVersion((String) event.getNewValue());
+			    return;
 			} else if (event.getProperty() == MOCK_SAVE_IN_TESTPROJECT) {
 			    setMockSaveInTestProject((Boolean) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == GHERKIN_STYLE_ENABLED) {
 			    setGherkinStyleEnabled((Boolean) event.getNewValue());
+			    return;
+			} else if (event.getProperty() == SHOW_SETTINGS_BEFORE_GENERATE) {
+			    setShowSettingsBeforeGenerate((Boolean) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == MOCK_FRAMEWORK) {
 			    setMockFramework((String) event.getNewValue());

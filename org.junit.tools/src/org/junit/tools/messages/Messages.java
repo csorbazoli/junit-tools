@@ -134,9 +134,9 @@ public class Messages extends NLS {
     public static String JUTPreferenceFilterPage_Name_filter;
 
     public static String JUTPreferenceAnnotationsPage_description;
-    
+
     public static String JUTPreferenceStaticBindingsPage_description;
-    
+
     public static String JUTPreferenceMainPage_description_Main_settings;
     public static String JUTPreferenceMainPage_Test_class_prefix;
     public static String JUTPreferenceMainPage_Test_class_postfix;
@@ -151,6 +151,9 @@ public class Messages extends NLS {
     public static String JUTPreferenceMainPage_Mock_Project;
     public static String JUTPreferenceMainPage_Mock_Save_In_Test_Project;
     public static String JUTPreferenceMainPage_Mock_Framework;
+    public static String JUTPreferenceMainPage_JUnit_Version;
+    public static String JUTPreferenceMainPage_Show_Settings_Before_Generate;
+    public static String JUTPreferenceMainPage_Gherkin_Style_Enabled;
 
     public static String GeneratorWizard_description_main;
     public static String GeneratorWizard_description_testbases;
