@@ -21,7 +21,9 @@ public interface IJUTPreferenceConstants {
     public static final String TEST_METHOD_FILTER_MODIFIER = "TEST_METHOD_FILTER_MODIFIER";
     public static final String TEST_CLASS_SUPER_TYPE = "TEST_CLASS_SUPER_TYPE";
     public static final String MOCK_PROJECT = "MOCK_PROJECT";
+    public static final String JUNIT_VERSION = "JUNIT_VERSION";
     public static final String MOCK_SAVE_IN_TESTPROJECT = "MOCK_SAVE_IN_TESTPROJECT";
+    public static final String SHOW_SETTINGS_BEFORE_GENERATE = "SHOW_SETTINGS_BEFORE_GENERATE";
     public static final String GHERKIN_STYLE_ENABLED = "GHERKIN_STYLE";
     public static final String MOCK_FRAMEWORK = "MOCK_FRAMEWORK";
     public static final String TEST_CLASS_ANNOTATIONS = "TEST_CLASS_ANNOTATIONS";

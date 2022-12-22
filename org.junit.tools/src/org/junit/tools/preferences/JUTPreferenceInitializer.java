@@ -20,40 +20,36 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
     public void initializeDefaultPreferences() {
 	IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
-	store.setDefault(WRITE_TML, false);
-
-	store.setDefault(TML_CONTAINER, "test_files");
-
-	store.setDefault(TEST_PROJECT_POSTFIX, ".test");
-
-	store.setDefault(TEST_SOURCE_FOLDER_NAME, "src");
-
-	store.setDefault(TEST_CLASS_SUPER_TYPE, "");
+	// useful settings
+	store.setDefault(TEST_CLASS_ANNOTATIONS, "");
+	store.setDefault(STATIC_BINDINGS, "");
 
 	store.setDefault(TEST_CLASS_PREFIX, "");
-
 	store.setDefault(TEST_CLASS_POSTFIX, "Test");
-
-	store.setDefault(TEST_PACKAGE_POSTFIX, "");
 
 	store.setDefault(TEST_METHOD_PREFIX, "test");
 	store.setDefault(TEST_METHOD_POSTFIX, "");
 
-	store.setDefault(TEST_METHOD_FILTER_NAME, DEFAULT_METHOD_FILTER_NAME);
-	store.setDefault(TEST_METHOD_FILTER_MODIFIER,
-		DEFAULT_METHOD_FILTER_MODIFIER);
+	store.setDefault(TEST_METHOD_FILTER_NAME, "");
+	store.setDefault(TEST_METHOD_FILTER_MODIFIER, DEFAULT_METHOD_FILTER_MODIFIER);
 
-	store.setDefault(MOCK_PROJECT, "org.junit.tools.mock");
-
-	store.setDefault(MOCK_SAVE_IN_TESTPROJECT, true);
-
-	store.setDefault(MOCK_SAVE_IN_TESTPROJECT, "powermock");
-
-	store.setDefault(TEST_CLASS_ANNOTATIONS, "");
-
+	// this are not needed
+	store.setDefault(TEST_PROJECT_POSTFIX, "");
+	store.setDefault(TML_CONTAINER, "test_files");
+	store.setDefault(WRITE_TML, false);
+	store.setDefault(TEST_CLASS_SUPER_TYPE, "");
+	store.setDefault(TEST_PACKAGE_POSTFIX, "");
+	store.setDefault(MOCK_PROJECT, "org.junit.tools.mock"); // this is not needed
+	store.setDefault(MOCK_SAVE_IN_TESTPROJECT, false);
 	store.setDefault(MOCK_CLASS_ANNOTATIONS, "");
 
-	store.setDefault(STATIC_BINDINGS, "");
+	// Important settings
+	store.setDefault(TEST_SOURCE_FOLDER_NAME, "test"); // TODO for maven it is src/test/java
+	store.setDefault(MOCK_FRAMEWORK, "mockito"); // should we support EasyMock as well?
+	store.setDefault(GHERKIN_STYLE_ENABLED, true);
+	// settings to be implemented/used
+	store.setDefault(JUNIT_VERSION, 5);
+	store.setDefault(SHOW_SETTINGS_BEFORE_GENERATE, false);
 
 	// initialize JUT-preferences
 	JUTPreferences.initialize();
