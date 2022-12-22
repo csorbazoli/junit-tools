@@ -22,12 +22,6 @@
 	        sequence="Ctrl+Shift+&lt;">
 	  </key>
 	  
-	  <key 
-	        commandId="org.junit.tools.handler.GenerateMockClass"
-	        contextId="org.eclipse.ui.contexts.window"
-	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="Ctrl+Shift+M">
-	  </key>
 	  
    </extension>
    
@@ -50,37 +44,9 @@
 	        name="Generate unit-test-class">
 	  </command>
 	
-	  <command
-	        categoryId="org.eclipse.ui.category.window"
-	        defaultHandler="org.junit.tools.handler.GenerateTestSuitesHandler"
-	        description="Generate test-suites"
-	        id="org.junit.tools.handler.GenerateTestSuites"
-	        name="Generate test-suites">
-	  </command>
 	
-	  <command
-	        categoryId="org.eclipse.ui.category.window"
-	        defaultHandler="org.junit.tools.handler.GenerateMockClassHandler"
-	        description="Generates a mock-class for the selected class"
-	        id="org.junit.tools.handler.GenerateMockClass"
-	        name="Generates a mock-class">
-	  </command>
 
-	  <command
-	        categoryId="org.eclipse.ui.category.window"
-	        defaultHandler="org.junit.tools.handler.CleanMocksHandler"
-	        description="Clean mock-classes"
-	        id="org.junit.tools.handler.CleanMocks"
-	        name="Clean mock-classes">
-	  </command>	  
 	  
-	  <command
-	        categoryId="org.eclipse.ui.category.window"
-	        defaultHandler="org.junit.tools.handler.CreateNecessaryTestsReportHandler"
-	        description="Create report for necessary tests"
-	        id="org.junit.tools.handler.CreateNecessaryTestsReport"
-	        name="Create report for necessary tests">
-	  </command>
 	  
    </extension>
    

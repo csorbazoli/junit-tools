@@ -19,8 +19,6 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="1">
             <element ref="testclass_generator" minOccurs="0" maxOccurs="1"/>
-            <element ref="testsuites_generator" minOccurs="0" maxOccurs="1"/>
-            <element ref="mockclass_generator" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -58,36 +56,6 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.junit.tools.generator.ITestClassGenerator"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="testsuites_generator">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  This class implements a TestSuites-Generator.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.junit.tools.generator.ITestSuitesGenerator"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="mockclass_generator">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  This class implements a Mockclass-Generator.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.junit.tools.generator.IMockClassGenerator"/>
                </appinfo>
             </annotation>
          </attribute>
