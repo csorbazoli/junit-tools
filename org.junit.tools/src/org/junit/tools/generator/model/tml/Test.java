@@ -5,7 +5,6 @@
 // Generated on: 2015.11.22 at 02:08:56 AM CET 
 //
 
-
 package org.junit.tools.generator.model.tml;
 
 import java.util.ArrayList;
@@ -18,11 +17,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -48,9 +49,9 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "settings",
-    "testBases",
-    "method"
+	"settings",
+	"testBases",
+	"method"
 })
 @XmlRootElement(name = "test")
 public class Test {
@@ -65,8 +66,6 @@ public class Test {
     protected String testBase;
     @XmlAttribute(name = "testClass")
     protected String testClass;
-    @XmlAttribute(name = "testPrio")
-    protected Testprio testPrio;
     @XmlAttribute(name = "version")
     protected String version;
     @XmlAttribute(name = "superClass")
@@ -77,222 +76,170 @@ public class Test {
     /**
      * Gets the value of the settings property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Settings }
-     *     
+     * @return possible object is {@link Settings }
+     * 
      */
     public Settings getSettings() {
-        return settings;
+	return settings;
     }
 
     /**
      * Sets the value of the settings property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Settings }
-     *     
+     * @param value allowed object is {@link Settings }
+     * 
      */
     public void setSettings(Settings value) {
-        this.settings = value;
+	this.settings = value;
     }
 
     /**
      * Gets the value of the testBases property.
      * 
-     * @return
-     *     possible object is
-     *     {@link TestBases }
-     *     
+     * @return possible object is {@link TestBases }
+     * 
      */
     public TestBases getTestBases() {
-        return testBases;
+	return testBases;
     }
 
     /**
      * Sets the value of the testBases property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link TestBases }
-     *     
+     * @param value allowed object is {@link TestBases }
+     * 
      */
     public void setTestBases(TestBases value) {
-        this.testBases = value;
+	this.testBases = value;
     }
 
     /**
      * Gets the value of the method property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the method property.
+     * This accessor method returns a reference to the live list, not a snapshot.
+     * Therefore any modification you make to the returned list will be present
+     * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+     * for the method property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getMethod().add(newItem);
+     * getMethod().add(newItem);
      * </pre>
      * 
      * 
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Method }
+     * Objects of the following type(s) are allowed in the list {@link Method }
      * 
      * 
      */
     public List<Method> getMethod() {
-        if (method == null) {
-            method = new ArrayList<Method>();
-        }
-        return this.method;
+	if (method == null) {
+	    method = new ArrayList<Method>();
+	}
+	return this.method;
     }
 
     /**
      * Gets the value of the testBase property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getTestBase() {
-        return testBase;
+	return testBase;
     }
 
     /**
      * Sets the value of the testBase property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setTestBase(String value) {
-        this.testBase = value;
+	this.testBase = value;
     }
 
     /**
      * Gets the value of the testClass property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getTestClass() {
-        return testClass;
+	return testClass;
     }
 
     /**
      * Sets the value of the testClass property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setTestClass(String value) {
-        this.testClass = value;
-    }
-
-    /**
-     * Gets the value of the testPrio property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Testprio }
-     *     
-     */
-    public Testprio getTestPrio() {
-        return testPrio;
-    }
-
-    /**
-     * Sets the value of the testPrio property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Testprio }
-     *     
-     */
-    public void setTestPrio(Testprio value) {
-        this.testPrio = value;
+	this.testClass = value;
     }
 
     /**
      * Gets the value of the version property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getVersion() {
-        return version;
+	return version;
     }
 
     /**
      * Sets the value of the version property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setVersion(String value) {
-        this.version = value;
+	this.version = value;
     }
 
     /**
      * Gets the value of the superClass property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getSuperClass() {
-        return superClass;
+	return superClass;
     }
 
     /**
      * Sets the value of the superClass property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setSuperClass(String value) {
-        this.superClass = value;
+	this.superClass = value;
     }
 
     /**
      * Gets the value of the superClassPackage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getSuperClassPackage() {
-        return superClassPackage;
+	return superClassPackage;
     }
 
     /**
      * Sets the value of the superClassPackage property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setSuperClassPackage(String value) {
-        this.superClassPackage = value;
+	this.superClassPackage = value;
     }
 
 }

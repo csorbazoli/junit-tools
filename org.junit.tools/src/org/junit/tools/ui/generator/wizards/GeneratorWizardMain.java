@@ -27,7 +27,6 @@ import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.Result;
 import org.junit.tools.generator.model.tml.Settings;
 import org.junit.tools.generator.model.tml.Test;
-import org.junit.tools.generator.model.tml.Testprio;
 import org.junit.tools.generator.utils.GeneratorUtils;
 import org.junit.tools.generator.utils.JDTUtils;
 import org.junit.tools.preferences.JUTPreferences;
@@ -104,16 +103,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 		    }
 		});
 
-//	page.getView().getBtnTestProject()
-//		.addSelectionListener(new SelectionAdapter() {
-//
-//		    @Override
-//		    public void widgetSelected(SelectionEvent e) {
-//			super.widgetSelected(e);
-//			handleTestProject();
-//		    }
-//		});
-
 	if (page.getView().getBtnSuperClass() != null) {
 	    page.getView().getBtnSuperClass()
 		    .addSelectionListener(new SelectionAdapter() {
@@ -154,8 +143,9 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 
 	    dialog = JavaUI
 		    .createTypeDialog(getPage().getShell(), getPage()
-			    .getWizard().getContainer(), SearchEngine
-			    .createWorkspaceScope(),
+			    .getWizard().getContainer(),
+			    SearchEngine
+				    .createWorkspaceScope(),
 			    IJavaElementSearchConstants.CONSIDER_CLASSES,
 			    false, filter);
 	} catch (JavaModelException e) {
@@ -167,7 +157,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    if (results.length > 0) {
 		for (Object result : results) {
 		    if (result instanceof IType) {
-			IType superClass = ((IType) result);
+			IType superClass = (IType) result;
 			getPage().getView().getTxtSuperClass()
 				.setText(superClass.getFullyQualifiedName());
 			getPage().getView().getTxtSuperClass()
@@ -260,7 +250,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    // initialize settings
 	    initPageSettings(page, tmlTest.getSettings());
 
-	    initTestprio(page, tmlTest);
 	}
 
 	methodSelection = new GroupMethodSelectionCtrl();
@@ -285,17 +274,11 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
      * @param page
      */
     private void initDefaults(GeneratorWizardMainPage page) {
-	String testProjectPostfix = JUTPreferences.getTestProjectPostfix();
 	String baseProjectName = getModel().getJUTElements().getProjects()
 		.getBaseProject().getElementName();
-	String testProjectName = baseProjectName + testProjectPostfix;
+	String testProjectName = baseProjectName;
 
 	page.getView().getTxtTestProject().setText(testProjectName);
-
-	if (page.getView().getTxtSuperClass() != null) {
-	    page.getView().getTxtSuperClass()
-		    .setText(JUTPreferences.getTestClassSuperType());
-	}
 
 	page.getView().getMethodPrefix()
 		.setText(JUTPreferences.getTestMethodPrefix());
@@ -330,40 +313,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 
     }
 
-    /**
-     * Initializes the test priority.
-     * 
-     * @param page
-     * @param tmlTest
-     */
-    private void initTestprio(GeneratorWizardMainPage page, Test tmlTest) {
-	// TODO test prio deactivated 
-	/*page.getView().getBtnPrioHigh().setSelection(false);
-	page.getView().getBtnPrioStandard().setSelection(false);
-	page.getView().getBtnPrioLow().setSelection(false);
-
-	Testprio testprio = tmlTest.getTestPrio();
-
-	if (testprio != null) {
-	    switch (testprio) {
-	    case HIGH:
-		page.getView().getBtnPrioHigh().setSelection(true);
-		break;
-	    case DEFAULT:
-		page.getView().getBtnPrioStandard().setSelection(true);
-		break;
-	    case LOW:
-		page.getView().getBtnPrioLow().setSelection(true);
-		break;
-	    default:
-		page.getView().getBtnPrioStandard().setSelection(true);
-		break;
-	    }
-	} else {
-	    page.getView().getBtnPrioStandard().setSelection(true);
-	}*/
-    }
-
     @Override
     public void updateModel() {
 	Test tmlTest = getModel().getTmlTest();
@@ -383,16 +332,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 
 	// TML-version
 	tmlTest.setVersion(TML_VERSION_ACTUAL);
-
-	// TODO test-priority
-	tmlTest.setTestPrio(Testprio.DEFAULT);
-//	if (page.getView().getBtnPrioHigh().getSelection()) {
-//	    tmlTest.setTestPrio(Testprio.HIGH);
-//	} else if (page.getView().getBtnPrioStandard().getSelection()) {
-//	    tmlTest.setTestPrio(Testprio.DEFAULT);
-//	} else if (page.getView().getBtnPrioLow().getSelection()) {
-//	    tmlTest.setTestPrio(Testprio.LOW);
-//	}
 
 	Text txtSuperClass = page.getView().getTxtSuperClass();
 	if (txtSuperClass != null) {

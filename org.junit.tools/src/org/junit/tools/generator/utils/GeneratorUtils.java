@@ -10,11 +10,9 @@ import java.util.Vector;
 
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
@@ -717,8 +715,6 @@ public class GeneratorUtils implements IGeneratorConstants {
 
 	String elementName = type.getElementName();
 
-	String projectPostfix = JUTPreferences.getTestProjectPostfix();
-	String packagePostfix = JUTPreferences.getTestPackagePostfix();
 	String testclassPrefix = JUTPreferences.getTestClassPrefix();
 	String testclassPostfix = JUTPreferences.getTestClassPostfix();
 
@@ -734,49 +730,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 	    }
 	}
 
-	if (projectPostfix != null && !"".equals(projectPostfix)) {
-	    IJavaProject javaProject = type.getJavaProject();
-	    elementName = javaProject.getElementName();
-	    if (!elementName.endsWith(projectPostfix)) {
-		return false;
-	    }
-	}
-
-	if (packagePostfix != null && !"".equals(packagePostfix)) {
-	    IPackageFragment pack = type.getPackageFragment();
-	    elementName = pack.getElementName();
-	    if (!elementName.endsWith(packagePostfix)) {
-		return false;
-	    }
-	}
-
 	return true;
-    }
-
-    public static String getMockedClassName(IType type) throws JavaModelException {
-	String mockedClassName = null;
-	String superclassName = type.getSuperclassName();
-	if (superclassName != null && superclassName.indexOf("MockUp<") > -1) {
-	    int ixStart = superclassName.indexOf("<") + 1;
-	    int ixEnd = superclassName.indexOf(">");
-
-	    mockedClassName = superclassName.substring(ixStart, ixEnd);
-	}
-
-	// mocked name via name conventions
-	if (mockedClassName == null) {
-	    String elementName = type.getElementName();
-
-	    // TODO mock-postfix
-	    if (elementName.endsWith("Mock")) {
-		int endIndex = elementName.indexOf("Mock");
-		mockedClassName = elementName.substring(0, endIndex);
-	    } else {
-		mockedClassName = elementName;
-	    }
-	}
-
-	return mockedClassName;
     }
 
 }

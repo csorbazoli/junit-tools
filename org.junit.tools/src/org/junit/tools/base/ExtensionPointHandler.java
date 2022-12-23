@@ -12,13 +12,10 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.junit.tools.generator.IMockClassGenerator;
 import org.junit.tools.generator.ITestClassGenerator;
 import org.junit.tools.generator.ITestDataFactory;
 import org.junit.tools.generator.ITestSuitesGenerator;
-import org.junit.tools.generator.MockClassGenerator;
 import org.junit.tools.generator.TestClassGenerator;
-import org.junit.tools.generator.TestSuitesGenerator;
 
 /**
  * Handles all extension points of the junit-tools
@@ -43,14 +40,6 @@ public class ExtensionPointHandler {
 
     private Vector<ITestClassGenerator> customTestClassGenerators = null;
 
-    private Vector<ITestSuitesGenerator> testSuitesGenerators = null;
-
-    private Vector<ITestSuitesGenerator> customTestSuitesGenerators = null;
-
-    private Vector<IMockClassGenerator> mockClassGenerators = null;
-
-    private Vector<IMockClassGenerator> customMockClassGenerators = null;
-
     // test-data factories
     private boolean testDataFactoriesInitialized = false;
 
@@ -60,21 +49,6 @@ public class ExtensionPointHandler {
     private boolean preferenceInitializerInitialized = false;
 
     private Vector<AbstractPreferenceInitializer> preferenceInitializers;
-
-    public IMockClassGenerator getMockClassGenerator() {
-	initCustomGenerators();
-
-	if (customMockClassGenerators != null
-		&& customMockClassGenerators.size() > 0) {
-	    return customMockClassGenerators.firstElement();
-	}
-
-	if (mockClassGenerators == null) {
-	    mockClassGenerators = new Vector<IMockClassGenerator>();
-	    mockClassGenerators.add(new MockClassGenerator());
-	}
-	return mockClassGenerators.firstElement();
-    }
 
     /**
      * Getter for the test-class-generators. Do not change the list of the
@@ -104,8 +78,6 @@ public class ExtensionPointHandler {
 	if (!customGeneratorsInitialized) {
 	    customGeneratorsInitialized = true;
 	    customTestClassGenerators = new Vector<ITestClassGenerator>();
-	    customTestSuitesGenerators = new Vector<ITestSuitesGenerator>();
-	    customMockClassGenerators = new Vector<IMockClassGenerator>();
 
 	    IExtensionRegistry registry = Platform.getExtensionRegistry();
 	    IExtensionPoint point = registry.getExtensionPoint(EP_GENERATOR);
@@ -133,14 +105,6 @@ public class ExtensionPointHandler {
 				if ("testclass_generator".equals(elementName)) {
 				    customTestClassGenerators
 					    .add((ITestClassGenerator) generator);
-				} else if ("testsuites_generator"
-					.equals(elementName)) {
-				    customTestSuitesGenerators
-					    .add((ITestSuitesGenerator) generator);
-				} else if ("mockclass_generator"
-					.equals(elementName)) {
-				    customMockClassGenerators
-					    .add((IMockClassGenerator) generator);
 				}
 			    } catch (ClassCastException e) {
 				logger.warning("wrong custom generator class "
@@ -156,14 +120,13 @@ public class ExtensionPointHandler {
 
     }
 
-    private Vector<ITestSuitesGenerator> getCustomTestSuitesGenerators()
-	    throws CoreException {
-	return customTestSuitesGenerators;
-    }
+//    private Vector<ITestSuitesGenerator> getCustomTestSuitesGenerators()
+//	    throws CoreException {
+//	return customTestSuitesGenerators;
+//    }
 
     /**
-     * Getter for the test-suite-generator. Do not change the List of
-     * Generators!
+     * Getter for the test-suite-generator. Do not change the List of Generators!
      * 
      * @return test-suites-generator
      * @throws CoreException
@@ -172,17 +135,7 @@ public class ExtensionPointHandler {
 	    throws CoreException {
 	initCustomGenerators();
 
-	Vector<ITestSuitesGenerator> cstmTestSuitesGenerators = getCustomTestSuitesGenerators();
-	if (cstmTestSuitesGenerators.size() > 0) {
-	    return cstmTestSuitesGenerators;
-	}
-
-	if (testSuitesGenerators == null) {
-	    testSuitesGenerators = new Vector<ITestSuitesGenerator>();
-	    testSuitesGenerators.add(new TestSuitesGenerator());
-	}
-
-	return testSuitesGenerators;
+	return new Vector<ITestSuitesGenerator>();
     }
 
     public List<ITestDataFactory> getTestDataFactories() throws CoreException {

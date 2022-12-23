@@ -7,7 +7,6 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.junit.tools.generator.model.GeneratorModel;
-import org.junit.tools.generator.model.tml.Testprio;
 import org.junit.tools.ui.generator.swt.view.GeneratorMainView;
 import org.junit.tools.ui.generator.wizards.GeneratorWizardMain;
 
@@ -28,8 +27,6 @@ public class GeneratorWizardMainPage extends GeneratorWizardBasePage {
     }
 
     private Vector<IMethod> methods;
-
-    private final Testprio selectedTestprio = Testprio.DEFAULT;
 
     private GeneratorMainView mainView = null;
 
@@ -59,10 +56,6 @@ public class GeneratorWizardMainPage extends GeneratorWizardBasePage {
 
     public Vector<IMethod> getMethods() {
 	return methods;
-    }
-
-    public Testprio getSelectedTestprio() {
-	return selectedTestprio;
     }
 
     public GeneratorMainView getView() {

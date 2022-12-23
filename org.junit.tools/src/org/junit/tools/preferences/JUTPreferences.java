@@ -19,15 +19,6 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     // from main-page
 
-    // TODO remove
-    private static Boolean writeTML = null;
-    private static String tmlContainer = null;
-    private static String testProjectPostfix = null;
-    private static String testPackagePostfix = null;
-    private static String testClassSuperType = null;
-    private static String mockProject = null;
-    private static Boolean mockSaveInTestProject = null;
-
     // USEFUL
     private static String testSourceFolderName = null;
     private static String testMethodPrefix = null;
@@ -67,27 +58,6 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     private static IPreferenceStore getPreferenceStore() {
 	return Activator.getDefault().getPreferenceStore();
-    }
-
-    public static String getTmlContainer() {
-	if (tmlContainer == null) {
-	    tmlContainer = getPreference(TML_CONTAINER);
-	}
-	return tmlContainer;
-    }
-
-    public static boolean isWriteTML() {
-	if (writeTML == null) {
-	    writeTML = getPreferenceBoolean(WRITE_TML);
-	}
-	return writeTML;
-    }
-
-    public static String getTestProjectPostfix() {
-	if (testProjectPostfix == null) {
-	    testProjectPostfix = getPreference(TEST_PROJECT_POSTFIX);
-	}
-	return testProjectPostfix;
     }
 
     public static String getTestSourceFolderName() {
@@ -199,18 +169,6 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return staticBindingsMapTest;
     }
 
-    protected static void setTmlContainer(String tmlContainerPref) {
-	JUTPreferences.tmlContainer = tmlContainerPref;
-    }
-
-    protected static void setWriteTML(Boolean writeTML) {
-	JUTPreferences.writeTML = writeTML;
-    }
-
-    protected static void setTestProjectPostfix(String testProjectPostfixPref) {
-	JUTPreferences.testProjectPostfix = testProjectPostfixPref;
-    }
-
     protected static void setTestSourceFolderName(String testSourceFolderName) {
 	JUTPreferences.testSourceFolderName = testSourceFolderName;
     }
@@ -228,28 +186,6 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     protected static void setTestMethodPrefix(String testMethodPrefix) {
 	JUTPreferences.testMethodPrefix = testMethodPrefix;
-    }
-
-    public static String getTestClassSuperType() {
-	if (testClassSuperType == null) {
-	    testClassSuperType = getPreference(TEST_CLASS_SUPER_TYPE);
-	}
-	return testClassSuperType;
-    }
-
-    protected static void setTestClassSuperType(String testClassSuperType) {
-	JUTPreferences.testClassSuperType = testClassSuperType;
-    }
-
-    protected static void setTestPackagePostfix(String newValue) {
-	JUTPreferences.testPackagePostfix = newValue;
-    }
-
-    public static String getTestPackagePostfix() {
-	if (testPackagePostfix == null) {
-	    testPackagePostfix = getPreference(TEST_PACKAGE_POSTFIX);
-	}
-	return testPackagePostfix;
     }
 
     protected static void setTestClassPrefix(String newValue) {
@@ -274,20 +210,6 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return testClassPostfix;
     }
 
-    public static String getMockProject() {
-	if (mockProject == null) {
-	    mockProject = getPreference(MOCK_PROJECT);
-	}
-	return mockProject;
-    }
-
-    public static Boolean isMockSaveInTestProject() {
-	if (mockSaveInTestProject == null) {
-	    mockSaveInTestProject = getPreferenceBoolean(MOCK_SAVE_IN_TESTPROJECT);
-	}
-	return mockSaveInTestProject;
-    }
-
     public static Boolean isGherkinStyleEnabled() {
 	if (gherkinStyleEnabled == null) {
 	    gherkinStyleEnabled = getPreferenceBoolean(GHERKIN_STYLE_ENABLED, true);
@@ -302,20 +224,12 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return showSettingsBeforeGenerate;
     }
 
-    public static void setMockProject(String mockProject) {
-	JUTPreferences.mockProject = mockProject;
-    }
-
     public static String getMockFramework() {
 	return mockFramework;
     }
 
     public static int getJUnitVersion() {
 	return junitVersion;
-    }
-
-    public static void setMockSaveInTestProject(Boolean mockSaveInTestProject) {
-	JUTPreferences.mockSaveInTestProject = mockSaveInTestProject;
     }
 
     public static void setGherkinStyleEnabled(Boolean gherkinStyleEnabled) {
@@ -377,21 +291,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
 		    @Override
 		    public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty() == TEST_PROJECT_POSTFIX) {
-			    setTestProjectPostfix((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == TEST_SOURCE_FOLDER_NAME) {
+			if (event.getProperty() == TEST_SOURCE_FOLDER_NAME) {
 			    setTestSourceFolderName((String) event
 				    .getNewValue());
-			    return;
-			} else if (event.getProperty() == TML_CONTAINER) {
-			    setTmlContainer((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == WRITE_TML) {
-			    setWriteTML((Boolean) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == TEST_PACKAGE_POSTFIX) {
-			    setTestPackagePostfix((String) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == TEST_METHOD_PREFIX) {
 			    setTestMethodPrefix((String) event.getNewValue());
@@ -403,23 +305,14 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    setTestMethodFilterModifier(convert((String) event
 				    .getNewValue()));
 			    return;
-			} else if (event.getProperty() == TEST_CLASS_SUPER_TYPE) {
-			    setTestClassSuperType((String) event.getNewValue());
-			    return;
 			} else if (event.getProperty() == TEST_CLASS_PREFIX) {
 			    setTestClassPrefix((String) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == TEST_CLASS_POSTFIX) {
 			    setTestClassPostfix((String) event.getNewValue());
 			    return;
-			} else if (event.getProperty() == MOCK_PROJECT) {
-			    setMockProject((String) event.getNewValue());
-			    return;
 			} else if (event.getProperty() == JUNIT_VERSION) {
 			    setJUnitVersion((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == MOCK_SAVE_IN_TESTPROJECT) {
-			    setMockSaveInTestProject((Boolean) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == GHERKIN_STYLE_ENABLED) {
 			    setGherkinStyleEnabled((Boolean) event.getNewValue());
