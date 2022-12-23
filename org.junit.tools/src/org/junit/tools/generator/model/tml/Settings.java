@@ -5,18 +5,19 @@
 // Generated on: 2015.11.22 at 02:08:56 AM CET 
 //
 
-
 package org.junit.tools.generator.model.tml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for Settings complex type.
+ * <p>
+ * Java class for Settings complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="Settings">
@@ -28,8 +29,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="tearDown" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="tearDownBeforeClass" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="logger" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="failAssertions" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="testsuites" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,13 +39,11 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Settings", propOrder = {
-    "setUp",
-    "setUpBeforeClass",
-    "tearDown",
-    "tearDownBeforeClass",
-    "logger",
-    "failAssertions",
-    "testsuites"
+	"setUp",
+	"setUpBeforeClass",
+	"tearDown",
+	"tearDownBeforeClass",
+	"logger",
 })
 public class Settings {
 
@@ -55,15 +52,13 @@ public class Settings {
     protected boolean tearDown;
     protected boolean tearDownBeforeClass;
     protected boolean logger;
-    protected boolean failAssertions;
-    protected boolean testsuites;
 
     /**
      * Gets the value of the setUp property.
      * 
      */
     public boolean isSetUp() {
-        return setUp;
+	return setUp;
     }
 
     /**
@@ -71,7 +66,7 @@ public class Settings {
      * 
      */
     public void setSetUp(boolean value) {
-        this.setUp = value;
+	this.setUp = value;
     }
 
     /**
@@ -79,7 +74,7 @@ public class Settings {
      * 
      */
     public boolean isSetUpBeforeClass() {
-        return setUpBeforeClass;
+	return setUpBeforeClass;
     }
 
     /**
@@ -87,7 +82,7 @@ public class Settings {
      * 
      */
     public void setSetUpBeforeClass(boolean value) {
-        this.setUpBeforeClass = value;
+	this.setUpBeforeClass = value;
     }
 
     /**
@@ -95,7 +90,7 @@ public class Settings {
      * 
      */
     public boolean isTearDown() {
-        return tearDown;
+	return tearDown;
     }
 
     /**
@@ -103,7 +98,7 @@ public class Settings {
      * 
      */
     public void setTearDown(boolean value) {
-        this.tearDown = value;
+	this.tearDown = value;
     }
 
     /**
@@ -111,7 +106,7 @@ public class Settings {
      * 
      */
     public boolean isTearDownBeforeClass() {
-        return tearDownBeforeClass;
+	return tearDownBeforeClass;
     }
 
     /**
@@ -119,7 +114,7 @@ public class Settings {
      * 
      */
     public void setTearDownBeforeClass(boolean value) {
-        this.tearDownBeforeClass = value;
+	this.tearDownBeforeClass = value;
     }
 
     /**
@@ -127,7 +122,7 @@ public class Settings {
      * 
      */
     public boolean isLogger() {
-        return logger;
+	return logger;
     }
 
     /**
@@ -135,39 +130,7 @@ public class Settings {
      * 
      */
     public void setLogger(boolean value) {
-        this.logger = value;
-    }
-
-    /**
-     * Gets the value of the failAssertions property.
-     * 
-     */
-    public boolean isFailAssertions() {
-        return failAssertions;
-    }
-
-    /**
-     * Sets the value of the failAssertions property.
-     * 
-     */
-    public void setFailAssertions(boolean value) {
-        this.failAssertions = value;
-    }
-
-    /**
-     * Gets the value of the testsuites property.
-     * 
-     */
-    public boolean isTestsuites() {
-        return testsuites;
-    }
-
-    /**
-     * Sets the value of the testsuites property.
-     * 
-     */
-    public void setTestsuites(boolean value) {
-        this.testsuites = value;
+	this.logger = value;
     }
 
 }

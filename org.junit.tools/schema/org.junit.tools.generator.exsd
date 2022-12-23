@@ -3,7 +3,7 @@
 <schema targetNamespace="org.junit.tools" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.junit.tools" id="org.junit.tools.generator" name="TestClass und TestSuites generators"/>
+         <meta.schema plugin="org.junit.tools" id="org.junit.tools.generator" name="TestClass generators"/>
       </appinfo>
       <documentation>
          Extension-point for customized generator-implementations

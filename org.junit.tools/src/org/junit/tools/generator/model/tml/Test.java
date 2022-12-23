@@ -38,8 +38,6 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="testClass" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="testPrio" type="{http://www.junit-tools.org/tml/tml.xsd}Testprio" />
  *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="superClass" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="superClassPackage" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -68,10 +66,6 @@ public class Test {
     protected String testClass;
     @XmlAttribute(name = "version")
     protected String version;
-    @XmlAttribute(name = "superClass")
-    protected String superClass;
-    @XmlAttribute(name = "superClassPackage")
-    protected String superClassPackage;
 
     /**
      * Gets the value of the settings property.
@@ -200,46 +194,6 @@ public class Test {
      */
     public void setVersion(String value) {
 	this.version = value;
-    }
-
-    /**
-     * Gets the value of the superClass property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getSuperClass() {
-	return superClass;
-    }
-
-    /**
-     * Sets the value of the superClass property.
-     * 
-     * @param value allowed object is {@link String }
-     * 
-     */
-    public void setSuperClass(String value) {
-	this.superClass = value;
-    }
-
-    /**
-     * Gets the value of the superClassPackage property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getSuperClassPackage() {
-	return superClassPackage;
-    }
-
-    /**
-     * Sets the value of the superClassPackage property.
-     * 
-     * @param value allowed object is {@link String }
-     * 
-     */
-    public void setSuperClassPackage(String value) {
-	this.superClassPackage = value;
     }
 
 }

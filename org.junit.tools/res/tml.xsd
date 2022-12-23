@@ -14,8 +14,6 @@
     	<attribute name="testClass" type="string"></attribute>
     	<attribute name="testPrio" type="tml:Testprio"></attribute>
     	<attribute name="version" type="string"></attribute>
-    	<attribute name="superClass" type="string"></attribute>
-    	<attribute name="superClassPackage" type="string"></attribute>
     </complexType>
   </element>
 
@@ -130,6 +128,7 @@
       <enumeration value="IS_NULL"></enumeration>
       <enumeration value="NOT_NULL"></enumeration>
       <enumeration value="EQUALS"></enumeration>
+      <enumeration value="EQUALS_J5"></enumeration>
       <enumeration value="NOT_EQUALS"></enumeration>
       <enumeration value="IS_TRUE"></enumeration>
       <enumeration value="IS_FALSE"></enumeration>
@@ -145,8 +144,6 @@
       <element name="tearDown" type="boolean"></element>
       <element name="tearDownBeforeClass" type="boolean"></element>
       <element name="logger" type="boolean"></element>
-      <element name="failAssertions" type="boolean"></element>
-      <element name="testsuites" type="boolean"></element>
     </sequence>
   </complexType>
 

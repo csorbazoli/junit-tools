@@ -680,22 +680,8 @@ public class GroupMethodSelectionCtrl implements IGeneratorConstants {
 
 	for (String notAllowedModifier : JUTPreferences.getTestMethodFilterModifier()) {
 
-	    if (MOD_PUBLIC.equals(modifier)) {
-		if (MOD_PUBLIC.equalsIgnoreCase(notAllowedModifier)) {
-		    return false;
-		}
-	    } else if (MOD_PROTECTED.equals(modifier)) {
-		if (MOD_PROTECTED.equalsIgnoreCase(notAllowedModifier)) {
-		    return false;
-		}
-	    } else if (MOD_PRIVATE.equals(modifier)) {
-		if (MOD_PRIVATE.equalsIgnoreCase(notAllowedModifier)) {
-		    return false;
-		}
-	    } else if (MOD_PACKAGE.equals(modifier)) {
-		if (MOD_PACKAGE.equalsIgnoreCase(notAllowedModifier)) {
-		    return false;
-		}
+	    if (notAllowedModifier.equalsIgnoreCase(modifier)) {
+		return false;
 	    }
 
 	}

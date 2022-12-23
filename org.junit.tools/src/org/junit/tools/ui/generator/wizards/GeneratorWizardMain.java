@@ -7,18 +7,11 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.SelectionDialog;
 import org.junit.tools.base.MethodRef;
 import org.junit.tools.generator.IGeneratorConstants;
 import org.junit.tools.generator.model.GeneratorModel;
@@ -103,18 +96,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 		    }
 		});
 
-	if (page.getView().getBtnSuperClass() != null) {
-	    page.getView().getBtnSuperClass()
-		    .addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			    super.widgetSelected(e);
-			    handleSuperClass();
-			}
-		    });
-	}
-
 	methodSelection.addListener(this);
     }
 
@@ -131,49 +112,10 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 
     }
 
-    protected void handleSuperClass() {
-	SelectionDialog dialog;
-	try {
-	    String filter = "";
-	    Object superClass = getPage().getView().getTxtSuperClass()
-		    .getData();
-	    if (superClass instanceof IType) {
-		filter = ((IType) superClass).getFullyQualifiedName();
-	    }
-
-	    dialog = JavaUI
-		    .createTypeDialog(getPage().getShell(), getPage()
-			    .getWizard().getContainer(),
-			    SearchEngine
-				    .createWorkspaceScope(),
-			    IJavaElementSearchConstants.CONSIDER_CLASSES,
-			    false, filter);
-	} catch (JavaModelException e) {
-	    return;
-	}
-
-	if (dialog.open() == Dialog.OK) {
-	    Object[] results = dialog.getResult();
-	    if (results.length > 0) {
-		for (Object result : results) {
-		    if (result instanceof IType) {
-			IType superClass = (IType) result;
-			getPage().getView().getTxtSuperClass()
-				.setText(superClass.getFullyQualifiedName());
-			getPage().getView().getTxtSuperClass()
-				.setData(superClass);
-			return;
-		    }
-		}
-	    }
-	}
-    }
-
     /**
      * Handle the toggle button for the other
      */
     protected void handleToggleOther() {
-	toggleButton(getPage().getView().getBtnTestsuites());
 	toggleButton(getPage().getView().getBtnLogger());
 	toggleButton(getPage().getView().getBtnFailassertion());
     }
@@ -282,7 +224,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 
 	page.getView().getMethodPrefix()
 		.setText(JUTPreferences.getTestMethodPrefix());
-	page.getView().getBtnTestsuites().setSelection(true);
     }
 
     /**
@@ -306,9 +247,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 		.setSelection(settings.isTearDownBeforeClass());
 
 	// other
-	page.getView().getBtnTestsuites().setSelection(settings.isTestsuites());
-	page.getView().getBtnFailassertion()
-		.setSelection(settings.isFailAssertions());
 	page.getView().getBtnLogger().setSelection(settings.isLogger());
 
     }
@@ -332,18 +270,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 
 	// TML-version
 	tmlTest.setVersion(TML_VERSION_ACTUAL);
-
-	Text txtSuperClass = page.getView().getTxtSuperClass();
-	if (txtSuperClass != null) {
-	    Object data = txtSuperClass.getData();
-	    if (data != null && data instanceof IType) {
-		tmlTest.setSuperClassPackage(((IType) data)
-			.getPackageFragment().getElementName());
-		tmlTest.setSuperClass(((IType) data).getElementName());
-	    } else {
-		tmlTest.setSuperClass(txtSuperClass.getText());
-	    }
-	}
 
 	updateModelSettings(page, tmlTest);
 
@@ -378,10 +304,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 		.getBtnTeardownafterclass().getSelection());
 
 	// other
-	settings.setTestsuites(page.getView().getBtnTestsuites().getSelection());
 	settings.setLogger(page.getView().getBtnLogger().getSelection());
-	settings.setFailAssertions(page.getView().getBtnFailassertion()
-		.getSelection());
     }
 
     /**

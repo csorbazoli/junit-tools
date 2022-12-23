@@ -34,6 +34,7 @@ import org.junit.tools.generator.model.tml.Test;
 import org.junit.tools.generator.utils.GeneratorUtils;
 import org.junit.tools.generator.utils.JDTUtils;
 import org.junit.tools.messages.Messages;
+import org.junit.tools.preferences.JUTPreferences;
 import org.junit.tools.ui.generator.wizards.GeneratorWizard;
 import org.junit.tools.ui.utils.EclipseUIUtils;
 
@@ -129,11 +130,10 @@ public class MainController implements IGeneratorConstants {
 	    Test tmlTest = null;
 
 	    // create the model
-	    final GeneratorModel model = new GeneratorModel(jutElements,
-		    tmlTest);
+	    final GeneratorModel model = new GeneratorModel(jutElements, tmlTest);
 
-	    // Open wizard
-	    if (!runGeneratorWizard(model, activeWorkbenchWindow)) {
+	    // Open wizard (only if needed)
+	    if (JUTPreferences.isShowSettingsBeforeGenerate() && !runGeneratorWizard(model, activeWorkbenchWindow)) {
 		return false;
 	    }
 
@@ -339,7 +339,7 @@ public class MainController implements IGeneratorConstants {
      * @param workbenchPart
      * @return boolean true
      */
-    protected boolean runGeneratorWizard(GeneratorModel model,
+    private boolean runGeneratorWizard(GeneratorModel model,
 	    IWorkbenchWindow workbenchPart) {
 
 	GeneratorWizard wizard = new GeneratorWizard(model);

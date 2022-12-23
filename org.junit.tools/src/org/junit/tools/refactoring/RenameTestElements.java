@@ -21,7 +21,6 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.junit.tools.generator.model.JUTElements;
 import org.junit.tools.generator.utils.GeneratorUtils;
 import org.junit.tools.generator.utils.JDTUtils;
-import org.junit.tools.preferences.JUTPreferences;
 
 public class RenameTestElements extends RenameParticipant {
 
@@ -82,116 +81,116 @@ public class RenameTestElements extends RenameParticipant {
 
 	PerformChangeOperation change = new PerformChangeOperation(
 
-	new Change() {
+		new Change() {
 
-	    @Override
-	    public Change perform(IProgressMonitor pm2) throws CoreException {
+		    @Override
+		    public Change perform(IProgressMonitor pm2) throws CoreException {
 
-		JUTElements utmElementsOld = null;
-		ICompilationUnit testCu = null;
+			JUTElements utmElementsOld = null;
+			ICompilationUnit testCu = null;
 
-		try {
-		    if (oldBaseType != null) {
-			utmElementsOld = JUTElements.initJUTElements(
-				oldBaseType.getJavaProject(),
-				oldBaseType.getCompilationUnit());
-			if (!utmElementsOld.getProjects()
-				.isBaseProjectSelected()
-				|| !utmElementsOld.getClassesAndPackages()
-					.getTestClass().exists()) {
-			    return null;
-			}
+			try {
+			    if (oldBaseType != null) {
+				utmElementsOld = JUTElements.initJUTElements(
+					oldBaseType.getJavaProject(),
+					oldBaseType.getCompilationUnit());
+				if (!utmElementsOld.getProjects()
+					.isBaseProjectSelected()
+					|| !utmElementsOld.getClassesAndPackages()
+						.getTestClass().exists()) {
+				    return null;
+				}
 
-			testCu = utmElementsOld.getClassesAndPackages()
-				.getTestClass();
-			renameTestClass(testCu, getArguments().getNewName(),
-				pm2);
-		    } else if (oldBaseMethod != null) {
-			utmElementsOld = JUTElements.initJUTElements(
-				oldBaseMethod.getJavaProject(),
-				oldBaseMethod.getCompilationUnit());
-			if (!utmElementsOld.getProjects()
-				.isBaseProjectSelected()
-				|| !utmElementsOld.getClassesAndPackages()
-					.getTestClass().exists()) {
-			    return null;
-			}
+				testCu = utmElementsOld.getClassesAndPackages()
+					.getTestClass();
+				renameTestClass(testCu, getArguments().getNewName(),
+					pm2);
+			    } else if (oldBaseMethod != null) {
+				utmElementsOld = JUTElements.initJUTElements(
+					oldBaseMethod.getJavaProject(),
+					oldBaseMethod.getCompilationUnit());
+				if (!utmElementsOld.getProjects()
+					.isBaseProjectSelected()
+					|| !utmElementsOld.getClassesAndPackages()
+						.getTestClass().exists()) {
+				    return null;
+				}
 
-			testCu = utmElementsOld.getClassesAndPackages()
-				.getTestClass();
-			renameTestMethod(testCu, getArguments().getNewName(),
-				pm2);
+				testCu = utmElementsOld.getClassesAndPackages()
+					.getTestClass();
+				renameTestMethod(testCu, getArguments().getNewName(),
+					pm2);
 
-			// format source
-			IPackageFragment testPackage = utmElementsOld
-				.getClassesAndPackages().getTestPackage();
-			testPackage.createCompilationUnit(
-				testCu.getElementName(), testCu.getSource(),
-				true, pm2);
-		    } else if (oldBasePackage != null) {
-			utmElementsOld = JUTElements.initJUTElements(
-				oldBasePackage.getJavaProject(), oldBasePackage);
+				// format source
+				IPackageFragment testPackage = utmElementsOld
+					.getClassesAndPackages().getTestPackage();
+				testPackage.createCompilationUnit(
+					testCu.getElementName(), testCu.getSource(),
+					true, pm2);
+			    } else if (oldBasePackage != null) {
+				utmElementsOld = JUTElements.initJUTElements(
+					oldBasePackage.getJavaProject(), oldBasePackage);
 
-			if (utmElementsOld.getProjects()
-				.isBaseProjectSelected()) {
-			    IPackageFragment newBasePackage = JDTUtils
-				    .getPackage(
-					    oldBasePackage.getJavaProject(),
-					    utmElementsOld
-						.getClassesAndPackages().getTestFolder(),
-					    getArguments().getNewName(), false);
-			    JUTElements utmElementsNew = JUTElements
-				    .initJUTElements(
-					    oldBasePackage.getJavaProject(),
-					    newBasePackage);
+				if (utmElementsOld.getProjects()
+					.isBaseProjectSelected()) {
+				    IPackageFragment newBasePackage = JDTUtils
+					    .getPackage(
+						    oldBasePackage.getJavaProject(),
+						    utmElementsOld
+							    .getClassesAndPackages().getTestFolder(),
+						    getArguments().getNewName(), false);
+				    JUTElements utmElementsNew = JUTElements
+					    .initJUTElements(
+						    oldBasePackage.getJavaProject(),
+						    newBasePackage);
 
-			    IPackageFragment testPackage = utmElementsOld
-				    .getClassesAndPackages().getTestPackage();
-			    if (testPackage != null && testPackage.exists()) {
-				testPackage.rename(utmElementsNew
-					.getClassesAndPackages()
-					.getTestPackageName(), true, pm2);
+				    IPackageFragment testPackage = utmElementsOld
+					    .getClassesAndPackages().getTestPackage();
+				    if (testPackage != null && testPackage.exists()) {
+					testPackage.rename(utmElementsNew
+						.getClassesAndPackages()
+						.getTestPackageName(), true, pm2);
+				    }
+				}
+			    } else {
+				return null;
 			    }
+
+			} catch (Exception e) {
+			    // only log - refactoring not possible
+			    Logger.getLogger(this.getName()).warning(
+				    "Refactoring not possible: " + e.getMessage());
 			}
-		    } else {
+
+			if (testCu == null || !testCu.exists()) {
+			    return null;
+			}
+
 			return null;
 		    }
 
-		} catch (Exception e) {
-		    // only log - refactoring not possible
-		    Logger.getLogger(this.getName()).warning(
-			    "Refactoring not possible: " + e.getMessage());
-		}
+		    @Override
+		    public RefactoringStatus isValid(IProgressMonitor pm)
+			    throws CoreException, OperationCanceledException {
+			return new RefactoringStatus();
+		    }
 
-		if (testCu == null || !testCu.exists()) {
-		    return null;
-		}
+		    @Override
+		    public void initializeValidationData(IProgressMonitor pm) {
+			// nothing
+		    }
 
-		return null;
-	    }
+		    @Override
+		    public String getName() {
+			String ar = getArguments().getNewName();
+			return ar;
+		    }
 
-	    @Override
-	    public RefactoringStatus isValid(IProgressMonitor pm)
-		    throws CoreException, OperationCanceledException {
-		return new RefactoringStatus();
-	    }
-
-	    @Override
-	    public void initializeValidationData(IProgressMonitor pm) {
-		// nothing
-	    }
-
-	    @Override
-	    public String getName() {
-		String ar = getArguments().getNewName();
-		return ar;
-	    }
-
-	    @Override
-	    public Object getModifiedElement() {
-		return null;
-	    }
-	});
+		    @Override
+		    public Object getModifiedElement() {
+			return null;
+		    }
+		});
 
 	renameMethodNameChange.add(change.getChange());
 

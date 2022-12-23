@@ -206,58 +206,6 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     /**
-     * Returns the annotation to delete.
-     * 
-     * @param type
-     * @param tmlTest
-     * @throws JavaModelException
-     */
-//    protected Vector<Annotation> getAnnotationsToDelete(IType type, Test tmlTest) throws JavaModelException {
-//	Vector<Annotation> annotationsToDelete = new Vector<Annotation>();
-//	Annotation annotation;
-//	boolean recreationNecessary = false;
-//
-//	for (IAnnotation iAnnotation : type.getAnnotations()) {
-//	    if (iAnnotation instanceof Annotation) {
-//		annotation = (Annotation) iAnnotation;
-//
-//		if (ANNO_GENERATED_NAME.equals(iAnnotation.getElementName())) {
-//		    annotationsToDelete.add(annotation);
-//		    IMemberValuePair[] memberValuePairs = annotation.getMemberValuePairs();
-//		    for (IMemberValuePair valuePair : memberValuePairs) {
-//			if (!VERSION.equals(valuePair.getValue())) {
-//			    recreationNecessary = true;
-//			    break;
-//			}
-//		    }
-//		} else if (ANNO_TESTPRIO_NAME.equals(iAnnotation.getElementName())) {
-//		    annotationsToDelete.add(annotation);
-//		    IMemberValuePair[] memberValuePairs = annotation.getMemberValuePairs();
-//
-//		    if (memberValuePairs.length == 0) {
-//			if (tmlTest.getTestPrio().compareTo(Testprio.DEFAULT) != 0) {
-//			    recreationNecessary = true;
-//			}
-//		    }
-//
-//		    for (IMemberValuePair valuePair : memberValuePairs) {
-//			if (!valuePair.getValue().toString().endsWith(tmlTest.getTestPrio().toString())) {
-//			    recreationNecessary = true;
-//			    break;
-//			}
-//		    }
-//		}
-//	    }
-//	}
-//
-//	if (!recreationNecessary) {
-//	    return null;
-//	}
-//
-//	return annotationsToDelete;
-//    }
-
-    /**
      * Creates a test class frame.
      * 
      * @param testCompilationUnit
@@ -273,34 +221,16 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	String annotations = createTestClassFrameAnnotations(tmlTest);
 
 	// create type
-	String superType = "";
-
 	if (source == null) {
 	    String customComment = getTestClassComment();
 
-	    superType = tmlTest.getSuperClass();
-
-	    String extendsStmt = "";
-	    if (!(superType == null || "".equals(superType))) {
-		extendsStmt = " extends " + superType;
-	    } else {
-		superType = "";
-	    }
-
-	    source = customComment + annotations.toString() + getPublicModifierIfNeeded() + " class " + testclassName + extendsStmt
+	    source = customComment + annotations.toString() + getPublicModifierIfNeeded() + " class " + testclassName
 		    + "{ " + RETURN + "}";
 	} else {
 	    source = annotations + source;
 	}
 
-	IType type = testCompilationUnit.createType(source, null, true, null);
-
-	String superTypePackage = tmlTest.getSuperClassPackage();
-	if (!"".equals(superType) && superTypePackage != null && !"".equals(superTypePackage)) {
-	    testCompilationUnit.createImport(superTypePackage + "." + superType, null, null);
-	}
-
-	return type;
+	return testCompilationUnit.createType(source, null, true, null);
     }
 
     private String getPublicModifierIfNeeded() {

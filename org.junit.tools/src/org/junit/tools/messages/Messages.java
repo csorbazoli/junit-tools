@@ -25,7 +25,6 @@ public class Messages extends NLS {
     public static String General_warning_project_initialization;
     public static String General_warning_nothing_selected;
     public static String General_error_processing;
-    public static String General_info_generation_successful;
 
     public static String General_info_process_successful;
 
@@ -92,8 +91,6 @@ public class Messages extends NLS {
     public static String GeneratorWizardMainPage_tearDown;
 
     public static String GeneratorWizardMainPage_tearDownAfterClass;
-
-    public static String GeneratorWizardMainPage_testsuites;
 
     public static String GeneratorWizardMainPage_toggle;
 

@@ -2,7 +2,6 @@ package org.junit.tools.ui.generator.wizards.pages;
 
 import java.util.Vector;
 
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -32,15 +31,10 @@ public class GeneratorWizardMainPage extends GeneratorWizardBasePage {
 
     @Override
     public void createControl(Composite parent) {
-	boolean withSuperclass = false;
 
-	ICompilationUnit testClass = model.getJUTElements()
-		.getClassesAndPackages().getTestClass();
-	if (testClass == null || !testClass.exists()) {
-	    withSuperclass = true;
-	}
+//	ICompilationUnit testClass = model.getJUTElements().getClassesAndPackages().getTestClass();
 
-	mainView = new GeneratorMainView(parent, SWT.NONE, withSuperclass);
+	mainView = new GeneratorMainView(parent, SWT.NONE);
 	setControl(mainView);
     }
 

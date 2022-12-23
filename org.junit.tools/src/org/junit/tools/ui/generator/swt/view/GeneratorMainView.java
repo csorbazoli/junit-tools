@@ -16,10 +16,6 @@ import org.junit.tools.messages.Messages;
 
 public class GeneratorMainView extends Composite {
 
-    public Text getTxtSuperClass() {
-	return txtSuperClass;
-    }
-
     public Button getBtnLogger() {
 	return btnLogger;
     }
@@ -32,17 +28,13 @@ public class GeneratorMainView extends Composite {
 	return txtTestProject;
     }
 
-    /*public Button getBtnPrioHigh() {
-	return btnPrioHigh;
-    }
-
-    public Button getBtnPrioStandard() {
-	return btnPrioStandard;
-    }
-
-    public Button getBtnPrioLow() {
-	return btnPrioLow;
-    }*/
+    /*
+     * public Button getBtnPrioHigh() { return btnPrioHigh; }
+     * 
+     * public Button getBtnPrioStandard() { return btnPrioStandard; }
+     * 
+     * public Button getBtnPrioLow() { return btnPrioLow; }
+     */
 
     public Button getBtnFailassertion() {
 	return btnFailassertion;
@@ -64,10 +56,6 @@ public class GeneratorMainView extends Composite {
 	return btnToggleStandardMethods;
     }
 
-    public Button getBtnTestsuites() {
-	return btnTestsuites;
-    }
-
     public Button getBtnToggleOther() {
 	return btnToggleOther;
     }
@@ -80,27 +68,19 @@ public class GeneratorMainView extends Composite {
 	return methodSelectionGroup;
     }
 
-//    public Button getBtnTestProject() {
-//	return btnTestProject;
-//    }
-
-    public Button getBtnSuperClass() {
-	return btnSuperClass;
-    }
-
-    private Text txtSuperClass;
-
     private final Button btnLogger;
 
     private final Text methodPrefix;
 
     private final Text txtTestProject;
 
-    /*private final Button btnPrioHigh;
-
-    private final Button btnPrioStandard;
-
-    private final Button btnPrioLow;*/
+    /*
+     * private final Button btnPrioHigh;
+     * 
+     * private final Button btnPrioStandard;
+     * 
+     * private final Button btnPrioLow;
+     */
 
     private final Button btnFailassertion;
 
@@ -112,19 +92,13 @@ public class GeneratorMainView extends Composite {
 
     private final Button btnToggleStandardMethods;
 
-    private final Button btnTestsuites;
-
     private final Button btnToggleOther;
 
     private final Button btnSetup;
 
     private final GroupMethodSelectionView methodSelectionGroup;
 
-//    private final Button btnTestProject;
-
-    private Button btnSuperClass;
-
-    public GeneratorMainView(Composite parent, int style, boolean withSuperclass) {
+    public GeneratorMainView(Composite parent, int style) {
 	super(parent, style);
 	setLayout(new GridLayout(1, false));
 
@@ -170,24 +144,6 @@ public class GeneratorMainView extends Composite {
 		false));
 
 	new Label(composite_2, SWT.NONE);
-	/*btnTestProject = new Button(composite_2, SWT.NONE);
-	btnTestProject.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-		false));
-	btnTestProject.setText(Messages.GeneratorWizardMainPage_Browse);*/
-
-	if (withSuperclass) {
-	    Label lblNewLabel = new Label(composite_2, SWT.NONE);
-	    lblNewLabel.setText(Messages.GeneratorWizardMainPage_Super_class);
-
-	    txtSuperClass = new Text(composite_2, SWT.BORDER);
-	    txtSuperClass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-		    true, false));
-
-	    btnSuperClass = new Button(composite_2, SWT.NONE);
-	    btnSuperClass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-		    false, false));
-	    btnSuperClass.setText(Messages.GeneratorWizardMainPage_Browse);
-	}
 
 	Label lblMethodprefix = new Label(composite_2, SWT.NONE);
 	lblMethodprefix
@@ -199,27 +155,26 @@ public class GeneratorMainView extends Composite {
 		false));
 	new Label(composite_2, SWT.NONE);
 
-	/*Label lblPrioritt = new Label(composite_2, SWT.NONE);
-	lblPrioritt.setText(Messages.GeneratorWizardMainPage_Testpriority);
-
-	Composite composite_4 = new Composite(composite_2, SWT.NONE);
-	RowLayout rl_composite_4 = new RowLayout(SWT.HORIZONTAL);
-	rl_composite_4.marginTop = 0;
-	rl_composite_4.marginRight = 0;
-	rl_composite_4.marginLeft = 0;
-	rl_composite_4.marginBottom = 0;
-	composite_4.setLayout(rl_composite_4);
-
-	btnPrioHigh = new Button(composite_4, SWT.RADIO);
-	btnPrioHigh.setText(Messages.GeneratorWizardMainPage_high);
-
-	btnPrioStandard = new Button(composite_4, SWT.RADIO);
-	btnPrioStandard.setText(Messages.GeneratorWizardMainPage_standard);
-	btnPrioStandard.setSelection(true);
-
-	btnPrioLow = new Button(composite_4, SWT.RADIO);
-	btnPrioLow.setText(Messages.GeneratorWizardMainPage_low);
-	new Label(composite_2, SWT.NONE);*/
+	/*
+	 * Label lblPrioritt = new Label(composite_2, SWT.NONE);
+	 * lblPrioritt.setText(Messages.GeneratorWizardMainPage_Testpriority);
+	 * 
+	 * Composite composite_4 = new Composite(composite_2, SWT.NONE); RowLayout
+	 * rl_composite_4 = new RowLayout(SWT.HORIZONTAL); rl_composite_4.marginTop = 0;
+	 * rl_composite_4.marginRight = 0; rl_composite_4.marginLeft = 0;
+	 * rl_composite_4.marginBottom = 0; composite_4.setLayout(rl_composite_4);
+	 * 
+	 * btnPrioHigh = new Button(composite_4, SWT.RADIO);
+	 * btnPrioHigh.setText(Messages.GeneratorWizardMainPage_high);
+	 * 
+	 * btnPrioStandard = new Button(composite_4, SWT.RADIO);
+	 * btnPrioStandard.setText(Messages.GeneratorWizardMainPage_standard);
+	 * btnPrioStandard.setSelection(true);
+	 * 
+	 * btnPrioLow = new Button(composite_4, SWT.RADIO);
+	 * btnPrioLow.setText(Messages.GeneratorWizardMainPage_low); new
+	 * Label(composite_2, SWT.NONE);
+	 */
 
 	Label label = new Label(composite_2, SWT.SEPARATOR | SWT.HORIZONTAL
 		| SWT.CENTER);
@@ -286,9 +241,6 @@ public class GeneratorMainView extends Composite {
 	rl_composite_7.marginRight = 0;
 	rl_composite_7.marginBottom = 0;
 	composite_7.setLayout(rl_composite_7);
-
-	btnTestsuites = new Button(composite_7, SWT.CHECK);
-	btnTestsuites.setText(Messages.GeneratorWizardMainPage_testsuites);
 
 	btnLogger = new Button(composite_7, SWT.CHECK);
 	btnLogger.setText(Messages.GeneratorWizardMainPage_logger);

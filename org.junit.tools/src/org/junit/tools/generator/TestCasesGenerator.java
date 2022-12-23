@@ -71,22 +71,12 @@ public class TestCasesGenerator {
 
 	private final List<List<TestCase>> testCasesToMerge = new ArrayList<List<TestCase>>();
 
-	private Method tmlMethod = null;
-
 	public ExpressionAnalyzer() {
 
 	}
 
 	public ExpressionAnalyzer(Method tmlMethod) {
-	    this.tmlMethod = tmlMethod;
 	    this.paramBaseList = tmlMethod.getParam();
-	}
-
-	/**
-	 * @param processIfExpressions
-	 */
-	private void addTestCasesToMerge(List<TestCase> testCasesToMerge) {
-	    this.testCasesToMerge.add(testCasesToMerge);
 	}
 
 	/**
@@ -110,7 +100,6 @@ public class TestCasesGenerator {
 		// addTestCasesToMerge(processIfExpressions(expression,
 		// tmlMethod));
 	    } else {
-		// TODO
 		System.out.println("Expression could not be analyzed: "
 			+ expression.getNodeType() + ". Expression: "
 			+ expression.toString());
@@ -242,15 +231,6 @@ public class TestCasesGenerator {
 		    return;
 		}
 	    }
-	}
-
-	/**
-	 * @param expression
-	 */
-	private void setParenthesizedExpression(
-		ParenthesizedExpression expression) {
-	    Expression mainExpression = expression.getExpression();
-	    analyze(mainExpression);
 	}
 
 	/**
@@ -622,46 +602,6 @@ public class TestCasesGenerator {
 	return mergedTcList;
     }
 
-    /**
-     * @param tcLeftOperand
-     * @param tcRightOperand
-     * @return
-     */
-    private List<TestCase> multiplyTestCases(List<TestCase> tcList1,
-	    List<TestCase> tcList2) {
-	List<TestCase> mergedTcList = new ArrayList<TestCase>();
-	TestCase mergedTc;
-
-	if (tcList2.size() == 0) {
-	    return tcList1;
-	} else if (tcList1.size() == 0) {
-	    return tcList2;
-	}
-
-	for (TestCase tc1 : tcList1) {
-	    for (TestCase tc2 : tcList2) {
-		mergedTc = of.createTestCase();
-		mergedTc.setTestBase(tc1.getTestBase());
-		mergedTc.setName(tc1.getName());
-
-		mergedTc.getPreconditions().addAll(tc1.getPreconditions());
-		mergedTc.getPreconditions().addAll(tc2.getPreconditions());
-
-		mergedTc.getParamAssignments()
-			.addAll(tc1.getParamAssignments());
-		mergedTc.getParamAssignments()
-			.addAll(tc2.getParamAssignments());
-
-		mergedTc.getAssertion().addAll(tc1.getAssertion());
-		mergedTc.getAssertion().addAll(tc2.getAssertion());
-
-		mergedTcList.add(mergedTc);
-	    }
-	}
-
-	return mergedTcList;
-    }
-
     private List<TestCase> processIfExpressions(Expression expression,
 	    Method tmlMethod) {
 	List<Param> tmlMethodParam = tmlMethod.getParam();
@@ -725,7 +665,7 @@ public class TestCasesGenerator {
 	    MethodInvocation mi = (MethodInvocation) expression;
 	    String methodName = mi.getName().toString();
 	    Expression methodExpression = mi.getExpression();
-	    List arguments = mi.arguments();
+	    List<?> arguments = mi.arguments();
 
 	    if (methodName.equals("equals")) {
 		if (methodExpression.getNodeType() == ASTNode.STRING_LITERAL) {

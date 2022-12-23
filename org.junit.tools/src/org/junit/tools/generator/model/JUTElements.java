@@ -85,21 +85,13 @@ public class JUTElements {
     public class JUTClassesAndPackages {
 
 	private ICompilationUnit baseClass = null;
-
 	private String testBaseName = "";
-
 	private ICompilationUnit testClass = null;
-
 	private String testClassName = "";
-
 	private List<IPackageFragmentRoot> baseSrcFolders = null;
-
 	private IPackageFragmentRoot testSrcFolder = null;
-
 	private List<IPackageFragment> basePackages = null;
-
 	private IPackageFragment testPackage = null;
-
 	private String testPackageName = null;
 
 	/**

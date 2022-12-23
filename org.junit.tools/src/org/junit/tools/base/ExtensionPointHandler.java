@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.junit.tools.generator.ITestClassGenerator;
 import org.junit.tools.generator.ITestDataFactory;
-import org.junit.tools.generator.ITestSuitesGenerator;
 import org.junit.tools.generator.TestClassGenerator;
 
 /**
@@ -28,26 +27,20 @@ public class ExtensionPointHandler {
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
     private static final String EP_GENERATOR = "org.junit.tools.generator";
-
     private static final String EP_GENERATOR_TD_FACTORY = "org.junit.tools.generator.factory.testdata";
-
     private static final String EP_PREFERENCES = "org.junit.tools.preferences";
 
     // generators
     private boolean customGeneratorsInitialized = false;
-
     private Vector<ITestClassGenerator> testClassGenerators = null;
-
     private Vector<ITestClassGenerator> customTestClassGenerators = null;
 
     // test-data factories
     private boolean testDataFactoriesInitialized = false;
-
     private List<ITestDataFactory> testDataFactories = null;
 
     // preference initializer
     private boolean preferenceInitializerInitialized = false;
-
     private Vector<AbstractPreferenceInitializer> preferenceInitializers;
 
     /**
@@ -118,24 +111,6 @@ public class ExtensionPointHandler {
 	    }
 	}
 
-    }
-
-//    private Vector<ITestSuitesGenerator> getCustomTestSuitesGenerators()
-//	    throws CoreException {
-//	return customTestSuitesGenerators;
-//    }
-
-    /**
-     * Getter for the test-suite-generator. Do not change the List of Generators!
-     * 
-     * @return test-suites-generator
-     * @throws CoreException
-     */
-    public Vector<ITestSuitesGenerator> getTestSuitesGenerators()
-	    throws CoreException {
-	initCustomGenerators();
-
-	return new Vector<ITestSuitesGenerator>();
     }
 
     public List<ITestDataFactory> getTestDataFactories() throws CoreException {
