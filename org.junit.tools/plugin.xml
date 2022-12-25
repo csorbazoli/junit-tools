@@ -12,16 +12,22 @@
 	        commandId="org.junit.tools.handler.SwitchClass"
 	        contextId="org.eclipse.ui.contexts.window"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="Ctrl+&lt;">
+	        sequence="Ctrl+J">
 	  </key>
 	
 	  <key
 	        commandId="org.junit.tools.handler.GenerateTestClass"
 	        contextId="org.eclipse.ui.contexts.window"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="Ctrl+Shift+&lt;">
+	        sequence="Ctrl+U">
 	  </key>
 	  
+	  <key
+	        commandId="org.junit.tools.handler.GenerateSpringTestClass"
+	        contextId="org.eclipse.ui.contexts.window"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="Ctrl+Shift+U">
+	  </key>
 	  
    </extension>
    
@@ -43,9 +49,14 @@
 	        id="org.junit.tools.handler.GenerateTestClass"
 	        name="Generate unit-test-class">
 	  </command>
-	
-	
 
+	  <command
+	        categoryId="org.eclipse.ui.category.window"
+	        defaultHandler="org.junit.tools.handler.GenerateSpringTestClassHandler"
+	        description="Generate a unit test-class with Spring Context with test-cases"
+	        id="org.junit.tools.handler.GenerateSpringTestClass"
+	        name="Generate unit-test-class with Spring Context">
+	  </command>
 	  
 	  
    </extension>
@@ -63,6 +74,25 @@
                   icon="res/icons/jut.png"
                   style="push"
                   tooltip="Generate test-class">
+
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>   
+
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.junit.tools.toolbar">
+            <command
+	              commandId="org.junit.tools.handler.GenerateSpringTestClass"
+	              label="Generate test-class with Spring Context"
+                  icon="res/icons/jut.png"
+                  style="push"
+                  tooltip="Generate test-class with Spring Context">
 
             </command>
          </toolbar>
@@ -156,6 +186,46 @@
 	        <command
 	              commandId="org.junit.tools.handler.GenerateTestClass"
 	              label="Generate test-class"
+	              style="push"
+	              icon="res/icons/jut.png">
+	              
+					<visibleWhen>
+					
+					  <or>
+					
+					    <with variable="activePartId">
+					
+					      <equals value="org.eclipse.jdt.ui.CompilationUnitEditor" />
+					
+					    </with>
+					
+
+						<with variable="activeMenuSelection">
+						
+						  <iterate ifEmpty="false" operator="and">
+						
+						    <or>
+						
+						      <adapt type="org.eclipse.jdt.core.ICompilationUnit" />
+						      <adapt type="org.eclipse.jdt.core.IType" />
+							  <adapt type="org.eclipse.jdt.core.IMethod" />						
+							  <adapt type="org.eclipse.jdt.core.IField" />
+                              <adapt type="org.eclipse.jdt.core.IClassFile" />						
+
+						    </or>
+						
+						  </iterate>
+						
+						</with>
+					
+					  </or>
+					
+					</visibleWhen>
+	        </command>	       
+
+	        <command
+	              commandId="org.junit.tools.handler.GenerateSpringTestClass"
+	              label="Generate test-class with Spring Context"
 	              style="push"
 	              icon="res/icons/jut.png">
 	              

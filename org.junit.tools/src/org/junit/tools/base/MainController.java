@@ -71,7 +71,14 @@ public class MainController implements IGeneratorConstants {
 	    IStructuredSelection selection) throws JUTException, JUTWarning,
 	    CoreException {
 	JUTElements jutElements = detectJUTElements(selection, null);
-	return generateTestclass(activeWorkbenchWindow, jutElements);
+	return generateTestclass(activeWorkbenchWindow, jutElements, false);
+    }
+
+    public boolean generateSpringTestclass(IWorkbenchWindow activeWorkbenchWindow,
+	    IStructuredSelection selection) throws JUTException, JUTWarning,
+	    CoreException {
+	JUTElements jutElements = detectJUTElements(selection, null);
+	return generateTestclass(activeWorkbenchWindow, jutElements, true);
     }
 
     /**
@@ -88,7 +95,14 @@ public class MainController implements IGeneratorConstants {
 	    IFileEditorInput fileEditorInput) throws JUTException, JUTWarning,
 	    CoreException {
 	JUTElements jutElements = detectJUTElements(null, fileEditorInput);
-	return generateTestclass(activeWorkbenchWindow, jutElements);
+	return generateTestclass(activeWorkbenchWindow, jutElements, false);
+    }
+
+    public boolean generateSpringTestclass(IWorkbenchWindow activeWorkbenchWindow,
+	    IFileEditorInput fileEditorInput) throws JUTException, JUTWarning,
+	    CoreException {
+	JUTElements jutElements = detectJUTElements(null, fileEditorInput);
+	return generateTestclass(activeWorkbenchWindow, jutElements, true);
     }
 
     protected ExtensionPointHandler getExtensionHandler() {
@@ -104,13 +118,14 @@ public class MainController implements IGeneratorConstants {
      * 
      * @param activeWorkbenchWindow
      * @param jutElements
+     * @param springTest            TODO
      * @return true, if the test-class is successful generated. False otherwise.
      * @throws JUTException
      * @throws JUTWarning
      */
-    protected boolean generateTestclass(
+    private boolean generateTestclass(
 	    final IWorkbenchWindow activeWorkbenchWindow,
-	    JUTElements jutElements) throws JUTException, JUTWarning {
+	    JUTElements jutElements, boolean springTest) throws JUTException, JUTWarning {
 	if (jutElements == null) {
 	    throw new JUTWarning(
 		    "No elements found! Perhaps baseclass changed.");
@@ -136,6 +151,8 @@ public class MainController implements IGeneratorConstants {
 	    if (!runGeneratorWizard(model, activeWorkbenchWindow)) {
 		return false;
 	    }
+
+	    model.getTmlTest().setSpring(springTest);
 
 	    // generate test-cases (in tml)
 	    try {
@@ -461,7 +478,7 @@ public class MainController implements IGeneratorConstants {
 			    "No existing test-class found (perhaps the configuration is wrong). Would you like to generate a new test-class?");
 
 	    if (result) {
-		generateTestclass(activeWorkbenchWindow, jutElements);
+		generateTestclass(activeWorkbenchWindow, jutElements, false);
 	    }
 	} else {
 	    return false;

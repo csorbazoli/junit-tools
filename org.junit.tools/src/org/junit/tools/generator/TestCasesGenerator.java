@@ -46,25 +46,20 @@ public class TestCasesGenerator {
     public class ExpressionAnalyzer {
 
 	private final Map<Expression, Integer> expressionOrder = new HashMap<Expression, Integer>();
-
 	private final Map<Expression, org.eclipse.jdt.core.dom.PostfixExpression.Operator> expressionPostfixes = new HashMap<Expression, org.eclipse.jdt.core.dom.PostfixExpression.Operator>();
-
 	private final Map<Expression, org.eclipse.jdt.core.dom.PrefixExpression.Operator> expressionPrefixes = new HashMap<Expression, org.eclipse.jdt.core.dom.PrefixExpression.Operator>();
 
 	int filledCount = 0;
 
 	List<NullLiteral> nullLiterals = new ArrayList<NullLiteral>();
-
 	List<NumberLiteral> numberLiterals = new ArrayList<NumberLiteral>();
 
 	private Operator operator;
 
 	private List<Param> paramBaseList = null;
-
 	private final List<Param> params = new ArrayList<Param>();
 
 	List<PostfixExpression> postfixExpressions = new ArrayList<PostfixExpression>();
-
 	List<PrefixExpression> prefixExpressions = new ArrayList<PrefixExpression>();
 
 	List<SimpleName> simpleNames = new ArrayList<SimpleName>();

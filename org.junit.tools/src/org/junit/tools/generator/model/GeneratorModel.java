@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.IMethod;
-import org.junit.tools.base.MethodRef;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.model.tml.Test;
 
@@ -21,8 +20,6 @@ public class GeneratorModel {
 
     private HashMap<IMethod, Method> methodMap = new HashMap<IMethod, Method>();
     private List<IMethod> methodsToCreate;
-    private List<IMethod> methodsToDelete;
-    private HashMap<MethodRef, IMethod> existingMethods;
 
     /**
      * @param jutElements

@@ -81,7 +81,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	monitor.beginTask("", 4 + methodSize);
 
 	// create or update test-class-frame
-	type = createTestClassFrame(testClass, tmlTest, testClassName);
+	type = createTestClassFrame(testClass, tmlTest, testClassName, baseClassName);
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -97,7 +97,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create standard-class-fields
-	createStandardClassFields(type, testClassName);
+	createStandardClassFields(type, baseClassName);
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -194,12 +194,12 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @return the created test class frame
      * @throws JavaModelException
      */
-    private IType createTestClassFrame(ICompilationUnit testCompilationUnit, Test tmlTest, String testClassName)
+    private IType createTestClassFrame(ICompilationUnit testCompilationUnit, Test tmlTest, String testClassName, String baseClassName)
 	    throws JavaModelException {
 	IType type = testCompilationUnit.getType(testClassName);
 
 	if (!type.exists()) {
-	    return createTestClassFrame(testCompilationUnit, tmlTest, testClassName, null);
+	    return createTestClassFrame(testCompilationUnit, tmlTest, testClassName, baseClassName, null);
 	}
 
 	return type;
@@ -215,10 +215,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @return the created test class frame
      * @throws JavaModelException
      */
-    private IType createTestClassFrame(ICompilationUnit testCompilationUnit, Test tmlTest, String testclassName,
+    private IType createTestClassFrame(ICompilationUnit testCompilationUnit, Test tmlTest, String testclassName, String baseClassName,
 	    String source) throws JavaModelException {
 	// create annotations
-	String annotations = createTestClassFrameAnnotations(tmlTest);
+	String annotations = createTestClassFrameAnnotations(tmlTest, baseClassName);
 
 	// create type
 	if (source == null) {
@@ -244,30 +244,29 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     /**
      * Creates the test class annotations.
      * 
-     * @param tmlTest
-     * 
-     * @param tmlTest
-     * 
      * @return the created annotations
      */
-    protected String createTestClassFrameAnnotations(Test tmlTest) {
+    protected String createTestClassFrameAnnotations(Test tmlTest, String baseClassName) {
 	// create annotations
 	StringBuilder annotations = new StringBuilder();
+	boolean isSpringTest = tmlTest.isSpring();
 
-	if (tmlTest.getSettings().isLogger()) {
+	if (tmlTest.getSettings() != null && tmlTest.getSettings().isLogger()) {
 	    annotations.append("@Slf4j").append(RETURN);
 	}
 
 	// TODO depending on the method/class we might need different annotations
-	// @ExtendWith(MockitoExtension.class) for general usage
-	// @ExtendWith(SpringExtension.class) for Spring rest controllers maybe
-	// none for class with static methods only
-	// also depending on the mockframework we need a different extension
+	// none needed for class with static methods only
 	// JUTPreferences.getMockFramework() = mockito or easymock
 	if (JUTPreferences.getJUnitVersion() == 4) {
-	    annotations.append(GeneratorUtils.createAnnoRunWith("MockitoJUnitRunner"));
+	    annotations.append(GeneratorUtils.createAnnoRunWith(isSpringTest ? "SpringRunner" : "MockitoJUnitRunner"));
 	} else {
-	    annotations.append(GeneratorUtils.createAnnoExtendWith("MockitoExtension"));
+	    annotations.append(GeneratorUtils.createAnnoExtendWith(isSpringTest ? "SpringExtension" : "MockitoExtension"));
+	}
+	if (isSpringTest) {
+	    annotations.append("@SpringBootTest").append(RETURN);
+	    annotations.append("@ActiveProfiles(\"test\")").append(RETURN);
+	    annotations.append("@ContextConfiguration(classes = { ").append(baseClassName).append(".class })").append(RETURN);
 	}
 
 	String[] testClassAnnotations = JUTPreferences.getTestClassAnnotations();
@@ -275,7 +274,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    if (!additionalAnno.startsWith("@")) {
 		additionalAnno = "@" + additionalAnno;
 	    }
-	    annotations.append(additionalAnno).append(RETURN);
+	    if (annotations.indexOf(additionalAnno) == -1) {
+		annotations.append(additionalAnno).append(RETURN);
+	    }
 	}
 
 	return annotations.toString();
@@ -303,6 +304,21 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    compilationUnit.createImport("org.mockito.junit.jupiter.MockitoExtension", null, null);
 	}
 	compilationUnit.createImport("org.mockito.InjectMocks", null, null);
+	compilationUnit.createImport("org.mockito.Mock", null, null);
+
+	if (tmlTest.isSpring()) {
+	    // SpringRunner/SpringExtension
+	    if (JUTPreferences.getJUnitVersion() == 4) {
+		compilationUnit.createImport("org.springframework.test.context.junit4.SpringRunner", null, null);
+	    } else {
+		compilationUnit.createImport("org.springframework.test.context.junit.jupiter.SpringExtension", null, null);
+	    }
+	    compilationUnit.createImport("org.springframework.test.context.ActiveProfiles", null, null);
+	    compilationUnit.createImport("org.springframework.test.context.ContextConfiguration", null, null);
+	    compilationUnit.createImport("org.springframework.beans.factory.annotation.Autowired", null, null);
+	    compilationUnit.createImport("org.springframework.boot.test.context.SpringBootTest", null, null);
+	    compilationUnit.createImport("org.springframework.boot.test.mock.mockito.MockBean", null, null);
+	}
 
 	if (tmlTest.getSettings().isLogger()) {
 	    compilationUnit.createImport("lombok.extern.slf4j.Slf4j", null, null);

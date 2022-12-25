@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="testClass" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="testPrio" type="{http://www.junit-tools.org/tml/tml.xsd}Testprio" />
  *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="spring" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -66,6 +67,8 @@ public class Test {
     protected String testClass;
     @XmlAttribute(name = "version")
     protected String version;
+    @XmlAttribute(name = "spring")
+    protected boolean spring;
 
     /**
      * Gets the value of the settings property.
@@ -194,6 +197,14 @@ public class Test {
      */
     public void setVersion(String value) {
 	this.version = value;
+    }
+
+    public boolean isSpring() {
+	return spring;
+    }
+
+    public void setSpring(boolean spring) {
+	this.spring = spring;
     }
 
 }
