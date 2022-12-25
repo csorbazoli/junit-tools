@@ -79,23 +79,8 @@ public class GeneratorModel {
 	this.methodsToCreate = methodsToCreate;
     }
 
-    public void setMethodsToDelete(List<IMethod> methodsToDelete) {
-	this.methodsToDelete = methodsToDelete;
-    }
-
     public List<IMethod> getMethodsToCreate() {
 	return methodsToCreate;
     }
 
-    public List<IMethod> getMethodsToDelete() {
-	return methodsToDelete;
-    }
-
-    public void setExistingMethods(HashMap<MethodRef, IMethod> existingMethods) {
-	this.existingMethods = existingMethods;
-    }
-
-    public HashMap<MethodRef, IMethod> getExistingMethods() {
-	return existingMethods;
-    }
 }

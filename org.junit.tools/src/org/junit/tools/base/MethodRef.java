@@ -90,4 +90,14 @@ public class MethodRef {
 	}
     }
 
+    @Override
+    public int hashCode() {
+	int PRIME = 31;
+	int ret = 1;
+	ret = ret * PRIME + super.hashCode();
+	ret = ret * PRIME + (this.name == null ? 0 : this.name.hashCode());
+	ret = ret * PRIME + (this.signature == null ? 0 : this.signature.hashCode());
+	return ret;
+    }
+
 }

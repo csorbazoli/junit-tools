@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.Button;
 import org.junit.tools.base.MethodRef;
 import org.junit.tools.generator.IGeneratorConstants;
 import org.junit.tools.generator.model.GeneratorModel;
+import org.junit.tools.generator.model.JUTElements;
+import org.junit.tools.generator.model.JUTElements.JUTConstructorsAndMethods;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.Result;
@@ -296,15 +298,20 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	}
 
 	// standard methods
-	settings.setSetUp(page.getView().getBtnSetup().getSelection());
-	settings.setSetUpBeforeClass(page.getView().getBtnSetupbeforeclass()
-		.getSelection());
-	settings.setTearDown(page.getView().getBtnTeardown().getSelection());
-	settings.setTearDownBeforeClass(page.getView()
-		.getBtnTeardownafterclass().getSelection());
+	if (page.getView() == null) {
+	    // TODO use defaults from last execution
+	} else {
+	    // TODO save selections as defaults for next execution
+	    settings.setSetUp(page.getView().getBtnSetup().getSelection());
+	    settings.setSetUpBeforeClass(page.getView().getBtnSetupbeforeclass()
+		    .getSelection());
+	    settings.setTearDown(page.getView().getBtnTeardown().getSelection());
+	    settings.setTearDownBeforeClass(page.getView()
+		    .getBtnTeardownafterclass().getSelection());
 
-	// other
-	settings.setLogger(page.getView().getBtnLogger().getSelection());
+	    // other
+	    settings.setLogger(page.getView().getBtnLogger().getSelection());
+	}
     }
 
     /**
@@ -322,8 +329,40 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	// add methods
 	HashMap<IMethod, Method> methodMap = new HashMap<IMethod, Method>();
 	getModel().setMethodMap(methodMap);
+	HashMap<MethodRef, IMethod> existingMethods;
 
-	for (IMethod method : methodSelection.getCheckedMethods()) {
+	Vector<IMethod> checkedMethods = new Vector<>();
+	if (methodSelection == null) {
+	    // add selected method or all non-existing methods as if the methodSelection was
+	    // initialized
+	    JUTElements utmElements = getModel().getJUTElements();
+	    ICompilationUnit baseClass = utmElements.getClassesAndPackages().getBaseClass();
+	    ICompilationUnit testClass = utmElements.getClassesAndPackages().getTestClass();
+
+	    existingMethods = GeneratorUtils.getExistingTestMethods(baseClass, testClass, true);
+
+	    // add selected base method
+	    if (utmElements.getProjects().isBaseProjectSelected()) {
+		JUTConstructorsAndMethods constructorsAndMethods = utmElements.getConstructorsAndMethods();
+		IMethod selectedMethod = constructorsAndMethods.getSelectedMethod();
+		if (selectedMethod != null) {
+		    checkedMethods.add(selectedMethod);
+		} else {
+		    Vector<IMethod> baseClassMethods = constructorsAndMethods.getBaseClassMethods();
+		    for (IMethod method : baseClassMethods) {
+			MethodRef methodRef = new MethodRef(method.getElementName(), method.getSignature());
+			if (existingMethods.keySet().stream().noneMatch(m -> m.isEquals(methodRef))) {
+			    checkedMethods.add(method);
+			}
+		    }
+		}
+	    }
+
+	} else {
+	    checkedMethods.addAll(methodSelection.getCheckedMethods());
+	    existingMethods = new HashMap<>(methodSelection.getExistingMethods());
+	}
+	for (IMethod method : checkedMethods) {
 	    tmlMethod = getObjectFactory().createMethod();
 	    tmlTest.getMethod().add(tmlMethod);
 
@@ -333,16 +372,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    methodMap.put(method, tmlMethod);
 	}
 
-	HashMap<MethodRef, IMethod> existingMethods = methodSelection
-		.getExistingMethods();
-
-	getModel().setExistingMethods(existingMethods);
-	getModel().setMethodsToCreate(
-		GeneratorUtils.getMethodsToCreate(existingMethods,
-			checkedMethods));
-	getModel().setMethodsToDelete(
-		GeneratorUtils.getMethodsToDelete(existingMethods,
-			checkedMethods));
+	getModel().setMethodsToCreate(GeneratorUtils.getMethodsToCreate(existingMethods, checkedMethods));
     }
 
     /**

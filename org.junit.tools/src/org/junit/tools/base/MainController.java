@@ -133,7 +133,7 @@ public class MainController implements IGeneratorConstants {
 	    final GeneratorModel model = new GeneratorModel(jutElements, tmlTest);
 
 	    // Open wizard (only if needed)
-	    if (JUTPreferences.isShowSettingsBeforeGenerate() && !runGeneratorWizard(model, activeWorkbenchWindow)) {
+	    if (!runGeneratorWizard(model, activeWorkbenchWindow)) {
 		return false;
 	    }
 
@@ -344,18 +344,18 @@ public class MainController implements IGeneratorConstants {
 
 	GeneratorWizard wizard = new GeneratorWizard(model);
 
-	WizardDialog dialog = new WizardDialog(workbenchPart.getShell(), wizard);
-	dialog.create();
+	if (JUTPreferences.isShowSettingsBeforeGenerate()) {
+	    WizardDialog dialog = new WizardDialog(workbenchPart.getShell(), wizard);
+	    dialog.create();
 
-	wizard.initPages();
+	    wizard.initPages();
 
-	dialog.open();
-
-	if (wizard.isFinished()) {
-	    return true;
+	    dialog.open();
+	} else {
+	    wizard.addPages();
+	    wizard.performFinish();
 	}
-
-	return false;
+	return wizard.isFinished();
     }
 
     /**
