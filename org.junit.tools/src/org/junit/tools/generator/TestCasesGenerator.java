@@ -3,6 +3,7 @@ package org.junit.tools.generator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -276,7 +277,10 @@ public class TestCasesGenerator {
 	    for (Object statement : body.statements()) {
 		if (statement instanceof Statement) {
 		    Statement st = (Statement) statement;
+		    // The if statements are an overkill
 		    processIfStatements(st, tmlMethod);
+		    // maybe we could check the calls to dependencies and prepare
+		    // when(dep).thenReturn(defValue) lines for the // given section
 		}
 	    }
 	}
@@ -443,25 +447,50 @@ public class TestCasesGenerator {
 
 	    Method tmlMethod = utmModel.getMethodMap().get(method);
 
-	    // create default test-cases
-	    TestCase testCase = of.createTestCase();
-
 	    // analyze the base-method
-	    analyzeBaseMethod(method, tmlMethod);
+	    // analyzeBaseMethod(method, tmlMethod);
 
 	    // add default test-case
-	    if (tmlMethod.getTestCase().size() == 0) {
-		testCase.setTestBase("");
-		testCase.setName("default test");
-		tmlMethod.getTestCase().add(testCase);
-	    } else {
-		int i = 1;
-		for (TestCase tc : tmlMethod.getTestCase()) {
-		    tc.setName(tc.getName() + " " + i++);
-		}
-	    }
+	    // if (tmlMethod.getTestCase().size() == 0) {
+	    // create default test-cases
+	    TestCase testCase = of.createTestCase();
+	    testCase.setTestBase("");
+	    testCase.setName("default test");
+
+	    testCase.getAssertion().add(createDefaultAssertion(tmlMethod));
+
+	    testCase.getParamAssignments().addAll(createParamAssignments(tmlMethod));
+
+	    tmlMethod.getTestCase().add(testCase);
+//	    } else {
+//		int i = 1;
+//		for (TestCase tc : tmlMethod.getTestCase()) {
+//		    tc.setName(tc.getName() + " " + i++);
+//		}
+//	    }
 
 	}
+    }
+
+    private List<ParamAssignment> createParamAssignments(Method tmlMethod) {
+	List<ParamAssignment> ret = new LinkedList<>();
+	for (Param param : tmlMethod.getParam()) {
+	    ParamAssignment assignment = new ParamAssignment();
+	    assignment.setParamType(param.getType());
+	    assignment.setParamName(param.getName());
+	    assignment.setAssignment("\"Test" + GeneratorUtils.firstCharToUpper(param.getName()) + "\""); // TODO based upon the type
+	    ret.add(assignment);
+	}
+	return ret;
+    }
+
+    private Assertion createDefaultAssertion(Method tmlMethod) {
+	Assertion defaultAssertion = new Assertion();
+	defaultAssertion.setBase("{result}");
+	defaultAssertion.setBaseType(tmlMethod.getResult().getType());
+	defaultAssertion.setType(AssertionType.EQUALS_J5);
+	defaultAssertion.setValue("\"EXPECTED\""); // TODO based upon the type
+	return defaultAssertion;
     }
 
     /**

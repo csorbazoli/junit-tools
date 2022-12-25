@@ -409,7 +409,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	returnType = method.getReturnType();
 	if (returnType != null && !returnType.equals("V")) {
 	    result = getObjectFactory().createResult();
-	    result.setName("result");
+	    result.setName("actual");
 	    result.setType(Signature.getSignatureSimpleName(returnType));
 	    tmlMethod.setResult(result);
 	}
