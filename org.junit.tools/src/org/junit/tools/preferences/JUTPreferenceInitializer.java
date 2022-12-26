@@ -44,7 +44,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 	store.setDefault(MOCK_CLASS_ANNOTATIONS, "");
 
 	// Important settings
-	store.setDefault(TEST_SOURCE_FOLDER_NAME, "test"); // TODO for maven it is src/test/java
+	store.setDefault(TEST_SOURCE_FOLDER_NAME, "src/test/java");
 	store.setDefault(MOCK_FRAMEWORK, "mockito"); // should we support EasyMock as well?
 	store.setDefault(GHERKIN_STYLE_ENABLED, true);
 	// settings to be implemented/used
