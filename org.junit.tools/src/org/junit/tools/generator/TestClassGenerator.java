@@ -544,19 +544,15 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 			.append(tmlAssertion.getValue()); // TODO this should be a test value or TestUtils.readTestFile()
 	    } else {
 		sbTestMethodBody.append(RETURN + "Assert.").append(assertionType).append("(");
-	    }
 
-	    // message
-	    String message = "";
-	    if (tmlAssertion.getMessage() != null && tmlAssertion.getMessage().length() > 0) {
-		if (!type.isJUnit5()) {
+		// message
+		String message = "";
+		if (StringUtils.isNotBlank(tmlAssertion.getMessage())) {
 		    message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
 		    sbTestMethodBody.append(QUOTES).append(message).append(QUOTES).append(", ");
 		}
-	    }
 
-	    // actual
-	    if (!type.isJUnit5()) {
+		// actual
 		if (type == AssertionType.EQUALS || type == AssertionType.NOT_EQUALS) {
 		    // test-value
 		    String testValue = tmlAssertion.getValue();
