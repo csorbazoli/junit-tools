@@ -1,7 +1,6 @@
 package org.junit.tools.generator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,21 +9,13 @@ import java.util.Map;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.Statement;
 import org.junit.tools.generator.model.GeneratorModel;
 import org.junit.tools.generator.model.tml.Assertion;
 import org.junit.tools.generator.model.tml.AssertionType;
@@ -34,7 +25,6 @@ import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.ParamAssignment;
 import org.junit.tools.generator.model.tml.TestCase;
 import org.junit.tools.generator.utils.GeneratorUtils;
-import org.junit.tools.generator.utils.JDTUtils;
 
 /**
  * The test-cases-generator. It's only a beta version.
@@ -265,180 +255,11 @@ public class TestCasesGenerator {
 
     private final ObjectFactory of = new ObjectFactory();
 
-    private void analyzeBaseMethod(IMethod method, Method tmlMethod)
-	    throws IllegalArgumentException, JavaModelException {
-	CompilationUnit cu = JDTUtils
-		.createASTRoot(method.getCompilationUnit());
-	MethodDeclaration md = JDTUtils.createMethodDeclaration(cu, method);
-
-	Block body = md.getBody();
-
-	if (body != null) {
-	    for (Object statement : body.statements()) {
-		if (statement instanceof Statement) {
-		    Statement st = (Statement) statement;
-		    // The if statements are an overkill
-		    processIfStatements(st, tmlMethod);
-		    // maybe we could check the calls to dependencies and prepare
-		    // when(dep).thenReturn(defValue) lines for the // given section
-		}
-	    }
-	}
-
-    }
-
     private TestCase createTestCase() {
 	TestCase tc = of.createTestCase();
 	tc.setName("test");
 	tc.setTestBase("");
 	return tc;
-    }
-
-    /**
-     * @param testCases
-     * @param string
-     * @param param
-     * @param infixExpression
-     */
-    private List<TestCase> createTestcaseForCheck(Param param, String value) {
-	List<TestCase> testCases = new ArrayList<TestCase>(2);
-
-	TestCase tc = createTestCase();
-	ParamAssignment pa = of.createParamAssignment();
-	pa.setParamName(param.getName());
-	pa.setAssignment(value);
-	tc.getParamAssignments().add(pa);
-	testCases.add(tc);
-
-	String initValue = JDTUtils.createInitValue(param.getType(), true);
-	if (initValue.equals(value)) {
-	    initValue = GeneratorUtils.createRandomValue(param.getType(), true);
-	}
-	if (initValue.equals(value)) {
-	    return testCases;
-	}
-
-	tc = createTestCase();
-	pa = of.createParamAssignment();
-	pa.setParamName(param.getName());
-	pa.setAssignment(initValue);
-	tc.getParamAssignments().add(pa);
-	testCases.add(tc);
-
-	return testCases;
-    }
-
-    /**
-     * @param ec
-     * @return
-     */
-    private Collection<? extends TestCase> createTestCasesForCompare(
-	    ExpressionAnalyzer ec) {
-	if (ec.getNumberLiteral() != null) {
-	    String number = ec.getNumberLiteral().getToken();
-	    if (ec.getParam() != null) {
-		return createTestCasesForCompare(number, ec.getParam());
-	    } else if (ec.getSimpleName() != null) {
-		return createTestCasesForCompare(number, ec.getSimpleName());
-	    }
-
-	} else if (ec.getParam() != null) {
-	    if (ec.getParamSecond() != null) {
-		return createTestCasesForCompare(ec.getParam(),
-			ec.getParamSecond());
-	    } else if (ec.getParamSecond() != null) {
-		return createTestCasesForCompare(ec.getParam(),
-			ec.getSimpleName());
-	    }
-	}
-
-	return EMPTY_LIST_TC;
-    }
-
-    /**
-     * @param param
-     * @param expression
-     * @return
-     */
-    private Collection<? extends TestCase> createTestCasesForCompare(
-	    Param param, Expression expression) {
-	return EMPTY_LIST_TC;
-    }
-
-    /**
-     * @param param
-     * @param paramSecond
-     * @return
-     */
-    private Collection<? extends TestCase> createTestCasesForCompare(
-	    Param param, Param paramSecond) {
-	List<TestCase> testCases = new ArrayList<TestCase>();
-
-	List<String> comb = GeneratorUtils.createCombination(param.getType());
-	if (comb.size() == 0) {
-	    return testCases;
-	}
-
-	TestCase tc;
-	ParamAssignment pa1, pa2;
-
-	// param1
-	pa1 = of.createParamAssignment();
-	pa1.setParamName(param.getName());
-	pa1.setAssignment(comb.get(0));
-
-	for (String paramValue : comb) {
-	    tc = createTestCase();
-	    // param2
-	    pa2 = of.createParamAssignment();
-	    pa2.setParamName(paramSecond.getName());
-	    pa2.setAssignment(paramValue);
-
-	    // add param assignments
-	    tc.getParamAssignments().add(pa1);
-	    tc.getParamAssignments().add(pa2);
-
-	    testCases.add(tc);
-	}
-
-	return testCases;
-    }
-
-    /**
-     * @param number
-     * @param simpleName
-     * @return
-     */
-    private Collection<? extends TestCase> createTestCasesForCompare(
-	    String number, Expression simpleName) {
-	return EMPTY_LIST_TC;
-    }
-
-    /**
-     * @param number
-     * @param testCases
-     * @param string
-     * @param param
-     * @param infixExpression
-     */
-    private List<TestCase> createTestCasesForCompare(String number, Param param) {
-	List<TestCase> testCases = new ArrayList<TestCase>();
-
-	List<String> comb = GeneratorUtils.createCombination(param.getType(),
-		number);
-
-	TestCase tc;
-	ParamAssignment pa;
-	for (String paramValue : comb) {
-	    tc = createTestCase();
-	    pa = of.createParamAssignment();
-	    pa.setParamName(param.getName());
-	    pa.setAssignment(paramValue);
-	    tc.getParamAssignments().add(pa);
-	    testCases.add(tc);
-	}
-
-	return testCases;
     }
 
     public void generateTestCases(GeneratorModel utmModel)
@@ -447,12 +268,7 @@ public class TestCasesGenerator {
 
 	    Method tmlMethod = utmModel.getMethodMap().get(method);
 
-	    // analyze the base-method
-	    // analyzeBaseMethod(method, tmlMethod);
-
 	    // add default test-case
-	    // if (tmlMethod.getTestCase().size() == 0) {
-	    // create default test-cases
 	    TestCase testCase = of.createTestCase();
 	    testCase.setTestBase("");
 	    testCase.setName("default test");
@@ -462,12 +278,6 @@ public class TestCasesGenerator {
 	    testCase.getParamAssignments().addAll(createParamAssignments(tmlMethod));
 
 	    tmlMethod.getTestCase().add(testCase);
-//	    } else {
-//		int i = 1;
-//		for (TestCase tc : tmlMethod.getTestCase()) {
-//		    tc.setName(tc.getName() + " " + i++);
-//		}
-//	    }
 
 	}
     }
@@ -626,156 +436,4 @@ public class TestCasesGenerator {
 	return mergedTcList;
     }
 
-    private List<TestCase> processIfExpressions(Expression expression,
-	    Method tmlMethod) {
-	List<Param> tmlMethodParam = tmlMethod.getParam();
-
-	List<TestCase> allTestCases = new ArrayList<TestCase>();
-
-	if (expression.getNodeType() == ASTNode.INFIX_EXPRESSION) {
-	    InfixExpression infixExpression = (InfixExpression) expression;
-	    Expression leftOperand = infixExpression.getLeftOperand();
-	    Expression rightOperand = infixExpression.getRightOperand();
-
-	    Operator operator = infixExpression.getOperator();
-
-	    List<TestCase> tcLeftOperand = processIfExpressions(leftOperand,
-		    tmlMethod);
-	    List<TestCase> tcRightOperand = processIfExpressions(rightOperand,
-		    tmlMethod);
-
-	    // analyze expressions
-
-	    ExpressionAnalyzer ec = new ExpressionAnalyzer(tmlMethod);
-	    ec.analyze(leftOperand);
-	    ec.analyze(rightOperand);
-	    ec.setOperator(operator);
-
-	    // &&, &, ||, |, XOR
-	    if (isChainOperator(operator)) {
-		allTestCases.addAll(mergeTestCases(tcLeftOperand,
-			tcRightOperand));
-	    }
-	    // ==, !=
-	    else if (operator == Operator.NOT_EQUALS
-		    || operator == Operator.EQUALS) {
-		// create test-cases
-		if (ec.getParam() != null) {
-		    if (ec.getNullLiteral() != null) {
-			allTestCases.addAll(createTestcaseForCheck(
-				ec.getParam(), "null"));
-		    } else if (ec.getNumberLiteral() != null) {
-			allTestCases.addAll(createTestcaseForCheck(
-				ec.getParam(),
-				"" + getNumber(ec.getNumberLiteral())));
-		    }
-		}
-
-	    }
-	    // <, <=, >, >=
-	    else if (operator == Operator.LESS
-		    || operator == Operator.LESS_EQUALS
-		    || operator == Operator.GREATER
-		    || operator == Operator.GREATER_EQUALS) {
-		allTestCases.addAll(createTestCasesForCompare(ec));
-	    } else {
-		allTestCases.addAll(tcLeftOperand);
-		allTestCases.addAll(tcRightOperand);
-	    }
-
-	}
-
-	else if (expression.getNodeType() == ASTNode.METHOD_INVOCATION) {
-	    MethodInvocation mi = (MethodInvocation) expression;
-	    String methodName = mi.getName().toString();
-	    Expression methodExpression = mi.getExpression();
-	    List<?> arguments = mi.arguments();
-
-	    if (methodName.equals("equals")) {
-		if (methodExpression.getNodeType() == ASTNode.STRING_LITERAL) {
-		    for (Object argumentO : arguments) {
-			if (argumentO instanceof ASTNode) {
-			    ASTNode argumentNode = (ASTNode) argumentO;
-
-			    if (argumentNode.getNodeType() == ASTNode.SIMPLE_NAME) {
-				if (isParamVariable(tmlMethodParam,
-					argumentNode.toString())) {
-				    TestCase tc = createTestCase();
-
-				    ParamAssignment pa = of
-					    .createParamAssignment();
-				    pa.setParamName(argumentNode.toString());
-				    pa.setAssignment(methodExpression
-					    .toString());
-				    tc.getParamAssignments().add(pa);
-
-				    allTestCases.add(tc);
-				}
-			    }
-
-			}
-		    }
-		} else if (methodExpression.getNodeType() == ASTNode.SIMPLE_NAME) {
-		    if (isParamVariable(tmlMethodParam,
-			    methodExpression.toString())) {
-			for (Object argumentO : arguments) {
-			    if (argumentO instanceof ASTNode) {
-				ASTNode argumentNode = (ASTNode) argumentO;
-				if (argumentNode.getNodeType() == ASTNode.STRING_LITERAL) {
-				    TestCase tc = createTestCase();
-
-				    ParamAssignment pa = of
-					    .createParamAssignment();
-				    pa.setParamName(methodExpression.toString());
-				    pa.setAssignment(argumentNode.toString());
-
-				    tc.getParamAssignments().add(pa);
-
-				    allTestCases.add(tc);
-				}
-			    }
-			}
-		    }
-		}
-	    }
-
-	}
-
-	else if (expression.getNodeType() == ASTNode.PARENTHESIZED_EXPRESSION) {
-	    Expression mainExpression = ((ParenthesizedExpression) expression)
-		    .getExpression();
-	    return processIfExpressions(mainExpression, tmlMethod);
-	}
-
-	return allTestCases;
-
-    }
-
-    private void processIfStatements(Statement st, Method tmlMethod) {
-	List<TestCase> testCases = tmlMethod.getTestCase();
-
-	if (st != null && st.getNodeType() == ASTNode.IF_STATEMENT) {
-
-	    IfStatement ifSt = (IfStatement) st;
-
-	    Expression expression = ifSt.getExpression();
-	    testCases.addAll(processIfExpressions(expression, tmlMethod));
-
-	    // add assertions for result variable
-	    for (TestCase tc : testCases) {
-		if (tc.getAssertion().size() == 0
-			&& tmlMethod.getResult() != null) {
-		    Assertion assertion = of.createAssertion();
-		    assertion.setType(AssertionType.EQUALS);
-		    assertion.setBase("{result}");
-		    assertion.setValue("");
-		    tc.getAssertion().add(assertion);
-		}
-	    }
-
-	    // process other statements
-	    processIfStatements(ifSt.getThenStatement(), tmlMethod);
-	    processIfStatements(ifSt.getElseStatement(), tmlMethod);
-	}
-    }
 }

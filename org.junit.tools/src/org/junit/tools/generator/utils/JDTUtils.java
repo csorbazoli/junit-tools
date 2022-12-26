@@ -20,7 +20,6 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IImportDeclaration;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ILocalVariable;
@@ -52,7 +51,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.junit.tools.base.JUTWarning;
 import org.junit.tools.generator.IGeneratorConstants;
-import org.junit.tools.generator.ITestDataFactory;
 import org.junit.tools.messages.Messages;
 import org.junit.tools.ui.utils.EclipseUIUtils;
 
@@ -66,8 +64,6 @@ import org.junit.tools.ui.utils.EclipseUIUtils;
 public class JDTUtils implements IGeneratorConstants {
 
     private static Logger logger = Logger.getLogger(JDTUtils.class.getName());
-
-    private static ICompilationUnit lastParsedCu = null;
 
     private static CompilationUnit parsedCu = null;
 
@@ -458,24 +454,6 @@ public class JDTUtils implements IGeneratorConstants {
 	return packageFragment;
     }
 
-    public static List<IPackageFragment> getSubPackages(IPackageFragment p)
-	    throws JavaModelException {
-	List<IPackageFragment> result = new ArrayList<IPackageFragment>();
-	IJavaElement[] children = ((IPackageFragmentRoot) p.getParent())
-		.getChildren();
-
-	for (IJavaElement element : children) {
-	    if (element instanceof IPackageFragment) {
-		if (isParentPackage(p.getElementName(),
-			element.getElementName())) {
-		    result.add((IPackageFragment) element);
-		}
-	    }
-	}
-
-	return result;
-    }
-
     /**
      * creates source- and package-folders
      * 
@@ -696,39 +674,6 @@ public class JDTUtils implements IGeneratorConstants {
 	return (IPackageFragment) tmp;
     }
 
-    public static IPackageFragmentRoot getPackageFragmentRoot(IJavaElement javaElement) {
-	IJavaElement tmp = javaElement
-		.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-
-	if (tmp == null) {
-	    return null;
-	}
-
-	return (IPackageFragmentRoot) tmp;
-    }
-
-    /**
-     * Creates a method.
-     * 
-     * @param type
-     * @param modifier
-     * @param returnType
-     * @param methodName
-     * @param throwsClause
-     * @param params
-     * @param body
-     * @param annotations
-     * @return the created method
-     * @throws JavaModelException
-     */
-    public static IMethod createMethod(IType type, String modifier,
-	    String returnType, String methodName, String throwsClause,
-	    String params, String body, String... annotations)
-	    throws JavaModelException {
-	return createMethod(type, modifier, returnType, methodName,
-		throwsClause, params, body, true, annotations);
-    }
-
     /**
      * Creates a method.
      * 
@@ -758,18 +703,6 @@ public class JDTUtils implements IGeneratorConstants {
      * @return created method
      * @throws JavaModelException
      */
-    public static IMethod createMethod(IType type, IMethod method, String body,
-	    String annotations) throws JavaModelException {
-	return createMethod(type, method, method.getElementName(), body,
-		annotations);
-    }
-
-    /**
-     * @param type
-     * @param method
-     * @return created method
-     * @throws JavaModelException
-     */
     public static IMethod createMethod(IType type, IMethod method,
 	    String methodName, String body, String annotations)
 	    throws JavaModelException {
@@ -786,40 +719,6 @@ public class JDTUtils implements IGeneratorConstants {
 
 	return createMethod(type, modifier, returnType, methodName,
 		throwsClause, params, body, false, true, annotations);
-    }
-
-    /**
-     * @param type
-     * @param method
-     * @return created method
-     * @throws JavaModelException
-     */
-    public static IMethod createMethod(IType type, IMethod method)
-	    throws JavaModelException {
-	String returnType = createReturnType(method.getReturnType());
-	String body = "";
-	if (!TYPE_VOID.equals(returnType)) {
-	    body = "return " + createInitValue(returnType, true) + ";";
-	}
-
-	return createMethod(type, method, body, "");
-    }
-
-    /**
-     * @param type
-     * @param method
-     * @return created method
-     * @throws JavaModelException
-     */
-    public static IMethod createMethod(IType type, IMethod method,
-	    String annotation) throws JavaModelException {
-	String returnType = createReturnType(method.getReturnType());
-	String body = "";
-	if (!TYPE_VOID.equals(returnType)) {
-	    body = "return " + createInitValue(returnType, true) + ";";
-	}
-
-	return createMethod(type, method, body, annotation);
     }
 
     public static IMethod createMethod(IType type, String modifier,
@@ -1098,104 +997,6 @@ public class JDTUtils implements IGeneratorConstants {
 	return null;
     }
 
-    private static String getFullQualifiedName(IImportDeclaration[] imports,
-	    String paramType) {
-	if (imports == null) {
-	    return null;
-	}
-
-	String importFullQualifiedName;
-	String importType;
-
-	for (IImportDeclaration importDeclaration : imports) {
-	    importFullQualifiedName = importDeclaration.getElementName();
-	    importType = importFullQualifiedName
-		    .substring(importFullQualifiedName.lastIndexOf(".") + 1);
-	    if (paramType.equals(importType)) {
-		return importFullQualifiedName;
-	    }
-	}
-
-	return null;
-    }
-
-    /**
-     * Gets the full qualified name from the type of a variable in a type from a
-     * compilation unit
-     * 
-     * @param type
-     * @param variableToSearch
-     * @return the full qualified name for the type of the variable
-     * @throws JavaModelException
-     */
-    public static String getFullQualifiedName(IType type,
-	    ILocalVariable variableToSearch) throws JavaModelException {
-	String variableTypeName = Signature
-		.getSignatureSimpleName(variableToSearch.getTypeSignature());
-	return getFullQualifiedName(type, variableTypeName);
-    }
-
-    public static String getFullQualifiedName(IType type,
-	    String variableTypeName) throws JavaModelException {
-
-	IImportDeclaration[] imports = null;
-	List<?> importsFromBinary = null;
-	ICompilationUnit cu = type.getCompilationUnit();
-
-	if (cu != null) {
-	    imports = cu.getImports();
-	} else {
-	    ASTParser parser = ASTParser.newParser(AST.JLS8);
-	    parser.setSource(type.getClassFile().getBuffer().getCharacters());
-	    CompilationUnit cuParsed = (CompilationUnit) parser.createAST(null);
-
-	    if (cuParsed != null) {
-		importsFromBinary = cuParsed.imports();
-	    }
-	}
-
-	String fullQualifiedName = null;
-
-	if (imports != null) {
-	    // from source
-	    fullQualifiedName = getFullQualifiedName(imports, variableTypeName);
-	} else if (importsFromBinary != null) {
-	    // from binary
-	    fullQualifiedName = getFullQualifiedName(importsFromBinary,
-		    variableTypeName);
-	}
-
-	if (fullQualifiedName == null) {
-	    // if no import available, then try to find in same package
-	    fullQualifiedName = type.getPackageFragment().getElementName()
-		    + "." + variableTypeName;
-	}
-
-	return fullQualifiedName;
-    }
-
-    private static String getFullQualifiedName(List<?> importsFromBinary,
-	    String paramTypeName) {
-	for (Object importFromBinary : importsFromBinary) {
-	    String importFromBinaryS = importFromBinary.toString()
-		    .replace("\\n", "").replace("\n", "").replace(";", "");
-	    int lastIndexOf = importFromBinaryS.lastIndexOf(".");
-	    if (lastIndexOf == -1) {
-		lastIndexOf = 0;
-	    } else {
-		lastIndexOf += 1;
-	    }
-
-	    String typeName = importFromBinaryS.substring(lastIndexOf);
-
-	    if (paramTypeName.equals(typeName)) {
-		return importFromBinaryS.replace("import", "").trim();
-	    }
-	}
-
-	return null;
-    }
-
     /**
      * Returns the method modifier as String.
      * 
@@ -1275,172 +1076,6 @@ public class JDTUtils implements IGeneratorConstants {
     }
 
     /**
-     * @param p the package fragment; may not be null
-     * @return the parent package fragment, or null if the given package fragment is
-     *         the default package or a top level package
-     */
-    public static IPackageFragment getParentPackage(IPackageFragment p) {
-	if (p.isDefaultPackage()) {
-	    return null;
-	}
-
-	final int index = p.getElementName().lastIndexOf('.');
-	if (index == -1) {
-	    return null;
-	}
-
-	final IPackageFragmentRoot root = (IPackageFragmentRoot) p.getParent();
-	final String parentPackageName = p.getElementName().substring(0, index);
-
-	final IPackageFragment parent = root
-		.getPackageFragment(parentPackageName);
-
-	if (parent.exists()) {
-	    return parent;
-	} else {
-	    return null;
-	}
-    }
-
-    /**
-     * Deletes the packages if no sub-packages exists and all parent-packages
-     * without any compilation-unit.
-     * 
-     * @param packageToDelete
-     * @throws JavaModelException
-     */
-    public static void deletePackages(IPackageFragment packageToDelete)
-	    throws JavaModelException {
-	if (!packageToDelete.hasSubpackages()) {
-	    deletePackagesWithParents(packageToDelete);
-	}
-    }
-
-    public static void deletePackagesWithParents(
-	    IPackageFragment packageToDelete) throws JavaModelException {
-
-	if (packageToDelete == null) {
-	    return;
-	}
-
-	packageToDelete.delete(true, null);
-
-	IPackageFragment parentPackage = getParentPackage(packageToDelete);
-
-	if (parentPackage.getCompilationUnits().length == 0) {
-	    deletePackagesWithParents(parentPackage);
-	}
-    }
-
-    public static boolean isParentPackage(String parentPackage,
-	    String childPackage) {
-	int parentPackageSegmentSize = parentPackage.split("\\.").length;
-	int childPackageSegmentSize = childPackage.split("\\.").length;
-
-	if (parentPackageSegmentSize != childPackageSegmentSize
-		&& childPackage.startsWith(parentPackage)) {
-	    return true;
-	}
-
-	return false;
-    }
-
-    public static String createClassCreationChain(IType baseType,
-	    StringBuilder classCreationChain,
-	    List<ITestDataFactory> testDataFactories) {
-	try {
-	    // begin creation block
-	    classCreationChain.append("new ").append(baseType.getElementName())
-		    .append("(");
-
-	    // create chain for the first constructor
-	    for (IMethod method : baseType.getMethods()) {
-		if (method.isConstructor()) {
-		    createClassCreationChain(baseType, method,
-			    classCreationChain, testDataFactories);
-		    break;
-		}
-	    }
-
-	} catch (Exception e) {
-	    // TODO error log
-	    classCreationChain.append("null");
-	} finally {
-	    // end creation block
-	    classCreationChain.append(")");
-	}
-
-	return classCreationChain.toString();
-    }
-
-    private static void createClassCreationChain(IType baseType,
-	    IMethod constructor, StringBuilder classCreationChain,
-	    List<ITestDataFactory> testDataFactories) throws JavaModelException {
-	// add parameters
-	ILocalVariable[] params = constructor.getParameters();
-
-	String fullQualifiedName;
-	IType paramType;
-
-	if (params != null && params.length != 0) {
-	    String typeSignature;
-	    String comma = "";
-	    for (ILocalVariable param : params) {
-		classCreationChain.append(comma);
-
-		typeSignature = param.getTypeSignature();
-		int typeSignatureKind = Signature
-			.getTypeSignatureKind(typeSignature);
-		String signatureSimpleName = Signature
-			.getSignatureSimpleName(typeSignature);
-
-		// if simple type
-		if (Signature.BASE_TYPE_SIGNATURE == typeSignatureKind
-			|| isString(signatureSimpleName)) {
-		    if (!TYPE_VOID.equals(Signature
-			    .getSimpleName(typeSignature))) {
-			classCreationChain.append(decorateValue(
-				JDTUtils.createInitValue(signatureSimpleName),
-				signatureSimpleName));
-		    }
-		} else {
-		    paramType = null;
-		    fullQualifiedName = getFullQualifiedName(baseType, param);
-
-		    try {
-			paramType = baseType.getJavaProject().findType(
-				fullQualifiedName);
-		    } catch (JavaModelException e) {
-			paramType = null;
-		    }
-
-		    if (paramType != null) {
-			boolean creationDone = false;
-			// if it is a special type
-			for (ITestDataFactory testDataFactory : testDataFactories) {
-			    creationDone = testDataFactory.createTypeCreation(
-				    paramType, classCreationChain);
-			}
-
-			if (paramType.getFullyQualifiedName().equals(
-				baseType.getFullyQualifiedName())) {
-			    classCreationChain.append("null");
-			} else if (!creationDone) {
-			    createClassCreationChain(paramType,
-				    classCreationChain, testDataFactories);
-			}
-		    } else {
-			classCreationChain.append("null");
-		    }
-
-		}
-
-		comma = ", ";
-	    }
-	}
-    }
-
-    /**
      * Returns if the modifiers are equal.
      * 
      * @param method
@@ -1455,11 +1090,7 @@ public class JDTUtils implements IGeneratorConstants {
 	    return false;
 	}
 
-	if (methodModifier.equals(modifier)) {
-	    return true;
-	}
-
-	return false;
+	return methodModifier.equals(modifier);
     }
 
     /**
@@ -1492,16 +1123,12 @@ public class JDTUtils implements IGeneratorConstants {
      * @return true if type is String
      */
     public static boolean isString(String type) {
-	if (type.startsWith(TYPE_STRING)) {
-	    return true;
-	}
-
-	return false;
+	return type.startsWith(TYPE_STRING);
     }
 
     public static String createReturnType(String returnType) {
 
-	if (returnType != null && !returnType.equals("V")) {
+	if (returnType != null && !"V".equals(returnType)) {
 	    returnType = Signature.getSignatureSimpleName(returnType);
 	} else {
 	    returnType = TYPE_VOID;
@@ -1645,111 +1272,36 @@ public class JDTUtils implements IGeneratorConstants {
 	return value;
     }
 
-    /**
-     * Returns if the type is a array.
-     * 
-     * @param type
-     * @return true if type is a array
-     */
     public static boolean isArray(String type) {
-	if (type.endsWith(TYPE_ARRAY)) {
-	    return true;
-	}
-
-	return false;
+	return type.endsWith(TYPE_ARRAY);
     }
 
-    /**
-     * Returns if the type is boolean.
-     * 
-     * @param type
-     * @return true if type is boolean
-     */
     public static boolean isBoolean(String type) {
-	if (type.startsWith(TYPE_BOOLEAN)) {
-	    return true;
-	}
-
-	return false;
+	return type.startsWith(TYPE_BOOLEAN);
     }
 
-    /**
-     * Returns if the type is char.
-     * 
-     * @param type
-     * @return true if type is char
-     */
     public static boolean isChar(String type) {
-	if (type.startsWith(TYPE_CHAR)) {
-	    return true;
-	}
-
-	return false;
+	return type.startsWith(TYPE_CHAR);
     }
 
     public static boolean isByte(String type) {
-	if (type.startsWith(TYPE_BYTE)) {
-	    return true;
-	}
-
-	return false;
+	return type.startsWith(TYPE_BYTE);
     }
 
-    /**
-     * Returns if the type is double.
-     * 
-     * @param type
-     * @return true if type is double
-     */
     public static boolean isDouble(String type) {
-	if (type.startsWith(TYPE_DOUBLE)) {
-	    return true;
-	}
-
-	return false;
+	return type.startsWith(TYPE_DOUBLE);
     }
 
-    /**
-     * Returns if the type is float.
-     * 
-     * @param type
-     * @return true if type is float
-     */
     public static boolean isFloat(String type) {
-	if (type.startsWith(TYPE_FLOAT)) {
-	    return true;
-	}
-
-	return false;
+	return type.startsWith(TYPE_FLOAT);
     }
 
-    /**
-     * Returns if the type is int.
-     * 
-     * @param type
-     * @return true if type is int
-     */
     public static boolean isInt(String type) {
-	if (type.startsWith(TYPE_INT)) {
-	    return true;
-	}
-
-	return false;
+	return type.startsWith(TYPE_INT);
     }
-
-    /**
-     * Returns if the type is Integer.
-     * 
-     * @param type
-     * @return true if type is Integer
-     */
 
     public static boolean isInteger(String type) {
-	if (type.startsWith(TYPE_INTEGER)) {
-	    return true;
-	}
-
-	return false;
+	return type.startsWith(TYPE_INTEGER);
     }
 
     public static IMethod getSelectedMethod(IFileEditorInput fileEditorInput)
