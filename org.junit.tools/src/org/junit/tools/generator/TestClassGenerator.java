@@ -97,7 +97,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create standard-class-fields
-	createStandardClassFields(type, baseClassName);
+	createStandardClassFields(type, baseClassName, tmlTest.isSpring());
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -337,9 +337,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
     /**
      * Create standard class fields.
+     * 
+     * @param b
      */
-    protected void createStandardClassFields(IType type, String testClassName) throws JavaModelException {
-	type.createField(GeneratorUtils.createAnnoInjectMocks() + testClassName + " " + UNDER_TEST + ";", null, false, null);
+    protected void createStandardClassFields(IType type, String testClassName, boolean springTest) throws JavaModelException {
+	type.createField(GeneratorUtils.createAnnoForUnderTest(springTest) + testClassName + " " + UNDER_TEST + ";", null, false, null);
     }
 
     private boolean createTestMethods(IType type, HashMap<IMethod, Method> methodMap, List<IMethod> methodsToCreate,
@@ -472,7 +474,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    if (useTypeForNull) {
 		String initValue = "null";
 		if (param.getType() != null) {
-		    initValue = JDTUtils.createInitValue(param.getType());
+		    initValue = JDTUtils.createInitValue(param.getType(), param.getName());
 		}
 
 		if (initValue.equals("null")) {
@@ -556,7 +558,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		if (type == AssertionType.EQUALS || type == AssertionType.NOT_EQUALS) {
 		    // test-value
 		    String testValue = tmlAssertion.getValue();
-		    testValue = JDTUtils.formatValue(testValue, baseType);
+		    testValue = JDTUtils.formatValue(testValue, baseType, "result");
 		    sbTestMethodBody.append(testValue).append(", ");
 
 		    // expected

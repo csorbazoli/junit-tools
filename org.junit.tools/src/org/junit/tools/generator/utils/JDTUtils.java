@@ -2,9 +2,11 @@ package org.junit.tools.generator.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -52,6 +54,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.junit.tools.base.JUTWarning;
 import org.junit.tools.generator.IGeneratorConstants;
 import org.junit.tools.messages.Messages;
+import org.junit.tools.preferences.JUTPreferences;
 import org.junit.tools.ui.utils.EclipseUIUtils;
 
 /**
@@ -1145,11 +1148,11 @@ public class JDTUtils implements IGeneratorConstants {
      * @param type  JUT-type (mandatory parameter)
      * @return formated an if value
      */
-    public static String formatValue(String value, String type) {
+    public static String formatValue(String value, String type, String name) {
 	String resultValue = "";
 
-	if (value == null || value.length() == 0) {
-	    resultValue = createInitValue(type);
+	if (StringUtils.isBlank(value)) {
+	    resultValue = createInitValue(type, name);
 	    resultValue = decorateValue(resultValue, type);
 	} else if (isArray(type)) {
 	    String[] values = value.split(",");
@@ -1159,7 +1162,7 @@ public class JDTUtils implements IGeneratorConstants {
 		tmpValue = tmpValue.trim();
 
 		if ("".equals(tmpValue)) {
-		    tmpValue = createInitValue(type);
+		    tmpValue = createInitValue(type, name);
 		}
 
 		tmpValue = decorateValue(tmpValue, type);
@@ -1184,43 +1187,18 @@ public class JDTUtils implements IGeneratorConstants {
 
     /**
      * Creates a initializer value.
-     * 
-     * @param type
-     * @return initializer value
      */
-    public static String createInitValue(String type) {
-	return createInitValue(type, false);
-    }
-
-    /**
-     * Creates a initializer value.
-     * 
-     * @param type
-     * @return initializer value
-     */
-    public static String createInitValue(String type, boolean formatValue) {
-	String value;
-
-	// TODO use TestValueFactory where applicable
-
-	if (isString(type) || isChar(type)) {
-	    value = "";
-	} else if (isByte(type)) {
-	    value = " ";
-	} else if (isBoolean(type)) {
-	    value = "false";
-	} else if (isNumber(type)) {
-	    if (isDouble(type)) {
-		value = "0.0";
-	    } else {
-		value = "0";
-	    }
-	} else {
-	    value = "null";
+    public static String createInitValue(String type, String name) {
+	Map<String, String> defaultValueMapping = JUTPreferences.getDefaultValuesByType();
+	String lookupType = type;
+	if (!defaultValueMapping.containsKey(type.replace("[]", ""))) {
+	    lookupType = "JavaBean"; // TODO how do we know if it has default constructor?
 	}
-
-	if (formatValue) {
-	    value = formatValue(value, type);
+	String value = defaultValueMapping.get(lookupType);
+	if (value.contains("${")) {
+	    value = value.replace("${Name}", GeneratorUtils.firstCharToUpper(name));
+	    value = value.replace("${name}", name);
+	    value = value.replace("${Class}", type);
 	}
 
 	return value;

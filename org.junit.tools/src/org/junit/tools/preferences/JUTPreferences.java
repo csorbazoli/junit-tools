@@ -43,6 +43,8 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static Map<String, String> staticBindingsMapBase = null;
     private static Map<String, String> staticBindingsMapTest = null;
 
+    private static Map<String, String> defaultValuesByTypeMap = null;
+
     public static boolean getPreferenceBoolean(String name) {
 	return getPreferenceStore().getBoolean(name);
     }
@@ -151,6 +153,35 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 		staticBindingsMapTest.put(testProject, baseProject);
 	    }
 	}
+    }
+
+    public static Map<String, String> getDefaultValuesByType() {
+	if (defaultValuesByTypeMap == null) {
+	    initDefaultValueMapping();
+	}
+
+	return defaultValuesByTypeMap;
+    }
+
+    private static void initDefaultValueMapping() {
+	defaultValuesByTypeMap = new HashMap<>();
+	defaultValuesByTypeMap.put("String", "\"Test${Name}\"");
+	defaultValuesByTypeMap.put("boolean", "true");
+	defaultValuesByTypeMap.put("Boolean", "true");
+	defaultValuesByTypeMap.put("byte", "63");
+	defaultValuesByTypeMap.put("Byte", "63");
+	defaultValuesByTypeMap.put("char", "'c'");
+	defaultValuesByTypeMap.put("Chararcter", "'c'");
+	defaultValuesByTypeMap.put("double", "12.34");
+	defaultValuesByTypeMap.put("Double", "12.34");
+	defaultValuesByTypeMap.put("float", "15.79");
+	defaultValuesByTypeMap.put("Float", "15.79");
+	defaultValuesByTypeMap.put("int", "123");
+	defaultValuesByTypeMap.put("Integer", "123");
+	// any class with default constructor
+	defaultValuesByTypeMap.put("JavaBean", "TestValueFactory.fillFields(new ${Class}())");
+	// anything else
+	defaultValuesByTypeMap.put("", "Mockito.mock(${Class}.class)");
     }
 
     public static Map<String, String> getStaticBindingsMapBaseProject() {

@@ -18,12 +18,14 @@ public interface IGeneratorConstants {
     public static final String TYPE_VOID = "void";
     public static final String TYPE_STRING = "String";
     public static final String TYPE_CHAR = "char";
+    public static final String TYPE_CHARACTER = "Character";
     public static final String TYPE_BYTE = "byte";
     public static final String TYPE_DOUBLE = "double";
     public static final String TYPE_INT = "int";
     public static final String TYPE_INTEGER = "Integer";
-    public static final String TYPE_BOOLEAN = "boolean";
+    public static final String TYPE_LONG = "long";
     public static final String TYPE_FLOAT = "float";
+    public static final String TYPE_BOOLEAN = "boolean";
 
     public static final String TYPE_ARRAY = "[]";
 
@@ -33,11 +35,12 @@ public interface IGeneratorConstants {
 
     public static final String VERSION = "org.junit-tools-1.1.0";
 
-    public static final String ANNO_GENERATED_NAME = "Generated";
-    public static final String ANNO_GENERATED = "@" + ANNO_GENERATED_NAME;
     public static final String ANNO_EXTEND_WITH = "@ExtendWith";
     public static final String ANNO_RUN_WITH = "@RunWith";
     public static final String ANNO_INJECTMOCKS = "@InjectMocks";
+    public static final String ANNO_AUTOWIRED = "@Autowired";
+    public static final String ANNO_MOCK = "@Mock";
+    public static final String ANNO_MOCKBEAN = "@MockBean";
 
     public static final String ANNO_METHOD_REF_NAME = "MethodRef";
     public static final String ANNO_METHOD_REF = "@";

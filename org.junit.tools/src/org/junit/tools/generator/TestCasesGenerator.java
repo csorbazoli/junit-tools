@@ -24,7 +24,7 @@ import org.junit.tools.generator.model.tml.ObjectFactory;
 import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.ParamAssignment;
 import org.junit.tools.generator.model.tml.TestCase;
-import org.junit.tools.generator.utils.GeneratorUtils;
+import org.junit.tools.generator.utils.JDTUtils;
 
 /**
  * The test-cases-generator. It's only a beta version.
@@ -288,7 +288,7 @@ public class TestCasesGenerator {
 	    ParamAssignment assignment = new ParamAssignment();
 	    assignment.setParamType(param.getType());
 	    assignment.setParamName(param.getName());
-	    assignment.setAssignment("\"Test" + GeneratorUtils.firstCharToUpper(param.getName()) + "\""); // TODO based upon the type
+	    assignment.setAssignment(JDTUtils.createInitValue(param.getType(), param.getName()));
 	    ret.add(assignment);
 	}
 	return ret;

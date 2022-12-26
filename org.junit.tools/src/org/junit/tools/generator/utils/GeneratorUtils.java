@@ -192,16 +192,6 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return false;
     }
 
-    /**
-     * Creates the annotation generated.
-     * 
-     * @return the created annotation
-     */
-    public static String createAnnoGenerated() {
-	return ANNO_GENERATED + "(value=" + QUOTES + VERSION + QUOTES + ")"
-		+ RETURN;
-    }
-
     public static String createAnnoExtendWith(String extension) {
 	return ANNO_EXTEND_WITH + "(" + extension + ".class)"
 		+ RETURN;
@@ -212,21 +202,14 @@ public class GeneratorUtils implements IGeneratorConstants {
 		+ RETURN;
     }
 
-    public static String createAnnoInjectMocks() {
-	return ANNO_INJECTMOCKS
+    public static String createAnnoForUnderTest(boolean springTest) {
+	return (springTest ? ANNO_AUTOWIRED : ANNO_INJECTMOCKS)
 		+ RETURN;
     }
 
-    public static String createAnnoMethodRef(IMethod method)
-	    throws JavaModelException {
-	return createAnnoMethodRef(method.getElementName(),
-		method.getSignature());
-    }
-
-    public static String createAnnoMethodRef(String methodName,
-	    String methodSignature) {
-	return "@MethodRef(name=\"" + methodName + "\", signature=\""
-		+ methodSignature + "\")";
+    public static String createAnnoForDependency(boolean springTest) {
+	return (springTest ? ANNO_MOCKBEAN : ANNO_MOCK)
+		+ RETURN;
     }
 
     public static HashMap<MethodRef, IMethod> getExistingTestMethods(
