@@ -51,6 +51,12 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 	store.setDefault(JUNIT_VERSION, 5);
 	store.setDefault(SHOW_SETTINGS_BEFORE_GENERATE, false);
 
+	// default values
+	store.setDefault(DEFAULT_VALUE_MAPPING, "String=\"Test${Name}\";boolean=true;Boolean=true;byte=63;Byte=63;char='c';Chararcter='c';"
+		+ "double=12.34;Double=12.34;float=15.79;Float=15.79;int=123;Integer=123;");
+	store.setDefault(DEFAULT_VALUE_JAVA_BEANS, "TestValueFactory.fillFields(new ${Class}())");
+	store.setDefault(DEFAULT_VALUE_FALLBACK, "Mockito.mock(${Class}.class)");
+
 	// initialize JUT-preferences
 	JUTPreferences.initialize();
 

@@ -33,6 +33,11 @@ public interface IJUTPreferenceConstants {
     public static final String MOCK_CLASS_ANNOTATIONS = "MOCK_CLASS_ANNOTATIONS";
     public static final String STATIC_BINDINGS = "STATIC_BINDINGS";
 
+    public static final String DEFAULT_VALUE_MAPPING = "DEFAULT_VALUE_MAPPING";
+    public static final String DEFAULT_VALUE_JAVA_BEANS = "DEFAULT_VALUE_JAVA_BEANS";
+    public static final String DEFAULT_VALUE_FALLBACK = "DEFAULT_VALUE_FALLBACK";
+
+    public static final String VALUE_DELIMITER = "=";
     public static final String LIST_DELIMITER = ";";
     public static final String LIST_ENTRY_SEPERATOR = " <> ";
 }

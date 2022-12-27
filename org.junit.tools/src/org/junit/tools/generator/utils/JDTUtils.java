@@ -1190,15 +1190,22 @@ public class JDTUtils implements IGeneratorConstants {
      */
     public static String createInitValue(String type, String name) {
 	Map<String, String> defaultValueMapping = JUTPreferences.getDefaultValuesByType();
-	String lookupType = type;
-	if (!defaultValueMapping.containsKey(type.replace("[]", ""))) {
-	    lookupType = "JavaBean"; // TODO how do we know if it has default constructor?
-	}
+	String lookupType = type.replace("[]", "");
 	String value = defaultValueMapping.get(lookupType);
-	if (value.contains("${")) {
-	    value = value.replace("${Name}", GeneratorUtils.firstCharToUpper(name));
-	    value = value.replace("${name}", name);
-	    value = value.replace("${Class}", type);
+	if (defaultValueMapping.containsKey(lookupType)) {
+	    value = defaultValueMapping.get(lookupType);
+	} else {
+	    value = JUTPreferences.getDefaultValueForJavaBeans(); // TODO how do we know if it has default constructor?
+	    if (StringUtils.isBlank(value)) {
+		value = JUTPreferences.getDefaultValueFallback();
+	    }
+	}
+	if (StringUtils.isBlank(value)) {
+	    value = "null";
+	} else if (value.contains("${")) {
+	    value = value.replace("${Name}", GeneratorUtils.firstCharToUpper(name))
+		    .replace("${name}", name)
+		    .replace("${Class}", type);
 	}
 
 	return value;

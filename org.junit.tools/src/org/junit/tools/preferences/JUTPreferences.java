@@ -3,7 +3,9 @@ package org.junit.tools.preferences;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -44,6 +46,8 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static Map<String, String> staticBindingsMapTest = null;
 
     private static Map<String, String> defaultValuesByTypeMap = null;
+    private static String defaultValueForJavaBeans = null;
+    private static String defaultValueFallback = null;
 
     public static boolean getPreferenceBoolean(String name) {
 	return getPreferenceStore().getBoolean(name);
@@ -86,14 +90,14 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static String[] getTestClassAnnotations() {
 	if (testClassAnnotations == null) {
-	    testClassAnnotations = convert(getPreference(TEST_CLASS_ANNOTATIONS));
+	    testClassAnnotations = convertToArray(getPreference(TEST_CLASS_ANNOTATIONS));
 	}
 	return testClassAnnotations;
     }
 
     public static String[] getMockClassAnnotations() {
 	if (mockClassAnnotations == null) {
-	    mockClassAnnotations = convert(getPreference(MOCK_CLASS_ANNOTATIONS));
+	    mockClassAnnotations = convertToArray(getPreference(MOCK_CLASS_ANNOTATIONS));
 	}
 	return mockClassAnnotations;
     }
@@ -114,21 +118,21 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static String[] getTestMethodFilterName() {
 	if (testMethodFilterName == null) {
-	    testMethodFilterName = convert(getPreference(TEST_METHOD_FILTER_NAME));
+	    testMethodFilterName = convertToArray(getPreference(TEST_METHOD_FILTER_NAME));
 	}
 	return testMethodFilterName;
     }
 
     public static String[] getTestMethodFilterModifier() {
 	if (testMethodFilterModifier == null) {
-	    testMethodFilterModifier = convert(getPreference(TEST_METHOD_FILTER_MODIFIER));
+	    testMethodFilterModifier = convertToArray(getPreference(TEST_METHOD_FILTER_MODIFIER));
 	}
 	return testMethodFilterModifier;
     }
 
     public static String[] getStaticBindings() {
 	if (staticBindings == null) {
-	    staticBindings = convert(getPreference(STATIC_BINDINGS));
+	    staticBindings = convertToArray(getPreference(STATIC_BINDINGS));
 	}
 	return staticBindings;
     }
@@ -163,25 +167,34 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return defaultValuesByTypeMap;
     }
 
+    public static void setDefaultValuesByType(Map<String, String> value) {
+	defaultValuesByTypeMap = value;
+    }
+
     private static void initDefaultValueMapping() {
-	defaultValuesByTypeMap = new HashMap<>();
-	defaultValuesByTypeMap.put("String", "\"Test${Name}\"");
-	defaultValuesByTypeMap.put("boolean", "true");
-	defaultValuesByTypeMap.put("Boolean", "true");
-	defaultValuesByTypeMap.put("byte", "63");
-	defaultValuesByTypeMap.put("Byte", "63");
-	defaultValuesByTypeMap.put("char", "'c'");
-	defaultValuesByTypeMap.put("Chararcter", "'c'");
-	defaultValuesByTypeMap.put("double", "12.34");
-	defaultValuesByTypeMap.put("Double", "12.34");
-	defaultValuesByTypeMap.put("float", "15.79");
-	defaultValuesByTypeMap.put("Float", "15.79");
-	defaultValuesByTypeMap.put("int", "123");
-	defaultValuesByTypeMap.put("Integer", "123");
-	// any class with default constructor
-	defaultValuesByTypeMap.put("JavaBean", "TestValueFactory.fillFields(new ${Class}())");
-	// anything else
-	defaultValuesByTypeMap.put("", "Mockito.mock(${Class}.class)");
+	defaultValuesByTypeMap = convertToMap(getPreference(DEFAULT_VALUE_MAPPING));
+    }
+
+    public static String getDefaultValueForJavaBeans() {
+	if (defaultValueForJavaBeans == null) {
+	    defaultValueForJavaBeans = getPreference(DEFAULT_VALUE_JAVA_BEANS);
+	}
+	return defaultValueForJavaBeans;
+    }
+
+    public static void setDefaultValueForJavaBeans(String value) {
+	defaultValueForJavaBeans = value;
+    }
+
+    public static String getDefaultValueFallback() {
+	if (defaultValueFallback == null) {
+	    defaultValueFallback = getPreference(DEFAULT_VALUE_FALLBACK);
+	}
+	return defaultValueFallback;
+    }
+
+    public static void setDefaultValueFallback(String value) {
+	defaultValueFallback = value;
     }
 
     public static Map<String, String> getStaticBindingsMapBaseProject() {
@@ -289,7 +302,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
      * @param value
      * @return Array with list-entries
      */
-    public static String[] convert(String value) {
+    public static String[] convertToArray(String value) {
 	StringTokenizer tokenizer = new StringTokenizer(value, LIST_DELIMITER);
 	int tokenCount = tokenizer.countTokens();
 	String[] elements = new String[tokenCount];
@@ -306,14 +319,31 @@ public class JUTPreferences implements IJUTPreferenceConstants {
      * 
      * @return value
      */
-    public static String convert(String[] values) {
-	StringBuffer buffer = new StringBuffer();
+    public static String convertFromArray(String[] values) {
+	StringBuilder buffer = new StringBuilder();
 	for (int i = 0; i < values.length; i++) {
 	    buffer.append(values[i]);
 	    buffer.append(LIST_DELIMITER);
 	}
 
 	return buffer.toString();
+    }
+
+    public static Map<String, String> convertToMap(String value) {
+	Map<String, String> ret = new HashMap<>();
+	for (String item : StringUtils.split(value, LIST_DELIMITER)) {
+	    int pos = item.indexOf(VALUE_DELIMITER);
+	    if (pos > 0) {
+		ret.put(item.substring(0, pos).trim(), item.substring(pos + 1).trim());
+	    }
+	}
+	return ret;
+    }
+
+    public static String convertFromMap(Map<String, String> map) {
+	return map.entrySet().stream()
+		.map(entry -> entry.getKey() + VALUE_DELIMITER + entry.getValue())
+		.collect(Collectors.joining(LIST_DELIMITER));
     }
 
     public static void initialize() {
@@ -333,7 +363,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    setTestMethodPostfix((String) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == TEST_METHOD_FILTER_MODIFIER) {
-			    setTestMethodFilterModifier(convert((String) event
+			    setTestMethodFilterModifier(convertToArray((String) event
 				    .getNewValue()));
 			    return;
 			} else if (event.getProperty() == TEST_CLASS_PREFIX) {
@@ -355,15 +385,15 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    setMockFramework((String) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == TEST_CLASS_ANNOTATIONS) {
-			    setTestClassAnnotations(convert((String) event
+			    setTestClassAnnotations(convertToArray((String) event
 				    .getNewValue()));
 			    return;
 			} else if (event.getProperty() == MOCK_CLASS_ANNOTATIONS) {
-			    setMockClassAnnotations(convert((String) event
+			    setMockClassAnnotations(convertToArray((String) event
 				    .getNewValue()));
 			    return;
 			} else if (event.getProperty() == STATIC_BINDINGS) {
-			    setStaticBindings(convert((String) event
+			    setStaticBindings(convertToArray((String) event
 				    .getNewValue()));
 			    return;
 			}

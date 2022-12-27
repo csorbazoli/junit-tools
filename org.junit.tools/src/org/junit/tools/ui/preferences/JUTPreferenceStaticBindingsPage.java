@@ -182,16 +182,16 @@ public class JUTPreferenceStaticBindingsPage extends PreferencePage implements
 
     public void setStaticBindings(String[] values) {
 	getPreferenceStore().setValue(STATIC_BINDINGS,
-		JUTPreferences.convert(values));
+		JUTPreferences.convertFromArray(values));
     }
 
     public String[] getDefaultStaticBindings() {
-	return JUTPreferences.convert(getPreferenceStore().getDefaultString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
 		STATIC_BINDINGS));
     }
 
     public String[] getStaticBindings() {
-	return JUTPreferences.convert(getPreferenceStore().getString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(
 		STATIC_BINDINGS));
     }
 }

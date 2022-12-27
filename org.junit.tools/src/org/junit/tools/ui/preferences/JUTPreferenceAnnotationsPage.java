@@ -239,31 +239,31 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 
     public void setAnnotationsTestClass(String[] values) {
 	getPreferenceStore().setValue(TEST_CLASS_ANNOTATIONS,
-		JUTPreferences.convert(values));
+		JUTPreferences.convertFromArray(values));
     }
 
     public String[] getDefaultAnnotationsTestClass() {
-	return JUTPreferences.convert(getPreferenceStore().getDefaultString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
 		TEST_CLASS_ANNOTATIONS));
     }
 
     public String[] getAnnotationsTestClass() {
-	return JUTPreferences.convert(getPreferenceStore().getString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(
 		TEST_CLASS_ANNOTATIONS));
     }
 
     public void setAnnotationsMockClass(String[] values) {
 	getPreferenceStore().setValue(MOCK_CLASS_ANNOTATIONS,
-		JUTPreferences.convert(values));
+		JUTPreferences.convertFromArray(values));
     }
 
     public String[] getDefaultAnnotationsMockClass() {
-	return JUTPreferences.convert(getPreferenceStore().getDefaultString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
 		MOCK_CLASS_ANNOTATIONS));
     }
 
     public String[] getAnnotationsMockClass() {
-	return JUTPreferences.convert(getPreferenceStore().getString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(
 		MOCK_CLASS_ANNOTATIONS));
     }
 }

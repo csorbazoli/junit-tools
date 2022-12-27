@@ -240,14 +240,14 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
      */
     public void setMethodFilterNamePref(String[] values) {
 	getPreferenceStore().setValue(TEST_METHOD_FILTER_NAME,
-		JUTPreferences.convert(values));
+		JUTPreferences.convertFromArray(values));
     }
 
     /**
      * @return default method filter name preferences
      */
     public String[] getDefaultMethodFilterNamePref() {
-	return JUTPreferences.convert(getPreferenceStore().getDefaultString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
 		TEST_METHOD_FILTER_NAME));
     }
 
@@ -255,7 +255,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
      * @return method filter name preferences
      */
     public String[] getMethodFilterNamePref() {
-	return JUTPreferences.convert(getPreferenceStore().getString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(
 		TEST_METHOD_FILTER_NAME));
     }
 
@@ -266,14 +266,14 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
      */
     public void setMethodFilterModifierPref(String[] values) {
 	getPreferenceStore().setValue(TEST_METHOD_FILTER_MODIFIER,
-		JUTPreferences.convert(values));
+		JUTPreferences.convertFromArray(values));
     }
 
     /**
      * @return default method filter modifier preferences
      */
     public String[] getDefaultMethodFilterModifierPref() {
-	return JUTPreferences.convert(getPreferenceStore().getDefaultString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
 		TEST_METHOD_FILTER_MODIFIER));
     }
 
@@ -281,7 +281,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
      * @return method filter modifier preferences
      */
     public String[] getMethodFilterModifierPref() {
-	return JUTPreferences.convert(getPreferenceStore().getString(
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(
 		TEST_METHOD_FILTER_MODIFIER));
     }
 }
