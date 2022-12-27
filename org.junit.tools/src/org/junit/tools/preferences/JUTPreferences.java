@@ -27,6 +27,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String testMethodPostfix = null;
     private static String testClassPrefix = null;
     private static String testClassPostfix = null;
+    private static String springTestClassPostfix = null;
     private static Boolean gherkinStyleEnabled = true;
     private static Boolean showSettingsBeforeGenerate = false;
     private static String mockFramework = null;
@@ -254,6 +255,17 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return testClassPostfix;
     }
 
+    protected static void setSpringTestClassPostfix(String newValue) {
+	JUTPreferences.springTestClassPostfix = newValue;
+    }
+
+    public static String getSpringTestClassPostfix() {
+	if (springTestClassPostfix == null) {
+	    springTestClassPostfix = getPreference(SPRING_TEST_CLASS_POSTFIX);
+	}
+	return springTestClassPostfix;
+    }
+
     public static Boolean isGherkinStyleEnabled() {
 	if (gherkinStyleEnabled == null) {
 	    gherkinStyleEnabled = getPreferenceBoolean(GHERKIN_STYLE_ENABLED, true);
@@ -372,6 +384,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			} else if (event.getProperty() == TEST_CLASS_POSTFIX) {
 			    setTestClassPostfix((String) event.getNewValue());
 			    return;
+			} else if (event.getProperty() == SPRING_TEST_CLASS_POSTFIX) {
+			    setSpringTestClassPostfix((String) event.getNewValue());
+			    return;
 			} else if (event.getProperty() == JUNIT_VERSION) {
 			    setJUnitVersion((String) event.getNewValue());
 			    return;
@@ -395,6 +410,16 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			} else if (event.getProperty() == STATIC_BINDINGS) {
 			    setStaticBindings(convertToArray((String) event
 				    .getNewValue()));
+			    return;
+			} else if (event.getProperty() == DEFAULT_VALUE_MAPPING) {
+			    setDefaultValuesByType(convertToMap((String) event
+				    .getNewValue()));
+			    return;
+			} else if (event.getProperty() == DEFAULT_VALUE_JAVA_BEANS) {
+			    setDefaultValueForJavaBeans((String) event.getNewValue());
+			    return;
+			} else if (event.getProperty() == DEFAULT_VALUE_FALLBACK) {
+			    setDefaultValueFallback((String) event.getNewValue());
 			    return;
 			}
 		    }

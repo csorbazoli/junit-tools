@@ -26,6 +26,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 
 	store.setDefault(TEST_CLASS_PREFIX, "");
 	store.setDefault(TEST_CLASS_POSTFIX, "Test");
+	store.setDefault(SPRING_TEST_CLASS_POSTFIX, "IntegrationTest");
 
 	store.setDefault(TEST_METHOD_PREFIX, "test");
 	store.setDefault(TEST_METHOD_POSTFIX, "");
@@ -34,13 +35,6 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 	store.setDefault(TEST_METHOD_FILTER_MODIFIER, DEFAULT_METHOD_FILTER_MODIFIER);
 
 	// this are not needed
-	store.setDefault(TEST_PROJECT_POSTFIX, "");
-	store.setDefault(TML_CONTAINER, "test_files");
-	store.setDefault(WRITE_TML, false);
-	store.setDefault(TEST_CLASS_SUPER_TYPE, "");
-	store.setDefault(TEST_PACKAGE_POSTFIX, "");
-	store.setDefault(MOCK_PROJECT, "org.junit.tools.mock"); // this is not needed
-	store.setDefault(MOCK_SAVE_IN_TESTPROJECT, false);
 	store.setDefault(MOCK_CLASS_ANNOTATIONS, "");
 
 	// Important settings

@@ -29,6 +29,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
     private Label folderExample;
 //    private Label packageExample;
     private Label classExample;
+    private Label springClassExample;
     private Label methodExample;
 //    private Label superTypeExample;
 
@@ -43,6 +44,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 //    private StringFieldEditor fieldPackage;
     private StringFieldEditor fieldClassPre;
     private StringFieldEditor fieldClassPost;
+    private StringFieldEditor fieldSpringClassPost;
     private StringFieldEditor fieldMethodPre;
     private StringFieldEditor fieldMethodPost;
 //    private StringFieldEditor fieldSuperType;
@@ -184,6 +186,27 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	classExample = new Label(getFieldEditorParent(), SWT.NONE);
 	classExample.setLayoutData(createGridDataWithIndent());
 
+	// Spring class postfix
+	fieldSpringClassPost = new StringFieldEditor(SPRING_TEST_CLASS_POSTFIX,
+		Messages.JUTPreferenceMainPage_Spring_Test_class_postfix,
+		getFieldEditorParent()) {
+	    @Override
+	    protected void valueChanged() {
+		super.valueChanged();
+		setExampleValueSpringClass();
+	    }
+
+	    @Override
+	    protected void doLoad() {
+		super.doLoad();
+		setExampleValueSpringClass();
+	    }
+	};
+	addField(fieldSpringClassPost);
+
+	springClassExample = new Label(getFieldEditorParent(), SWT.NONE);
+	springClassExample.setLayoutData(createGridDataWithIndent());
+
 	// method prefix
 	fieldMethodPre = new StringFieldEditor(TEST_METHOD_PREFIX,
 		Messages.JUTPreferenceMainPage_Test_method_prefix,
@@ -318,31 +341,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	// setExampleValuePackage();
     }
 
-//    protected void setExampleValuePackage() {
-//
-//	if ("".equals(fieldPackage.getStringValue())) {
-//	    packageIsEqual = true;
-//
-//	    if (projectIsEqual && srcFolderIsEqual) {
-//		packageExample
-//			.setText("Source package and test package is equal");
-//	    } else {
-//		packageExample
-//			.setText("Package names are equal for base and test");
-//	    }
-//	} else {
-//	    packageIsEqual = false;
-//	    packageExample
-//		    .setText("The package name for the package \"base.logic\"is \"base.logic"
-//			    + fieldPackage.getStringValue() + "\"");
-//	}
-//
-//	packageExample.getParent().layout();
-//
-//	setExampleValueClass();
-//    }
-
-    protected void setExampleValueClass() {
+    private void setExampleValueClass() {
 
 	if ("".equals(fieldClassPre.getStringValue())
 		&& "".equals(fieldClassPost.getStringValue())) {
@@ -365,6 +364,33 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	}
 
 	classExample.getParent().layout();
+
+	setExampleValueMethod();
+    }
+
+    private void setExampleValueSpringClass() {
+
+	if ("".equals(fieldClassPre.getStringValue())
+		&& "".equals(fieldSpringClassPost.getStringValue())) {
+	    classIsEqual = true;
+
+	    if (srcFolderIsEqual) {
+		springClassExample.setText("Class for base and test is equal");
+	    } else {
+		springClassExample
+			.setText("The base and test name for the class is equal");
+	    }
+	} else {
+	    classIsEqual = false;
+
+	    springClassExample
+		    .setText("If the class under test is \"Calculator\" the test class is \""
+			    + fieldClassPre.getStringValue()
+			    + "Calculator"
+			    + fieldSpringClassPost.getStringValue() + "\"");
+	}
+
+	springClassExample.getParent().layout();
 
 	setExampleValueMethod();
     }
