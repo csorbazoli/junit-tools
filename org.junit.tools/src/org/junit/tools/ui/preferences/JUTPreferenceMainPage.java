@@ -321,13 +321,8 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 		|| "src".equals(fieldSrcFolder.getStringValue())) {
 	    srcFolderIsEqual = true;
 
-//	    if (projectIsEqual) {
 	    folderExample
 		    .setText("Source folder and test source folder is equal");
-//	    } else {
-//		folderExample
-//			.setText("The name of the test source folder is equal to the folder of the class under test");
-//	    }
 	} else {
 	    srcFolderIsEqual = false;
 
@@ -337,8 +332,6 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	}
 
 	folderExample.getParent().layout();
-
-	// setExampleValuePackage();
     }
 
     private void setExampleValueClass() {

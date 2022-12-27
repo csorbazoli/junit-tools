@@ -70,14 +70,14 @@ public class MainController implements IGeneratorConstants {
     public boolean generateTestclass(IWorkbenchWindow activeWorkbenchWindow,
 	    IStructuredSelection selection) throws JUTException, JUTWarning,
 	    CoreException {
-	JUTElements jutElements = detectJUTElements(selection, null);
+	JUTElements jutElements = detectJUTElements(selection, null, false);
 	return generateTestclass(activeWorkbenchWindow, jutElements, false);
     }
 
     public boolean generateSpringTestclass(IWorkbenchWindow activeWorkbenchWindow,
 	    IStructuredSelection selection) throws JUTException, JUTWarning,
 	    CoreException {
-	JUTElements jutElements = detectJUTElements(selection, null);
+	JUTElements jutElements = detectJUTElements(selection, null, true);
 	return generateTestclass(activeWorkbenchWindow, jutElements, true);
     }
 
@@ -94,14 +94,14 @@ public class MainController implements IGeneratorConstants {
     public boolean generateTestclass(IWorkbenchWindow activeWorkbenchWindow,
 	    IFileEditorInput fileEditorInput) throws JUTException, JUTWarning,
 	    CoreException {
-	JUTElements jutElements = detectJUTElements(null, fileEditorInput);
+	JUTElements jutElements = detectJUTElements(null, fileEditorInput, false);
 	return generateTestclass(activeWorkbenchWindow, jutElements, false);
     }
 
     public boolean generateSpringTestclass(IWorkbenchWindow activeWorkbenchWindow,
 	    IFileEditorInput fileEditorInput) throws JUTException, JUTWarning,
 	    CoreException {
-	JUTElements jutElements = detectJUTElements(null, fileEditorInput);
+	JUTElements jutElements = detectJUTElements(null, fileEditorInput, true);
 	return generateTestclass(activeWorkbenchWindow, jutElements, true);
     }
 
@@ -238,6 +238,7 @@ public class MainController implements IGeneratorConstants {
     }
 
     /**
+     * @param springTest TODO
      * @throws CoreException
      * @throws JavaModelException Detects all the necessary JUT-Elements: project,
      *                            package and class for the base and test.
@@ -247,7 +248,7 @@ public class MainController implements IGeneratorConstants {
      * @throws
      */
     private JUTElements detectJUTElements(IStructuredSelection selection,
-	    IFileEditorInput fileEditorInput) throws JUTException, JUTWarning,
+	    IFileEditorInput fileEditorInput, boolean springTest) throws JUTException, JUTWarning,
 	    CoreException {
 
 	JUTElements jutElements = new JUTElements();
@@ -285,9 +286,9 @@ public class MainController implements IGeneratorConstants {
 
 	if (cuList.size() > 0) {
 	    // init projects with cu
-	    jutElements.initProjects(project, cuList.firstElement());
+	    jutElements.initProjects(project, cuList.firstElement(), springTest);
 
-	    jutElements.initClassesAndPackages(cuList);
+	    jutElements.initClassesAndPackages(cuList, springTest);
 
 	    if (!jutElements.getClassesAndPackages().getBaseClass().exists()) {
 		return jutElements;
@@ -316,7 +317,7 @@ public class MainController implements IGeneratorConstants {
 
 	} else {
 	    // init projects without cu
-	    jutElements.initProjects(project);
+	    jutElements.initProjects(project, springTest);
 	}
 
 	return jutElements;
@@ -401,9 +402,12 @@ public class MainController implements IGeneratorConstants {
     public boolean switchClass(IWorkbenchWindow activeWorkbenchWindow,
 	    IStructuredSelection selection) throws JUTException, JUTWarning,
 	    CoreException {
-	JUTElements jutElements = detectJUTElements(selection, null);
+	JUTElements jutElements = detectJUTElements(selection, null, false);
 	if (jutElements == null) {
-	    return false;
+	    jutElements = detectJUTElements(selection, null, true);
+	    if (jutElements == null) {
+		return false;
+	    }
 	}
 
 	return switchClass(activeWorkbenchWindow, jutElements);
@@ -417,9 +421,12 @@ public class MainController implements IGeneratorConstants {
     public boolean switchClass(IWorkbenchWindow activeWorkbenchWindow,
 	    IFileEditorInput fileEditorInput) throws JUTException, JUTWarning,
 	    CoreException {
-	JUTElements jutElements = detectJUTElements(null, fileEditorInput);
+	JUTElements jutElements = detectJUTElements(null, fileEditorInput, false);
 	if (jutElements == null) {
-	    return false;
+	    jutElements = detectJUTElements(null, fileEditorInput, true);
+	    if (jutElements == null) {
+		return false;
+	    }
 	}
 	return switchClass(activeWorkbenchWindow, jutElements);
     }

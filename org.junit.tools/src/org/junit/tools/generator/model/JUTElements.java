@@ -375,7 +375,7 @@ public class JUTElements {
 	this.constructorsAndMethods = constructorsAndMethods;
     }
 
-    public JUTProjects initProjects(IJavaProject project, ICompilationUnit cu) throws JUTWarning {
+    public JUTProjects initProjects(IJavaProject project, ICompilationUnit cu, boolean springTest) throws JUTWarning {
 	JUTProjects tmpProjects = new JUTProjects();
 
 	if (project == null) {
@@ -426,7 +426,7 @@ public class JUTElements {
 	// identify by test-class-name and test-source-folder-name
 	if (cu != null) {
 	    String testClassPrefix = JUTPreferences.getTestClassPrefix();
-	    String testClassPostfix = JUTPreferences.getTestClassPostfix();
+	    String testClassPostfix = springTest ? JUTPreferences.getSpringTestClassPostfix() : JUTPreferences.getTestClassPostfix();
 
 	    if (!"".equals(testClassPostfix) || !"".equals(testClassPrefix)) {
 		String cuName = cu.getElementName().replace(".java", "");
@@ -471,17 +471,11 @@ public class JUTElements {
 	return tmpProjects;
     }
 
-    public JUTProjects initProjects(IJavaProject project) throws JUTWarning {
-	return initProjects(project, null);
+    public JUTProjects initProjects(IJavaProject project, boolean springTest) throws JUTWarning {
+	return initProjects(project, null, springTest);
     }
 
-    public JUTClassesAndPackages initClassesAndPackages(ICompilationUnit cu) throws JUTWarning, CoreException {
-	Vector<ICompilationUnit> cuList = new Vector<ICompilationUnit>();
-	cuList.add(cu);
-	return initClassesAndPackages(cuList);
-    }
-
-    public JUTClassesAndPackages initClassesAndPackages(Vector<ICompilationUnit> cuList)
+    public JUTClassesAndPackages initClassesAndPackages(Vector<ICompilationUnit> cuList, boolean springTest)
 	    throws JUTWarning, CoreException {
 
 	ICompilationUnit baseCu = null;
@@ -491,7 +485,7 @@ public class JUTElements {
 	IPackageFragment testPackage = null;
 
 	String testClassPrefix = JUTPreferences.getTestClassPrefix();
-	String testClassPostfix = JUTPreferences.getTestClassPostfix();
+	String testClassPostfix = springTest ? JUTPreferences.getSpringTestClassPostfix() : JUTPreferences.getTestClassPostfix();
 
 	if (cuList.size() == 0) {
 	    throw new JUTWarning(Messages.General_warning_nothing_selected);
@@ -500,7 +494,7 @@ public class JUTElements {
 	// initialize project, if necessary
 	ICompilationUnit cu = cuList.get(0);
 	if (projects.getBaseProject() == null) {
-	    initProjects(cu.getJavaProject());
+	    initProjects(cu.getJavaProject(), springTest);
 	}
 
 	JUTClassesAndPackages jutClassesAndPackages = initPackages(JDTUtils.getPackage(cu));
@@ -565,34 +559,6 @@ public class JUTElements {
 	jutClassesAndPackages.setTestClassName(testCuName);
 
 	return jutClassesAndPackages;
-    }
-
-    public static JUTElements initJUTElements(IJavaProject project) throws JUTWarning {
-	JUTElements jutElements = new JUTElements();
-
-	jutElements.initProjects(project);
-
-	return jutElements;
-    }
-
-    public static JUTElements initJUTElements(IJavaProject project, ICompilationUnit cu)
-	    throws JUTWarning, CoreException {
-	JUTElements jutElements = new JUTElements();
-
-	jutElements.initProjects(project, cu);
-	jutElements.initClassesAndPackages(cu);
-
-	return jutElements;
-    }
-
-    public static JUTElements initJUTElements(IJavaProject project, IPackageFragment pack)
-	    throws JUTWarning, CoreException {
-	JUTElements jutElements = new JUTElements();
-
-	jutElements.initProjects(project);
-	jutElements.initPackages(pack);
-
-	return jutElements;
     }
 
     /**

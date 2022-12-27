@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.ILocalVariable;
@@ -94,7 +95,7 @@ public class GeneratorUtils implements IGeneratorConstants {
     }
 
     /**
-     * Creates a class-name.
+     * Creates a test class-name.
      * 
      * @param className
      * @return class-name with a upper cased first letter
@@ -107,6 +108,27 @@ public class GeneratorUtils implements IGeneratorConstants {
 	String restClassName = className.substring(1);
 
 	String testClassPostfix = JUTPreferences.getTestClassPostfix();
+	if (testClassPostfix == null) {
+	    testClassPostfix = "";
+	}
+
+	return firstLetter + restClassName + testClassPostfix;
+    }
+
+    /**
+     * Creates a Spring test class-name.
+     * 
+     * @param className
+     * @return class-name with a upper cased first letter
+     */
+    public static String createSpringTestClassName(String className) {
+	if (className.length() == 0) {
+	    return ""; //$NON-NLS-1$
+	}
+	String firstLetter = String.valueOf(className.charAt(0)).toUpperCase();
+	String restClassName = className.substring(1);
+
+	String testClassPostfix = JUTPreferences.getSpringTestClassPostfix();
 	if (testClassPostfix == null) {
 	    testClassPostfix = "";
 	}
@@ -617,16 +639,21 @@ public class GeneratorUtils implements IGeneratorConstants {
 	String elementName = type.getElementName();
 
 	String testclassPrefix = JUTPreferences.getTestClassPrefix();
-	String testclassPostfix = JUTPreferences.getTestClassPostfix();
-
-	if (testclassPrefix != null && !"".equals(testclassPrefix)) {
+	if (StringUtils.isNotBlank(testclassPrefix)) {
 	    if (!elementName.startsWith(testclassPrefix)) {
 		return false;
 	    }
 	}
 
-	if (testclassPostfix != null && !"".equals(testclassPostfix)) {
+	String testclassPostfix = JUTPreferences.getTestClassPostfix();
+	if (StringUtils.isNotBlank(testclassPostfix)) {
 	    if (!elementName.endsWith(testclassPostfix)) {
+		return false;
+	    }
+	}
+	String springTestclassPostfix = JUTPreferences.getSpringTestClassPostfix();
+	if (StringUtils.isNotBlank(springTestclassPostfix)) {
+	    if (!elementName.endsWith(springTestclassPostfix)) {
 		return false;
 	    }
 	}
