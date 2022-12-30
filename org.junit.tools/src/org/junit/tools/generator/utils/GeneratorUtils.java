@@ -11,6 +11,7 @@ import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IMethod;
@@ -659,6 +660,18 @@ public class GeneratorUtils implements IGeneratorConstants {
 	}
 
 	return true;
+    }
+
+    public static Object findField(IType type, String name) throws JavaModelException {
+	IField[] fields = type.getFields();
+	if (fields != null && fields.length > 0) {
+	    for (IField field : fields) {
+		if (name.equals(field.getElementName())) {
+		    return field;
+		}
+	    }
+	}
+	return null;
     }
 
 }

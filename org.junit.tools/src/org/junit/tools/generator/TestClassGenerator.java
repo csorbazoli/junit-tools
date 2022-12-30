@@ -342,7 +342,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param b
      */
     protected void createStandardClassFields(IType type, String testClassName, boolean springTest) throws JavaModelException {
-	if (type.getField(UNDER_TEST) == null) {
+	if (GeneratorUtils.findField(type, UNDER_TEST) == null) {
 	    type.createField(GeneratorUtils.createAnnoForUnderTest(springTest) + testClassName + " " + UNDER_TEST + ";", null, false, null);
 	}
     }

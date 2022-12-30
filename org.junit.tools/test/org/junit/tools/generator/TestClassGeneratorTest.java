@@ -422,7 +422,6 @@ public class TestClassGeneratorTest {
 	// then
 	verify(type).createField("@InjectMocks\n"
 		+ "SomeClass underTest;", null, false, null);
-	verify(type).getField("underTest");
     }
 
     @Test
@@ -431,7 +430,8 @@ public class TestClassGeneratorTest {
 	IType type = Mockito.mock(IType.class);
 	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
 	IField existingField = Mockito.mock(IField.class);
-	when(type.getField("underTest")).thenReturn(existingField);
+	when(existingField.getElementName()).thenReturn("underTest");
+	when(type.getFields()).thenReturn(new IField[] { existingField });
 	// when
 	underTest.createStandardClassFields(type, "SomeClass", false);
 	// then
