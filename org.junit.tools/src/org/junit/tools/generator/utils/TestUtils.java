@@ -85,14 +85,14 @@ public class TestUtils {
     }
 
     public static <T> T readObjectFromJsonFile(String relativePath, Class<T> clazz) {
-	return readObjectFromJson(readTestFile(relativePath), clazz);
+	return objectFromJson(readTestFile(relativePath), clazz);
     }
 
     public static <T> List<T> readObjectListFromJsonFile(String relativePath, Class<T> clazz) {
 	return readObjectListFromJson(readTestFile(relativePath), clazz);
     }
 
-    public static <T> T readObjectFromJson(String json, TypeReference<T> clazz) {
+    public static <T> T objectFromJson(String json, TypeReference<T> clazz) {
 	try {
 	    return StringUtils.isBlank(json) ? null : getObjectMapper().readValue(json, clazz);
 	} catch (Exception e) {
@@ -100,7 +100,7 @@ public class TestUtils {
 	}
     }
 
-    public static <T> T readObjectFromJson(String json, Class<T> clazz) {
+    public static <T> T objectFromJson(String json, Class<T> clazz) {
 	try {
 	    return StringUtils.isBlank(json) ? null : getObjectMapper().readValue(json, clazz);
 	} catch (Exception e) {

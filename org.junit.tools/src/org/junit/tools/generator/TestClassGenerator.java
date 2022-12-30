@@ -546,7 +546,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		    sbTestMethodBody.append("withFailMessage(").append(QUOTES).append(message).append(QUOTES).append(").");
 		}
 		sbTestMethodBody.append(assertionType).append("(")
-			.append(tmlAssertion.getValue()); // TODO this should be a test value or TestUtils.readTestFile()
+			.append(tmlAssertion.getValue());
 	    } else {
 		sbTestMethodBody.append(RETURN + "Assert.").append(assertionType).append("(");
 
