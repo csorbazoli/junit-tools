@@ -141,7 +141,7 @@ public class TestUtils {
 	new TestUtils().waitingInternal(timeout);
     }
 
-    public static String objectToJSON(Object object) {
+    public static String objectToJson(Object object) {
 	if (object == null) {
 	    return "{}";
 	}
