@@ -55,37 +55,33 @@ public class TestValueFactory {
     private static final int DEPTH_LIMIT = 100;
 
     private static final char CHAR = 'a';
-    private static final byte BYTE = 1;
-    private static final int INT = 3;
-    private static final long LONG = 12L;
-    private static final float FLOAT = 30.2f;
-    private static final double DOUBLE = 20.5d;
-    private static final int BIGINTEGER = 123;
-    private static final int BIGDECIMAL = 124;
+    private static final byte BYTE = 27;
+    private static final int INT = 123;
+    private static final long LONG = 123456L;
+    private static final float FLOAT = 37.89f;
+    private static final double DOUBLE = 23.45d;
+    private static final int BIGINTEGER = 127;
+    private static final int BIGDECIMAL = 1023;
 
     private TestValueFactory() {
 	// private constructor
     }
 
-    private static TestValueFactory get() {
-	return new TestValueFactory();
-    }
-
     public static <T> T getValueForType(Type type, String name) {
-	return (T) get().getValueForTypeInner(type, name, new ArrayDeque<>());
+	return (T) getValueForTypeInner(type, name, new ArrayDeque<>());
     }
 
     public static <T> T fillFields(T item) {
-	get().fillNonFinalFields(item.getClass(), item, new ArrayDeque<>());
+	fillNonFinalFields(item.getClass(), item, new ArrayDeque<>());
 	return item;
     }
 
     public static <T> T fillFieldsWithoutDeprecated(T item) {
-	get().fillNonFinalFields(item.getClass(), item, new ArrayDeque<>(), true);
+	fillNonFinalFields(item.getClass(), item, new ArrayDeque<>(), true);
 	return item;
     }
 
-    private Object getValueForTypeInner(Type type, String name,
+    private static Object getValueForTypeInner(Type type, String name,
 	    Deque<FieldReference> stack) {
 	if (stack.size() >= 100) {
 	    log.severe("Object structure is too deep (>" + DEPTH_LIMIT + "), could be a recursive structure?! " + getStackInfo(stack));
@@ -108,7 +104,7 @@ public class TestValueFactory {
 	return ret;
     }
 
-    private String getStackInfo(Deque<FieldReference> stack) {
+    private static String getStackInfo(Deque<FieldReference> stack) {
 	StringBuilder ret = new StringBuilder();
 	Iterator<FieldReference> iterator = stack.iterator();
 	String sep = "";
@@ -126,7 +122,7 @@ public class TestValueFactory {
     }
 
     // https://stackoverflow.com/questions/3152290/java-how-can-i-dynamically-create-an-array-of-a-specified-type-based-on-the-typ
-    private <T> T[] toArray(Collection<T> c) {
+    private static <T> T[] toArray(Collection<T> c) {
 	if (c != null) {
 	    Iterator<T> i = c.iterator();
 	    if (i.hasNext()) {
@@ -148,7 +144,7 @@ public class TestValueFactory {
 	return (T[]) new Object[0];
     }
 
-    private <T> T[] toSingletonArray(T item) {
+    private static <T> T[] toSingletonArray(T item) {
 	if (item != null) {
 	    /* Create an array of the type of the first non-null element. */
 	    Class<?> type = item.getClass();
@@ -159,7 +155,7 @@ public class TestValueFactory {
 	return (T[]) new Object[0];
     }
 
-    private Object getValueForPrimitiveTypes(Type type, String name) {
+    public static Object getValueForPrimitiveTypes(Type type, String name) {
 	Object ret;
 	if (boolean.class.equals(type) || Boolean.class.equals(type)) {
 	    ret = true;
@@ -183,7 +179,7 @@ public class TestValueFactory {
 	return ret;
     }
 
-    private Object getValueForObjects(Type type, String name, Deque<FieldReference> stack) {
+    private static Object getValueForObjects(Type type, String name, Deque<FieldReference> stack) {
 	Object ret;
 	try {
 	    Class<?> clazz = getClassOfType(type);
@@ -251,7 +247,7 @@ public class TestValueFactory {
 	return ret;
     }
 
-    private Throwable createExceptionOfType(Type type, String name) {
+    private static Throwable createExceptionOfType(Type type, String name) {
 	Throwable ret = null;
 	try {
 	    Class<?> clazz = getClassOfType(type);
@@ -263,7 +259,7 @@ public class TestValueFactory {
 	return ret;
     }
 
-    private Throwable createInstanceByName(Type type, String name, Throwable ret, Class<?> clazz)
+    private static Throwable createInstanceByName(Type type, String name, Throwable ret, Class<?> clazz)
 	    throws InstantiationException, IllegalAccessException, InvocationTargetException {
 	try {
 	    Constructor<?> stringContructor = clazz.getConstructor(String.class);
@@ -279,18 +275,18 @@ public class TestValueFactory {
 	return ret;
     }
 
-    private Date createDate() {
+    private static Date createDate() {
 	return new Date(LocalDateTime.of(2019, 3, 26, 12, 34, 56).atZone(ZoneId.of("+0100")).toInstant()
 		.toEpochMilli());
     }
 
-    private GregorianCalendar createGregorianCalendar() {
+    private static GregorianCalendar createGregorianCalendar() {
 	GregorianCalendar ret = new GregorianCalendar(2019, 2, 26, 12, 34, 56);
 	ret.setTimeZone(TimeZone.getTimeZone(ZoneId.of("+0100")));
 	return ret;
     }
 
-    private void createValueForMap(Object map, String name, Type maptype,
+    private static void createValueForMap(Object map, String name, Type maptype,
 	    Deque<FieldReference> stack) {
 	Object key = getValueForTypeInner(getGenericParameterType(maptype, 0), name,
 		stack);
@@ -303,7 +299,7 @@ public class TestValueFactory {
 	}
     }
 
-    private void createValueForSet(Object set, String name, Type settype,
+    private static void createValueForSet(Object set, String name, Type settype,
 	    Deque<FieldReference> stack) {
 	Object value = getValueForTypeInner(getGenericParameterType(settype, 0), name,
 		stack);
@@ -314,17 +310,17 @@ public class TestValueFactory {
 	}
     }
 
-    private void fillNonFinalFields(Class<?> type, Object item, Deque<FieldReference> stack) {
+    private static void fillNonFinalFields(Class<?> type, Object item, Deque<FieldReference> stack) {
 	fillNonFinalFields(type, item, stack, false);
     }
 
-    private void fillNonFinalFields(Class<?> type, Object item, Deque<FieldReference> stack, boolean excludeDeprecated) {
+    private static void fillNonFinalFields(Class<?> type, Object item, Deque<FieldReference> stack, boolean excludeDeprecated) {
 	// set each non-final fields which has a public setter method
 	FieldReference parent = stack.peekLast();
 	fillFieldsInternal(type, item, stack, parent, excludeDeprecated);
     }
 
-    private void fillFieldsInternal(Class<?> type, Object item, Deque<FieldReference> stack, FieldReference parent, boolean excludeDeprecated) {
+    private static void fillFieldsInternal(Class<?> type, Object item, Deque<FieldReference> stack, FieldReference parent, boolean excludeDeprecated) {
 	for (Field f : type.getDeclaredFields()) {
 	    if (excludeDeprecated && f.isAnnotationPresent(Deprecated.class)) {
 		continue;
@@ -332,14 +328,14 @@ public class TestValueFactory {
 	    if (!Modifier.isAbstract(f.getModifiers()) && !f.isSynthetic() &&
 		    !Modifier.isStatic(f.getModifiers())) {
 		// disregard final primitive values, they cannot be modified
-		Object curValue = f.getType().isPrimitive() && Modifier.isFinal(f.getModifiers()) ? "SKIP" : getInternalState(item, type, f);
+		Object curValue = getInternalState(item, type, f);
 		FieldReference fieldRef = new FieldReference(item, type.getSimpleName() + "#" + f.getName());
 		if (stack.contains(fieldRef)) { // repeating reference - loop in structure hierarchy?
 		    log.warning("Loop in structure hierarchy? " + getStackInfo(stack) + " -> " + fieldRef.getReference());
 		} else {
 		    stack.addLast(fieldRef);
 		    try {
-			if (curValue == null || f.getType().isPrimitive()) {
+			if (!Modifier.isFinal(f.getModifiers()) && (curValue == null || f.getType().isPrimitive())) {
 			    setFieldValueOfItem(item, f, type, parent, stack);
 			} else if (curValue instanceof List<?>) {
 			    List<Object> list = (List<Object>) curValue;
@@ -368,7 +364,7 @@ public class TestValueFactory {
 	}
     }
 
-    private Object getInternalState(Object item, Class<?> type, Field f) {
+    private static Object getInternalState(Object item, Class<?> type, Field f) {
 	Method getter = findGetterMethod(type, f);
 	Object ret = null;
 	try {
@@ -379,7 +375,7 @@ public class TestValueFactory {
 	return ret;
     }
 
-    private void setFieldValueOfItem(Object item, Field f, Class<?> type,
+    private static void setFieldValueOfItem(Object item, Field f, Class<?> type,
 	    FieldReference parent, Deque<FieldReference> stack) {
 	Method setter = findSetterMethod(type, f);
 	if (setter != null || Modifier.isPublic(f.getModifiers())) {
@@ -401,12 +397,12 @@ public class TestValueFactory {
 	}
     }
 
-    private boolean isParentReference(Field f, FieldReference parent) {
+    private static boolean isParentReference(Field f, FieldReference parent) {
 	return parent != null && StringUtils.containsIgnoreCase(f.getName(), "parent") &&
 		f.getType().isAssignableFrom(parent.getItem().getClass());
     }
 
-    private Method findSetterMethod(Class<?> clazz, Field f) {
+    protected static Method findSetterMethod(Class<?> clazz, Field f) {
 	Method ret = null;
 	String setter = "set" + StringUtils.capitalize(f.getName());
 	try {
@@ -420,21 +416,21 @@ public class TestValueFactory {
 	return ret;
     }
 
-    private Method findGetterMethod(Class<?> clazz, Field f) {
+    private static Method findGetterMethod(Class<?> clazz, Field f) {
 	Method ret = null;
-	String setter = "get" + StringUtils.capitalize(f.getName());
+	String getter = "get" + StringUtils.capitalize(f.getName());
 	try {
-	    ret = clazz.getDeclaredMethod(setter, f.getType());
+	    ret = clazz.getDeclaredMethod(getter);
 	} catch (NoSuchMethodException | SecurityException e) {
 	    ret = findIsSetterMethod(clazz, f);
 	    if (ret == null) {
-		log.warning("No getter method found " + clazz.getName() + "." + setter + ": " + e.getMessage());
+		log.warning("No getter method found " + clazz.getName() + "." + getter + ": " + e.getMessage());
 	    }
 	}
 	return ret;
     }
 
-    private Method findIsSetterMethod(Class<?> clazz, Field f) {
+    private static Method findIsSetterMethod(Class<?> clazz, Field f) {
 	Method ret = null;
 	if (f.getName().startsWith("is")) {
 	    String setter = "set" + StringUtils.capitalize(f.getName().replaceFirst("^is", ""));

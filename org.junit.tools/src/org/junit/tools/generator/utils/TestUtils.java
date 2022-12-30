@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.mockito.stubbing.Answer;
@@ -20,22 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-/**
- * <b>Note on EmbeddedKafka</b> Initialize EmbeddedKafka in a method annotated
- * by @BeforeClass<br/>
- * e.g. <br/>
- * <br/>
- * <code>
- * EmbeddedKafka embeddedKafka = new KafkaEmbedded(1, true, "someTopic");<br/> &#64;BeforeClass public static void
- * initKafka() { System.setProperty("spring.kafka.bootstrap-servers", embeddedKafka.getBrokersAsString());<br/>
- * System.setProperty("spring.cloud.stream.kafka.binder.brokers", embeddedKafka.getBrokersAsString());<br/>
- * System.setProperty("spring.cloud.stream.kafka.binder.zkNodes", embeddedKafka.getZookeeperConnectionString());<br/> }
- * </code>
- */
 public class TestUtils {
 
     private static Logger log = Logger.getLogger("TestUtils");
-    private static final String SRC_TEST_RESOURCES = "src/test/resources/";
+    private static final String SRC_TEST_RESOURCES = "test/"; // "src/test/resources/";
 
     public static class TestUtilException extends RuntimeException {
 	private static final long serialVersionUID = 429319185965049555L;
@@ -124,9 +113,10 @@ public class TestUtils {
 	if (StringUtils.isNotBlank(json)) {
 	    ObjectMapper mapper = getObjectMapper();
 	    try {
-		MappingIterator<T> readValues = mapper.readerForArrayOf(clazz).readValues(json);
+		MappingIterator<T[]> readValues = mapper.readerForArrayOf(clazz).readValues(json);
 		while (readValues.hasNext()) {
-		    ret.add(readValues.nextValue());
+		    Stream.of(readValues.nextValue())
+			    .forEach(ret::add);
 		}
 	    } catch (Exception e) {
 		throw new TestUtilException("Failed to read object list from json: " + e.getMessage(), e);
@@ -152,12 +142,15 @@ public class TestUtils {
     }
 
     public static String objectToJSON(Object object) {
-	return objectToJSON(object, false);
-    }
-
-    public static String objectToJSON(Object object, boolean withTimeZone) {
-	// jsonUtils.withDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-	return object == null ? null : objectToJSON(object, true);
+	if (object == null) {
+	    return "{}";
+	}
+	try {
+	    ObjectMapper mapper = getObjectMapper();
+	    return mapper.writeValueAsString(object).replace("\r\n", "\n");
+	} catch (Exception e) {
+	    return "JSON serialization failuire: " + e.getMessage();
+	}
     }
 
     public static class BenchmarkResults<T> {
@@ -172,20 +165,40 @@ public class TestUtils {
 	    return testCase;
 	}
 
+	public void setTestCase(String testCase) {
+	    this.testCase = testCase;
+	}
+
 	public int getIterations() {
 	    return iterations;
+	}
+
+	public void setIterations(int iterations) {
+	    this.iterations = iterations;
 	}
 
 	public long getTotalNano() {
 	    return totalNano;
 	}
 
+	public void setTotalNano(long totalNano) {
+	    this.totalNano = totalNano;
+	}
+
 	public long getMaxNano() {
 	    return maxNano;
 	}
 
+	public void setMaxNano(long maxNano) {
+	    this.maxNano = maxNano;
+	}
+
 	public T getLastResult() {
 	    return lastResult;
+	}
+
+	public void setLastResult(T lastResult) {
+	    this.lastResult = lastResult;
 	}
 
 	public long getAvgNano() {
@@ -242,16 +255,14 @@ public class TestUtils {
      */
     private static ObjectMapper getDefaultObjectMapper() {
 	ObjectMapper mapper = new ObjectMapper();
+	mapper.enable(SerializationFeature.INDENT_OUTPUT);
 	mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	// mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
 	mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 	mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
 	mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//	if (StringUtils.isNotBlank(config.getDateFormat())) {
-//	    mapper.setDateFormat(new SimpleDateFormat(config.getDateFormat()));
-//	}
+//	    mapper.setDateFormat(new SimpleDateFormat(getDateFormat()));
 
 	mapper.setSerializationInclusion(Include.ALWAYS); // show all values, even nulls
 
