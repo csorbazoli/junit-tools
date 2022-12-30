@@ -2,3 +2,7 @@
 org.junit.tools/classes/
 org.junit.tools/test-classes/
 org.junit.tools/.settings/
+
+junit-tools-demo/src/test/java/testutils/TestUtils.java
+
+junit-tools-demo/src/test/java/testutils/TestValueFactory.java
