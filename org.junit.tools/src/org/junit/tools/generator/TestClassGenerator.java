@@ -519,12 +519,12 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	for (Assertion tmlAssertion : tmlTestCase.getAssertion()) {
 	    // base
 	    String base;
-	    if ("{result}".equals(tmlAssertion.getBase())) {
+	    if (tmlAssertion.getBase().contains("{result}")) {
 		if ("".equals(resultVariableName)) {
 		    continue;
 		}
 
-		base = "actual";
+		base = tmlAssertion.getBase().replace("{result}", resultVariableName);
 		baseType = resultType;
 	    } else {
 		base = testBaseVariableName + "." + tmlAssertion.getBase() + "()";
