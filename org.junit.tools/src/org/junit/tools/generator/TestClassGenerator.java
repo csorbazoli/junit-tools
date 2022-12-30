@@ -331,7 +331,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	if (imports.length > 0) {
 	    importAbove = imports[0];
 	    compilationUnit.createImport("org.assertj.core.api.Assertions.assertThat", importAbove, Flags.AccStatic, null);
-	    compilationUnit.createImport("org.assertj.core.api.Assertions.assertThrows", importAbove, Flags.AccStatic, null);
+	    // compilationUnit.createImport("org.assertj.core.api.Assertions.assertThrows",
+	    // importAbove, Flags.AccStatic, null);
 	}
     }
 
@@ -341,7 +342,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param b
      */
     protected void createStandardClassFields(IType type, String testClassName, boolean springTest) throws JavaModelException {
-	type.createField(GeneratorUtils.createAnnoForUnderTest(springTest) + testClassName + " " + UNDER_TEST + ";", null, false, null);
+	if (type.getField(UNDER_TEST) == null) {
+	    type.createField(GeneratorUtils.createAnnoForUnderTest(springTest) + testClassName + " " + UNDER_TEST + ";", null, false, null);
+	}
     }
 
     private boolean createTestMethods(IType type, HashMap<IMethod, Method> methodMap, List<IMethod> methodsToCreate,
