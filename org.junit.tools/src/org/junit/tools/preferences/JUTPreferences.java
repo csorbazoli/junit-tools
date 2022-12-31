@@ -50,6 +50,8 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String defaultValueForJavaBeans = null;
     private static String defaultValueFallback = null;
 
+    private static String[] springAnnotations = null;
+
     public static boolean getPreferenceBoolean(String name) {
 	return getPreferenceStore().getBoolean(name);
     }
@@ -108,6 +110,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	initStaticBindingsMaps();
     }
 
+    public static void setRelevantSpringAnnotations(String[] values) {
+	JUTPreferences.springAnnotations = values;
+    }
+
     protected static void setTestMethodFilterName(String[] testMethodFilterName) {
 	JUTPreferences.testMethodFilterName = testMethodFilterName;
     }
@@ -158,6 +164,13 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 		staticBindingsMapTest.put(testProject, baseProject);
 	    }
 	}
+    }
+
+    public static String[] getRelevantSpringAnnotations() {
+	if (springAnnotations == null) {
+	    springAnnotations = convertToArray(getPreference(STATIC_BINDINGS));
+	}
+	return springAnnotations;
     }
 
     public static Map<String, String> getDefaultValuesByType() {
@@ -409,6 +422,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    return;
 			} else if (event.getProperty() == STATIC_BINDINGS) {
 			    setStaticBindings(convertToArray((String) event
+				    .getNewValue()));
+			    return;
+			} else if (event.getProperty() == SPRING_ANNOTATIONS) {
+			    setRelevantSpringAnnotations(convertToArray((String) event
 				    .getNewValue()));
 			    return;
 			} else if (event.getProperty() == DEFAULT_VALUE_MAPPING) {

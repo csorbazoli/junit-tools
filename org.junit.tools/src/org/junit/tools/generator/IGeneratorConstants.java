@@ -9,7 +9,7 @@ public interface IGeneratorConstants {
 
     public static final String TML_VERSION_ACTUAL = "1.0.0";
 
-    public static final String MOD_PUBLIC = "public";
+    public static final String MOD_PUBLIC_WITH_BLANK = "public ";
     public static final String MOD_PROTECTED = "protected";
     public static final String MOD_PRIVATE = "private";
     public static final String MOD_PACKAGE = "";

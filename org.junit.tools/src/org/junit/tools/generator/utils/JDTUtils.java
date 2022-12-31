@@ -1012,7 +1012,7 @@ public class JDTUtils implements IGeneratorConstants {
 	int methodFlags = method.getFlags();
 
 	if (Flags.isPublic(methodFlags)) {
-	    return MOD_PUBLIC;
+	    return MOD_PUBLIC_WITH_BLANK;
 	} else if (Flags.isProtected(methodFlags)) {
 	    return MOD_PROTECTED;
 	} else if (Flags.isPrivate(methodFlags)) {

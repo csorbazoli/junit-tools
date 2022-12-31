@@ -23,6 +23,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 	// useful settings
 	store.setDefault(TEST_CLASS_ANNOTATIONS, "");
 	store.setDefault(STATIC_BINDINGS, "");
+	store.setDefault(SPRING_ANNOTATIONS, "Service;Component;Configuration;Controller;RestController;Repository");
 
 	store.setDefault(TEST_CLASS_PREFIX, "");
 	store.setDefault(TEST_CLASS_POSTFIX, "Test");

@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IImportDeclaration;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
@@ -62,7 +63,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	String testClassName = utmClassesAndPackages.getTestClassName();
 	// ICompilationUnit baseClass = utmClassesAndPackages.getBaseClass();
 	String baseClassName = utmClassesAndPackages.getBaseClassName();
-	IType type;
+	IType testClassType;
 
 	// begin task
 	int methodSize = tmlTest.getMethod().size();
@@ -81,7 +82,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	monitor.beginTask("", 4 + methodSize);
 
 	// create or update test-class-frame
-	type = createTestClassFrame(testClass, tmlTest, testClassName, baseClassName);
+	testClassType = createTestClassFrame(testClass, tmlTest, testClassName, baseClassName);
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -97,7 +98,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create standard-class-fields
-	createStandardClassFields(type, baseClassName, tmlTest.isSpring());
+	createStandardClassFields(testClassType, baseClassName, tmlTest.isSpring());
+	createMocksForDependencies(testClassType, utmClassesAndPackages.getBaseClass(), tmlTest.isSpring());
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -105,7 +107,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create standard-methods (setup, teardown, ..., only if creation is enabled)
-	createStandardMethods(type, tmlSettings);
+	createStandardMethods(testClassType, tmlSettings);
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -113,7 +115,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-methods
-	if (createTestMethods(type, model.getMethodMap(), model.getMethodsToCreate(), tmlSettings, baseClassName,
+	if (createTestMethods(testClassType, model.getMethodMap(), model.getMethodsToCreate(), tmlSettings, baseClassName,
 		monitor, increment)) {
 	    return null;
 	}
@@ -234,7 +236,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     private String getPublicModifierIfNeeded() {
-	return JUTPreferences.getJUnitVersion() == 4 ? MOD_PUBLIC : "";
+	return JUTPreferences.getJUnitVersion() == 4 ? MOD_PUBLIC_WITH_BLANK : "";
     }
 
     protected String getTestClassComment() {
@@ -343,7 +345,30 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      */
     protected void createStandardClassFields(IType type, String testClassName, boolean springTest) throws JavaModelException {
 	if (GeneratorUtils.findField(type, UNDER_TEST) == null) {
-	    type.createField(GeneratorUtils.createAnnoForUnderTest(springTest) + testClassName + " " + UNDER_TEST + ";", null, false, null);
+	    type.createField(GeneratorUtils.createAnnoForUnderTest(springTest) + getPublicModifierIfNeeded() +
+		    testClassName + " " + UNDER_TEST + ";", null, false, null);
+	}
+    }
+
+    /**
+     * Create @Mock or @MockBean for each field of baseClass that has @Autowired
+     * annotation or is a final, non-initialized field.
+     * 
+     * Also check if the baseClass has a Spring annotation
+     * (e.g. @Component, @Service, @Controller or similar)
+     */
+    protected void createMocksForDependencies(IType testClassType, ICompilationUnit baseClass, boolean spring) throws JavaModelException {
+	if (GeneratorUtils.hasSpringAnnotation(baseClass)) {
+	    for (IField field : GeneratorUtils.findInjectedFields(baseClass)) {
+		createMockField(testClassType, field.getTypeSignature(), field.getElementName(), spring);
+	    }
+	}
+    }
+
+    private void createMockField(IType testClassType, String mockClass, String mockName, boolean springTest) throws JavaModelException {
+	if (GeneratorUtils.findField(testClassType, mockName) == null) {
+	    testClassType.createField(GeneratorUtils.createAnnoForDependency(springTest) + getPublicModifierIfNeeded() +
+		    mockClass + " " + mockName + ";", null, false, null);
 	}
     }
 

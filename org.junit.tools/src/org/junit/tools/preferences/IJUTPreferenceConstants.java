@@ -26,6 +26,7 @@ public interface IJUTPreferenceConstants {
     public static final String MOCK_FRAMEWORK = "MOCK_FRAMEWORK";
     public static final String TEST_CLASS_ANNOTATIONS = "TEST_CLASS_ANNOTATIONS";
     public static final String STATIC_BINDINGS = "STATIC_BINDINGS";
+    public static final String SPRING_ANNOTATIONS = "SPRING_ANNOTATIONS";
 
     public static final String DEFAULT_VALUE_MAPPING = "DEFAULT_VALUE_MAPPING";
     public static final String DEFAULT_VALUE_JAVA_BEANS = "DEFAULT_VALUE_JAVA_BEANS";

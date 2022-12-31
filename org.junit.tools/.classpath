@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="lib/jackson-databind-2.14.1.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.14.1.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.14.1.jar"/>
+	<classpathentry kind="lib" path="lib/assertj-core-3.23.1.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

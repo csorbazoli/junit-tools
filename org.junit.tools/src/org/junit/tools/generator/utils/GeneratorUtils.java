@@ -1,8 +1,11 @@
 package org.junit.tools.generator.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -235,20 +238,16 @@ public class GeneratorUtils implements IGeneratorConstants {
 		+ RETURN;
     }
 
-    public static HashMap<MethodRef, IMethod> getExistingTestMethods(
-	    ICompilationUnit cuBase, ICompilationUnit cu)
-	    throws JavaModelException {
+    public static HashMap<MethodRef, IMethod> getExistingTestMethods(ICompilationUnit cuBase, ICompilationUnit cu) throws JavaModelException {
 	return getExistingTestMethods(cuBase, cu, false);
     }
 
-    public static HashMap<MethodRef, IMethod> getExistingTestMethods(
-	    ICompilationUnit cu) throws JavaModelException {
+    public static HashMap<MethodRef, IMethod> getExistingTestMethods(ICompilationUnit cu) throws JavaModelException {
 	return getExistingTestMethods(null, cu, false);
     }
 
-    public static HashMap<MethodRef, IMethod> getExistingTestMethods(
-	    ICompilationUnit cuBase, ICompilationUnit cuWithRef,
-	    boolean withByName) throws JavaModelException {
+    public static HashMap<MethodRef, IMethod> getExistingTestMethods(ICompilationUnit cuBase, ICompilationUnit cuWithRef, boolean withByName)
+	    throws JavaModelException {
 	HashMap<MethodRef, IMethod> existingMethods = new HashMap<MethodRef, IMethod>();
 
 	if (cuWithRef == null) {
@@ -300,9 +299,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return existingMethods;
     }
 
-    private static boolean matchesMethodRef(MethodRef methodRefToCheck,
-	    IType typeBase, Set<MethodRef> allMethodRefs)
-	    throws JavaModelException {
+    private static boolean matchesMethodRef(MethodRef methodRefToCheck, IType typeBase, Set<MethodRef> allMethodRefs) throws JavaModelException {
 
 	List<IMethod> baseMethodsWithMatchingName = new ArrayList<IMethod>();
 
@@ -359,8 +356,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return false;
     }
 
-    public static boolean isMethodRefEqual(IMethod method, MethodRef methodRef)
-	    throws JavaModelException {
+    public static boolean isMethodRefEqual(IMethod method, MethodRef methodRef) throws JavaModelException {
 	return method.getElementName().equals(methodRef.getName())
 		&& method.getSignature().equals(methodRef.getSignature());
     }
@@ -401,9 +397,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return null;
     }
 
-    public static List<IMethod> getMethodsToCreate(
-	    HashMap<MethodRef, IMethod> existingMethods,
-	    Vector<IMethod> checkedMethods) throws JavaModelException {
+    public static List<IMethod> getMethodsToCreate(HashMap<MethodRef, IMethod> existingMethods, Vector<IMethod> checkedMethods) throws JavaModelException {
 	List<IMethod> methodsToCreate = new ArrayList<IMethod>();
 
 	if (existingMethods == null || existingMethods.size() == 0) {
@@ -434,9 +428,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return methodsToCreate;
     }
 
-    public static boolean checkMethodReference(String baseMethodName,
-	    String baseMethodSignature, IMethod methodToCheck)
-	    throws JavaModelException {
+    public static boolean checkMethodReference(String baseMethodName, String baseMethodSignature, IMethod methodToCheck) throws JavaModelException {
 	IAnnotation anno = methodToCheck.getAnnotation("MethodRef");
 
 	if (anno == null || !anno.exists()) {
@@ -471,9 +463,8 @@ public class GeneratorUtils implements IGeneratorConstants {
 
     }
 
-    public static boolean checkMethodReferenceAndName(String baseMethodName,
-	    String baseMethodSignature, String nameToCheck,
-	    IMethod methodToCheck) throws JavaModelException {
+    public static boolean checkMethodReferenceAndName(String baseMethodName, String baseMethodSignature, String nameToCheck, IMethod methodToCheck)
+	    throws JavaModelException {
 	// check by method-reference
 	if (checkMethodReference(baseMethodName, baseMethodSignature,
 		methodToCheck)) {
@@ -490,9 +481,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return false;
     }
 
-    public static void checkSignatures(
-	    HashMap<MethodRef, IMethod> existingMethods, ICompilationUnit cuBase)
-	    throws JavaModelException {
+    public static void checkSignatures(HashMap<MethodRef, IMethod> existingMethods, ICompilationUnit cuBase) throws JavaModelException {
 
 	IType typeBase = cuBase.findPrimaryType();
 
@@ -507,8 +496,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 
     }
 
-    public static IMethod findMethod(Collection<IMethod> methods,
-	    MethodRef methodRef) throws JavaModelException {
+    public static IMethod findMethod(Collection<IMethod> methods, MethodRef methodRef) throws JavaModelException {
 	boolean nameMatched;
 	IMethod nameMatchedMethod = null;
 	int nameMatchedCounter = 0;
@@ -549,14 +537,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return null;
     }
 
-    /**
-     * @param methodRefs
-     * @param method
-     * @return the
-     * @throws JavaModelException
-     */
-    public static IMethod findMethod(Collection<MethodRef> methodRefs,
-	    IMethod method) throws JavaModelException {
+    public static IMethod findMethod(Collection<MethodRef> methodRefs, IMethod method) throws JavaModelException {
 	for (MethodRef methodRef : methodRefs) {
 	    if (methodRef.getName().equals(method.getElementName())
 		    && methodRef.getSignature().equals(method.getSignature())) {
@@ -567,42 +548,6 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return null;
     }
 
-    public static List<IMethod> getMethodsToDelete(
-	    HashMap<MethodRef, IMethod> existingMethods,
-	    Vector<IMethod> checkedMethods) throws JavaModelException {
-	List<IMethod> methodsToDelete = new ArrayList<IMethod>();
-	boolean found;
-
-	if (existingMethods == null) {
-	    return methodsToDelete;
-	}
-
-	MethodRef methodRef;
-	for (Entry<MethodRef, IMethod> method : existingMethods.entrySet()) {
-	    found = false;
-	    methodRef = method.getKey();
-
-	    if (methodRef.isUnresolvedConflict()) {
-		continue;
-	    }
-
-	    for (IMethod checkedMethod : checkedMethods) {
-		if (methodRef.isEquals(checkedMethod)) {
-		    found = true;
-		    break;
-
-		}
-	    }
-
-	    if (!found) {
-		methodsToDelete.add(method.getValue());
-	    }
-
-	}
-
-	return methodsToDelete;
-    }
-
     /**
      * Searches the closest method.
      * 
@@ -610,8 +555,7 @@ public class GeneratorUtils implements IGeneratorConstants {
      * @param tmlMethods
      * @return closest method
      */
-    public static Method getClosestMethod(IMethod method,
-	    List<Method> tmlMethods) {
+    public static Method getClosestMethod(IMethod method, List<Method> tmlMethods) {
 	Method tmlMethodTmp = null;
 	for (Method tmlMethod : tmlMethods) {
 	    if (compareMethods(method, tmlMethod)) {
@@ -662,7 +606,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return true;
     }
 
-    public static Object findField(IType type, String name) throws JavaModelException {
+    public static IField findField(IType type, String name) throws JavaModelException {
 	IField[] fields = type.getFields();
 	if (fields != null && fields.length > 0) {
 	    for (IField field : fields) {
@@ -672,6 +616,42 @@ public class GeneratorUtils implements IGeneratorConstants {
 	    }
 	}
 	return null;
+    }
+
+    public static boolean hasSpringAnnotation(ICompilationUnit baseClass) throws JavaModelException {
+	Set<String> relevantSpringAnnotations = new HashSet<>(Arrays.asList(JUTPreferences.getRelevantSpringAnnotations()));
+	for (IType baseType : baseClass.getTypes()) {
+	    for (IAnnotation annotation : baseType.getAnnotations()) {
+		System.out.println("\tAnnotation: " + annotation);
+		if (relevantSpringAnnotations.contains(annotation.getElementName())) {
+		    return true;
+		}
+	    }
+	}
+	return false;
+    }
+
+    public static IField[] findInjectedFields(ICompilationUnit baseClass) throws JavaModelException {
+	List<IField> ret = new LinkedList<IField>();
+	IType primaryType = baseClass.findPrimaryType();
+	// Autowired fields
+	for (IField field : primaryType.getFields()) {
+	    if (isAutowired(field)) {
+		ret.add(field);
+	    }
+	}
+	// or values injected into the constructor
+	// primaryType.getMethods();
+	return ret.toArray(new IField[0]);
+    }
+
+    private static boolean isAutowired(IField field) throws JavaModelException {
+	for (IAnnotation annotation : field.getAnnotations()) {
+	    if ("Autowired".equals(annotation.getElementName())) {
+		return true;
+	    }
+	}
+	return false;
     }
 
 }
