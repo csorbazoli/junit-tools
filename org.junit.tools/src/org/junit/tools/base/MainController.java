@@ -152,7 +152,7 @@ public class MainController implements IGeneratorConstants {
 		return false;
 	    }
 
-	    model.getTmlTest().setSpring(springTest);
+	    model.getTmlTest().setSpring(springTest && GeneratorUtils.hasSpringAnnotation(classesAndPackages.getBaseClass()));
 
 	    // generate test-cases (in tml)
 	    try {

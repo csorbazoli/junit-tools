@@ -352,7 +352,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
     /**
      * Create @Mock or @MockBean for each field of baseClass that has @Autowired
-     * annotation or is a final, non-initialized field.
+     * annotation or injected by constructor.
      * 
      * Also check if the baseClass has a Spring annotation
      * (e.g. @Component, @Service, @Controller or similar)
