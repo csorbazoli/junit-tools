@@ -1,5 +1,6 @@
 package com.example.junittoolsdemo.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -11,11 +12,8 @@ import com.example.junittoolsdemo.models.DemoObject;
 @Service
 public class DemoService {
 
-	private final DemoComponent component;
-
-	public DemoService(DemoComponent component) {
-		this.component = component;
-	}
+	@Autowired
+	private DemoComponent component;
 
 	public String doSomething(String name) {
 		return name + "#" + component.doCalculation(name.length());

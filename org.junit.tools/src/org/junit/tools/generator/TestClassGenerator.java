@@ -2,12 +2,12 @@ package org.junit.tools.generator;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IImportDeclaration;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
@@ -359,8 +359,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      */
     protected void createMocksForDependencies(IType testClassType, ICompilationUnit baseClass, boolean spring) throws JavaModelException {
 	if (GeneratorUtils.hasSpringAnnotation(baseClass)) {
-	    for (IField field : GeneratorUtils.findInjectedFields(baseClass)) {
-		createMockField(testClassType, field.getTypeSignature(), field.getElementName(), spring);
+	    for (Map.Entry<String, String> fieldNameAndType : GeneratorUtils.findInjectedFields(baseClass).entrySet()) {
+		createMockField(testClassType, fieldNameAndType.getValue(), fieldNameAndType.getKey(), spring);
 	    }
 	}
     }

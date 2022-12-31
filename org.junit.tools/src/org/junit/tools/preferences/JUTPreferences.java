@@ -168,7 +168,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static String[] getRelevantSpringAnnotations() {
 	if (springAnnotations == null) {
-	    springAnnotations = convertToArray(getPreference(STATIC_BINDINGS));
+	    springAnnotations = convertToArray(getPreference(SPRING_ANNOTATIONS));
 	}
 	return springAnnotations;
     }

@@ -5,10 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
@@ -622,7 +623,6 @@ public class GeneratorUtils implements IGeneratorConstants {
 	Set<String> relevantSpringAnnotations = new HashSet<>(Arrays.asList(JUTPreferences.getRelevantSpringAnnotations()));
 	for (IType baseType : baseClass.getTypes()) {
 	    for (IAnnotation annotation : baseType.getAnnotations()) {
-		System.out.println("\tAnnotation: " + annotation);
 		if (relevantSpringAnnotations.contains(annotation.getElementName())) {
 		    return true;
 		}
@@ -631,18 +631,25 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return false;
     }
 
-    public static IField[] findInjectedFields(ICompilationUnit baseClass) throws JavaModelException {
-	List<IField> ret = new LinkedList<IField>();
+    public static Map<String, String> findInjectedFields(ICompilationUnit baseClass) throws JavaModelException {
+	Map<String, String> ret = new TreeMap<>();
 	IType primaryType = baseClass.findPrimaryType();
 	// Autowired fields
 	for (IField field : primaryType.getFields()) {
 	    if (isAutowired(field)) {
-		ret.add(field);
+		ret.put(field.getElementName(), Signature.getSignatureSimpleName(field.getTypeSignature()));
 	    }
 	}
 	// or values injected into the constructor
-	// primaryType.getMethods();
-	return ret.toArray(new IField[0]);
+	String className = primaryType.getElementName();
+	for (IMethod method : primaryType.getMethods()) {
+	    if (className.equals(method.getElementName())) {
+		for (ILocalVariable constructorParam : method.getParameters()) {
+		    ret.put(constructorParam.getElementName(), Signature.getSignatureSimpleName(constructorParam.getTypeSignature()));
+		}
+	    }
+	}
+	return ret;
     }
 
     private static boolean isAutowired(IField field) throws JavaModelException {
