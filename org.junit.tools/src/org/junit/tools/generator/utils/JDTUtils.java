@@ -316,7 +316,7 @@ public class JDTUtils implements IGeneratorConstants {
     public static IPackageFragment getPackage(IJavaProject javaProject,
 	    String name, boolean createIfNotExists) throws CoreException,
 	    JUTWarning {
-	return getPackage(javaProject, "src", name, createIfNotExists);
+	return getPackage(javaProject, "src/main/java", name, createIfNotExists);
     }
 
     public static IPackageFragment getPackage(IJavaProject javaProject,
@@ -335,7 +335,7 @@ public class JDTUtils implements IGeneratorConstants {
 	String srcFolderName = "";
 
 	if (srcFolder == null || "".equals(srcFolder)) {
-	    srcFolderName = "src";
+	    srcFolderName = "src/main/java";
 	} else {
 	    srcFolderName = srcFolder;
 	}
@@ -419,7 +419,7 @@ public class JDTUtils implements IGeneratorConstants {
 	    throws CoreException {
 	// create default folder
 	if (folder == null) {
-	    folder = javaProject.getProject().getFolder("src");
+	    folder = javaProject.getProject().getFolder("src/main/java");
 	}
 
 	// create only if exists
@@ -536,7 +536,7 @@ public class JDTUtils implements IGeneratorConstants {
 	javaProject.save(null, true);
 
 	// create source folder
-	IFolder sourceFolder = project.getFolder("src");
+	IFolder sourceFolder = project.getFolder("src/main/java");
 	if (!sourceFolder.exists()) {
 	    sourceFolder.create(false, true, null);
 
@@ -565,8 +565,7 @@ public class JDTUtils implements IGeneratorConstants {
 	    }
 
 	    // add source-path
-	    buildPath.add(JavaCore.newSourceEntry(javaProject.getPath().append(
-		    "src"))); //$NON-NLS-1$
+	    buildPath.add(JavaCore.newSourceEntry(javaProject.getPath().append("src/main/java"))); //$NON-NLS-1$
 	    // add base-project-path
 	    buildPath.add(JavaCore.newProjectEntry(baseProject.getPath()));
 

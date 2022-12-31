@@ -233,7 +233,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
     protected void setExampleValueFolder() {
 
 	if ("".equals(fieldSrcFolder.getStringValue())
-		|| "src".equals(fieldSrcFolder.getStringValue())) {
+		|| "src/main/java".equals(fieldSrcFolder.getStringValue())) {
 	    srcFolderIsEqual = true;
 
 	    folderExample

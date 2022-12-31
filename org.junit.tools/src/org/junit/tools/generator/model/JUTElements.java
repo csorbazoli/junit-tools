@@ -437,7 +437,7 @@ public class JUTElements {
 		}
 	    } else {
 		String testSourceFolderName = JUTPreferences.getTestSourceFolderName();
-		if ("src".equals(testSourceFolderName) || "".equals(testSourceFolderName)) {
+		if ("src/main/java".equals(testSourceFolderName) || "".equals(testSourceFolderName)) {
 		    // same folder as base-class - no difference to
 		    // base-class
 		    tmpProjects.setBaseProjectSelected(true);
@@ -656,7 +656,7 @@ public class JUTElements {
 	    IPath onlyFolderPathWithoutTest = onlyFolderPath.removeLastSegments(1);
 
 	    // add default source folder name for base
-	    basePath = onlyFolderPathWithoutTest.append("src");
+	    basePath = onlyFolderPathWithoutTest.append("src/main/java");
 
 	    // search for relevant folders
 	    IPath pathToCompare;
@@ -670,7 +670,7 @@ public class JUTElements {
 
 	    // if the setting is default, the name of source folder are equal
 	    String testSourceFolderName = JUTPreferences.getTestSourceFolderName();
-	    if ("".equals(testSourceFolderName) || "src".equals(testSourceFolderName)) {
+	    if ("".equals(testSourceFolderName) || "src/main/java".equals(testSourceFolderName)) {
 		for (IPackageFragmentRoot root : baseProject.getPackageFragmentRoots()) {
 		    if (root.getPath().removeFirstSegments(1).toString().equals(onlyFolderPath.toString())) {
 			baseSourceFolders.add(root);
@@ -682,7 +682,7 @@ public class JUTElements {
 
 	// set default source folder
 	if (baseSourceFolders.size() == 0) {
-	    IFolder folder = baseProject.getProject().getFolder("src");
+	    IFolder folder = baseProject.getProject().getFolder("src/main/java");
 	    baseSourceFolders.add(baseProject.getPackageFragmentRoot(folder));
 	}
 
@@ -701,11 +701,11 @@ public class JUTElements {
 	String testSourceFolderName = JUTPreferences.getTestSourceFolderName();
 
 	if ("".equals(testSourceFolderName)) {
-	    testSourceFolderName = "src";
+	    testSourceFolderName = "src/test/java";
 	}
 
 	// set source folder equal to source folder of base
-	if (baseRoot != null && "src".equals(testSourceFolderName)) {
+	if (baseRoot != null && "src/main/java".equals(testSourceFolderName)) {
 	    String completePath = baseRoot.getPath().toString();
 	    String projectPath = baseRoot.getJavaProject().getPath().toString();
 	    String sourcePath = completePath.replace(projectPath, "");
