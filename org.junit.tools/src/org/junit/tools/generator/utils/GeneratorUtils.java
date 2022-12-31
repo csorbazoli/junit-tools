@@ -26,6 +26,7 @@ import org.junit.tools.base.MethodRef;
 import org.junit.tools.generator.IGeneratorConstants;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.model.tml.Param;
+import org.junit.tools.preferences.IJUTPreferenceConstants;
 import org.junit.tools.preferences.JUTPreferences;
 
 /**
@@ -220,23 +221,30 @@ public class GeneratorUtils implements IGeneratorConstants {
     }
 
     public static String createAnnoExtendWith(String extension) {
-	return ANNO_EXTEND_WITH + "(" + extension + ".class)"
-		+ RETURN;
+	return StringUtils.isNotBlank(extension) ? ANNO_EXTEND_WITH + "(" + extension + ".class)"
+		+ RETURN : "";
     }
 
     public static String createAnnoRunWith(String extension) {
-	return ANNO_RUN_WITH + "(" + extension + ".class)"
-		+ RETURN;
+	return StringUtils.isNotBlank(extension) ? ANNO_RUN_WITH + "(" + extension + ".class)"
+		+ RETURN : "";
     }
 
     public static String createAnnoForUnderTest(boolean springTest) {
-	return (springTest ? ANNO_AUTOWIRED : ANNO_INJECTMOCKS)
+	if (springTest) {
+	    return ANNO_AUTOWIRED + RETURN;
+	}
+	return (isUsingEasyMock() ? ANNO_TESTSUBJECT : ANNO_INJECTMOCKS)
 		+ RETURN;
     }
 
     public static String createAnnoForDependency(boolean springTest) {
 	return (springTest ? ANNO_MOCKBEAN : ANNO_MOCK)
 		+ RETURN;
+    }
+
+    public static String createAnnoRule() {
+	return ANNO_RULE + RETURN;
     }
 
     public static HashMap<MethodRef, IMethod> getExistingTestMethods(ICompilationUnit cuBase, ICompilationUnit cu) throws JavaModelException {
@@ -659,6 +667,14 @@ public class GeneratorUtils implements IGeneratorConstants {
 	    }
 	}
 	return false;
+    }
+
+    public static boolean isUsingMockito() {
+	return IJUTPreferenceConstants.MOCKFW_MOCKITO.equals(JUTPreferences.getMockFramework());
+    }
+
+    public static boolean isUsingEasyMock() {
+	return IJUTPreferenceConstants.MOCKFW_EASYMOCK.equals(JUTPreferences.getMockFramework());
     }
 
 }

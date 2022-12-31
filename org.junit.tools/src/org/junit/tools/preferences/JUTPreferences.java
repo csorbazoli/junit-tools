@@ -27,6 +27,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String testMethodPostfix = null;
     private static String testClassPrefix = null;
     private static String testClassPostfix = null;
+    private static String testClassSuperType = null;
     private static String springTestClassPostfix = null;
     private static Boolean gherkinStyleEnabled = true;
     private static Boolean showSettingsBeforeGenerate = false;
@@ -246,6 +247,17 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	JUTPreferences.testMethodPrefix = testMethodPrefix;
     }
 
+    protected static void setTestClassSuperType(String newValue) {
+	JUTPreferences.testClassSuperType = newValue;
+    }
+
+    public static String getTestClassSuperType() {
+	if (testClassSuperType == null) {
+	    testClassSuperType = getPreference(TEST_CLASS_SUPER_TYPE);
+	}
+	return testClassSuperType;
+    }
+
     protected static void setTestClassPrefix(String newValue) {
 	JUTPreferences.testClassPrefix = newValue;
     }
@@ -396,6 +408,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    return;
 			} else if (event.getProperty() == TEST_CLASS_POSTFIX) {
 			    setTestClassPostfix((String) event.getNewValue());
+			    return;
+			} else if (event.getProperty() == TEST_CLASS_SUPER_TYPE) {
+			    setTestClassSuperType((String) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == SPRING_TEST_CLASS_POSTFIX) {
 			    setSpringTestClassPostfix((String) event.getNewValue());

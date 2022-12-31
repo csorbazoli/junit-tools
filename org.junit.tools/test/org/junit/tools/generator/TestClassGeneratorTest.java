@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.Before;
@@ -39,6 +40,7 @@ public class TestClassGeneratorTest {
     @Before
     public void setupTest() {
 	underTest.gherkinStyle = true;
+	JUTPreferences.setJUnitVersion(5);
     }
 
     @Test
@@ -333,8 +335,7 @@ public class TestClassGeneratorTest {
 	// when
 	String actual = underTest.createTestClassFrameAnnotations(tmlTest, "SomeClass");
 	// then
-	assertEquals("@RunWith(SpringRunner.class)\n"
-		+ "@SpringBootTest\n"
+	assertEquals("@SpringBootTest\n"
 		+ "@ActiveProfiles(\"test\")\n"
 		+ "@ContextConfiguration(classes = { SomeClass.class })\n",
 		actual);
@@ -351,8 +352,7 @@ public class TestClassGeneratorTest {
 	// when
 	String actual = underTest.createTestClassFrameAnnotations(tmlTest, "SomeClass");
 	// then
-	assertEquals("@ExtendWith(SpringExtension.class)\n"
-		+ "@SpringBootTest\n"
+	assertEquals("@SpringBootTest\n"
 		+ "@ActiveProfiles(\"test\")\n"
 		+ "@ContextConfiguration(classes = { SomeClass.class })\n",
 		actual);
@@ -433,7 +433,7 @@ public class TestClassGeneratorTest {
 	// given
 	IType type = Mockito.mock(IType.class);
 	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
-	ICompilationUnit baseClass = createSpringClassWithAutowiredField("RestController", "SomeService", "someService");
+	ICompilationUnit baseClass = createSpringClassWithAutowiredField("RestController", "QSomeService;", "someService");
 
 	JUTPreferences.setRelevantSpringAnnotations(new String[] { "Controller", "RestController", "Service", "Component" });
 	// when
@@ -461,6 +461,8 @@ public class TestClassGeneratorTest {
 	IAnnotation fieldAnnotation = mock(IAnnotation.class);
 	when(exitingField.getAnnotations()).thenReturn(new IAnnotation[] { fieldAnnotation });
 	when(fieldAnnotation.getElementName()).thenReturn("Autowired");
+
+	when(primaryType.getMethods()).thenReturn(new IMethod[] {});
 	return baseClass;
     }
 

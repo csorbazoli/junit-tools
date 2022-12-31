@@ -236,7 +236,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     private String getPublicModifierIfNeeded() {
-	return JUTPreferences.getJUnitVersion() == 4 ? MOD_PUBLIC_WITH_BLANK : "";
+	return isUsingJunit4() ? MOD_PUBLIC_WITH_BLANK : "";
     }
 
     protected String getTestClassComment() {
@@ -260,15 +260,20 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// TODO depending on the method/class we might need different annotations
 	// none needed for class with static methods only
 	// JUTPreferences.getMockFramework() = mockito or easymock
-	if (JUTPreferences.getJUnitVersion() == 4) {
-	    annotations.append(GeneratorUtils.createAnnoRunWith(isSpringTest ? "SpringRunner" : "MockitoJUnitRunner"));
-	} else {
-	    annotations.append(GeneratorUtils.createAnnoExtendWith(isSpringTest ? "SpringExtension" : "MockitoExtension"));
-	}
 	if (isSpringTest) {
 	    annotations.append("@SpringBootTest").append(RETURN);
 	    annotations.append("@ActiveProfiles(\"test\")").append(RETURN);
 	    annotations.append("@ContextConfiguration(classes = { ").append(baseClassName).append(".class })").append(RETURN);
+	} else if (GeneratorUtils.isUsingEasyMock()) {
+	    if (isUsingJunit4()) {
+		annotations.append(GeneratorUtils.createAnnoRunWith("EasyMockRunner"));
+	    } else {
+		annotations.append(GeneratorUtils.createAnnoExtendWith("EasyMockExtension"));
+	    }
+	} else if (isUsingJunit4()) {
+	    annotations.append(GeneratorUtils.createAnnoRunWith("MockitoJUnitRunner"));
+	} else {
+	    annotations.append(GeneratorUtils.createAnnoExtendWith("MockitoExtension"));
 	}
 
 	String[] testClassAnnotations = JUTPreferences.getTestClassAnnotations();
@@ -294,23 +299,34 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     private void createStandardImports(ICompilationUnit compilationUnit, Test tmlTest) throws JavaModelException {
 
 	compilationUnit.createImport("java.util.*", null, null);
-	if (JUTPreferences.getJUnitVersion() == 4) {
+	if (isUsingJunit4()) {
 	    compilationUnit.createImport("org.junit.Test", null, null);
 	    compilationUnit.createImport("org.junit.runner.RunWith", null, null);
-	    // TODO JUTPreferences.getMockFramework() - EasyMock?
-	    compilationUnit.createImport("org.mockito.junit.runner.MockitoJUnitRunner", null, null);
+	    if (GeneratorUtils.isUsingEasyMock()) {
+		compilationUnit.createImport("org.easynmock.*", null, null);
+		// prefer EasyMockRunner instead of Rule
+	    } else {
+		compilationUnit.createImport("org.mockito.junit.runner.MockitoJUnitRunner", null, null);
+	    }
 	} else { // default to JUnit5
 	    compilationUnit.createImport("org.junit.jupiter.api.Test", null, null);
 	    compilationUnit.createImport("org.junit.jupiter.api.extension.ExtendWith", null, null);
-	    // TODO JUTPreferences.getMockFramework() - EasyMock?
-	    compilationUnit.createImport("org.mockito.junit.jupiter.MockitoExtension", null, null);
+	    if (GeneratorUtils.isUsingEasyMock()) {
+		compilationUnit.createImport("org.easynmock.*", null, null);
+		// compilationUnit.createImport("org.easymock.EasyMockExtension", null, null)
+	    } else {
+		compilationUnit.createImport("org.mockito.junit.jupiter.MockitoExtension", null, null);
+	    }
 	}
-	compilationUnit.createImport("org.mockito.InjectMocks", null, null);
-	compilationUnit.createImport("org.mockito.Mock", null, null);
+	if (GeneratorUtils.isUsingMockito()) {
+	    compilationUnit.createImport("org.mockito.InjectMocks", null, null);
+	    compilationUnit.createImport("org.mockito.Mock", null, null);
+	}
+	// for EasyMock we need TestSubject
 
 	if (tmlTest.isSpring()) {
 	    // SpringRunner/SpringExtension
-	    if (JUTPreferences.getJUnitVersion() == 4) {
+	    if (isUsingJunit4()) {
 		compilationUnit.createImport("org.springframework.test.context.junit4.SpringRunner", null, null);
 	    } else {
 		compilationUnit.createImport("org.springframework.test.context.junit.jupiter.SpringExtension", null, null);
@@ -325,6 +341,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	if (tmlTest.getSettings().isLogger()) {
 	    compilationUnit.createImport("lombok.extern.slf4j.Slf4j", null, null);
 	}
+    }
+
+    private boolean isUsingJunit4() {
+	return JUTPreferences.getJUnitVersion() == 4;
     }
 
     private void createStandardStaticImports(ICompilationUnit compilationUnit) throws JavaModelException {

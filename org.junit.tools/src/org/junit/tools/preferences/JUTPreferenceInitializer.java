@@ -31,6 +31,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 
 	store.setDefault(TEST_METHOD_PREFIX, "test");
 	store.setDefault(TEST_METHOD_POSTFIX, "");
+	store.setDefault(TEST_CLASS_SUPER_TYPE, "");
 
 	store.setDefault(TEST_METHOD_FILTER_NAME, "");
 	store.setDefault(TEST_METHOD_FILTER_MODIFIER, DEFAULT_METHOD_FILTER_MODIFIER);
@@ -40,7 +41,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 
 	// Important settings
 	store.setDefault(TEST_SOURCE_FOLDER_NAME, "src/test/java");
-	store.setDefault(MOCK_FRAMEWORK, "mockito"); // should we support EasyMock as well?
+	store.setDefault(MOCK_FRAMEWORK, MOCKFW_MOCKITO); // should we support EasyMock as well?
 	store.setDefault(GHERKIN_STYLE_ENABLED, true);
 	// settings to be implemented/used
 	store.setDefault(JUNIT_VERSION, 5);

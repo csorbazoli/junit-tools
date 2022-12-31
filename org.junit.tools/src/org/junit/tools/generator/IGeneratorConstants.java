@@ -38,9 +38,11 @@ public interface IGeneratorConstants {
     public static final String ANNO_EXTEND_WITH = "@ExtendWith";
     public static final String ANNO_RUN_WITH = "@RunWith";
     public static final String ANNO_INJECTMOCKS = "@InjectMocks";
+    public static final String ANNO_TESTSUBJECT = "@TestSubject";
     public static final String ANNO_AUTOWIRED = "@Autowired";
     public static final String ANNO_MOCK = "@Mock";
     public static final String ANNO_MOCKBEAN = "@MockBean";
+    public static final String ANNO_RULE = "@Rule";
 
     public static final String ANNO_METHOD_REF_NAME = "MethodRef";
     public static final String ANNO_METHOD_REF = "@";
