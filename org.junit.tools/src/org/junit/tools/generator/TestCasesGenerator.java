@@ -36,7 +36,10 @@ public class TestCasesGenerator {
 	    testCase.setTestBase("");
 	    testCase.setName("default test");
 
-	    testCase.getAssertion().add(createDefaultAssertion(tmlMethod));
+	    Assertion assertion = createDefaultAssertion(tmlMethod);
+	    if (assertion != null) {
+		testCase.getAssertion().add(assertion);
+	    }
 
 	    testCase.getParamAssignments().addAll(createParamAssignments(tmlMethod));
 
@@ -58,6 +61,9 @@ public class TestCasesGenerator {
     }
 
     private Assertion createDefaultAssertion(Method tmlMethod) {
+	if (tmlMethod.getResult() == null) {
+	    return null;
+	}
 	Assertion defaultAssertion = new Assertion();
 	defaultAssertion.setBaseType(tmlMethod.getResult().getType());
 	defaultAssertion.setType(AssertionType.EQUALS_J5);

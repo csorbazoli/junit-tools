@@ -559,11 +559,21 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     protected void createAssertionsMethodBody(StringBuilder sbTestMethodBody, String resultVariableName,
 	    String resultType, String testBaseVariableName, TestCase tmlTestCase) {
 
-	String baseType;
-
+	if (isGherkinStyle()) {
+	    sbTestMethodBody.append(RETURN).append("// then");
+	}
+	if (tmlTestCase.getAssertion().isEmpty()) {
+	    sbTestMethodBody.append(RETURN).append("// TODO check for expected side effect (i.e. service call, changed parameter or exception thrown)")
+		    .append(RETURN).append("// verify(mock).methodcall();")
+		    .append(RETURN)
+		    .append("// assertThat(TestUtils.objectToJson(param)).isEqualTo(TestUtils.readTestFile(\"someMethod/ParamType_updated.json\"));")
+		    .append(RETURN).append("// assertThrows(SomeException.class, () -> underTest.someMethod());");
+	    return;
+	}
 	for (Assertion tmlAssertion : tmlTestCase.getAssertion()) {
 	    // base
 	    String base;
+	    String baseType;
 	    if (tmlAssertion.getBase().contains("{result}")) {
 		if ("".equals(resultVariableName)) {
 		    continue;
@@ -580,9 +590,6 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    AssertionType type = tmlAssertion.getType();
 	    String assertionType = createAssertionType(type, baseType);
 
-	    if (isGherkinStyle()) {
-		sbTestMethodBody.append(RETURN).append("// then");
-	    }
 	    // Assertion
 	    if (type.isJUnit5()) {
 		sbTestMethodBody.append(RETURN + "assertThat(" + base + ").");

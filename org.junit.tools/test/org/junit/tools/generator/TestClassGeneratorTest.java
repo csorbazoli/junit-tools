@@ -1,5 +1,6 @@
 package org.junit.tools.generator;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -114,6 +115,21 @@ public class TestClassGeneratorTest {
 		"assertThat(actual).withFailMessage(\"testedMethod: test message\").isEqualTo(\"test value\");",
 		sbTestMethodBody.toString());
 	// + "Assert.assertThat(\"testedMethod: test message\", baseVar.testBase());"
+    }
+
+    @Test
+    public void testCreateAssertionsMethodBody_noAssertionsForVoidMethod() {
+	// given
+	StringBuilder sbTestMethodBody = new StringBuilder();
+	TestCase testCase = new TestCase();
+	testCase.setName("testedMethod");
+	testCase.setTestBase("testBaseProperty");
+	// when
+	underTest.createAssertionsMethodBody(sbTestMethodBody, "actual", "String", "actual", testCase);
+	// then
+	assertThat(sbTestMethodBody).startsWith("\n"
+		+ "// then\n" +
+		"// TODO");
     }
 
     @Test
