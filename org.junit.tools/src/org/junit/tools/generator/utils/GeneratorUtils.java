@@ -627,11 +627,19 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return null;
     }
 
+    public static boolean isSpringController(ICompilationUnit baseClass) throws JavaModelException {
+	return hasAnyAnnotationOf(baseClass, Arrays.asList("RestController", "Controller"));
+    }
+
     public static boolean hasSpringAnnotation(ICompilationUnit baseClass) throws JavaModelException {
 	Set<String> relevantSpringAnnotations = new HashSet<>(Arrays.asList(JUTPreferences.getRelevantSpringAnnotations()));
+	return hasAnyAnnotationOf(baseClass, relevantSpringAnnotations);
+    }
+
+    public static boolean hasAnyAnnotationOf(ICompilationUnit baseClass, Collection<String> annotations) throws JavaModelException {
 	for (IType baseType : baseClass.getTypes()) {
 	    for (IAnnotation annotation : baseType.getAnnotations()) {
-		if (relevantSpringAnnotations.contains(annotation.getElementName())) {
+		if (annotations.contains(annotation.getElementName())) {
 		    return true;
 		}
 	    }

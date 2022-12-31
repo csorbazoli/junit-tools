@@ -120,15 +120,15 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    return null;
 	}
 
+	// create static standard-imports
+	createStandardStaticImports(testClass, tmlTest);
+
 	// create the test-source-folder and -package
 	IPackageFragment testPackage = model.getJUTElements().getClassesAndPackages().getTestPackage();
 
 	if (!testPackage.isDefaultPackage()) {
 	    testClass.createPackageDeclaration(testPackage.getElementName(), null);
 	}
-
-	// create static standard-imports
-	createStandardStaticImports(testClass);
 
 	// save test-class
 	testClass.save(null, true);
@@ -336,6 +336,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    compilationUnit.createImport("org.springframework.beans.factory.annotation.Autowired", null, null);
 	    compilationUnit.createImport("org.springframework.boot.test.context.SpringBootTest", null, null);
 	    compilationUnit.createImport("org.springframework.boot.test.mock.mockito.MockBean", null, null);
+	    if (GeneratorUtils.isSpringController(compilationUnit)) {
+		compilationUnit.createImport("org.springframework.http.MediaType", null, null);
+		compilationUnit.createImport("org.springframework.test.web.servlet.*", null, null);
+		compilationUnit.createImport("org.springframework.test.web.servlet.setup.MockMvcBuilders", null, null);
+	    }
 	}
 
 	if (tmlTest.getSettings().isLogger()) {
@@ -347,7 +352,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return JUTPreferences.getJUnitVersion() == 4;
     }
 
-    private void createStandardStaticImports(ICompilationUnit compilationUnit) throws JavaModelException {
+    private void createStandardStaticImports(ICompilationUnit compilationUnit, Test tmlTest) throws JavaModelException {
 	IJavaElement importAbove = null;
 	IImportDeclaration[] imports = compilationUnit.getImports();
 	if (imports.length > 0) {
@@ -355,6 +360,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    compilationUnit.createImport("org.assertj.core.api.Assertions.assertThat", importAbove, Flags.AccStatic, null);
 	    // compilationUnit.createImport("org.assertj.core.api.Assertions.assertThrows",
 	    // importAbove, Flags.AccStatic, null);
+	}
+	if (tmlTest.isSpring() && GeneratorUtils.isSpringController(compilationUnit)) {
+	    compilationUnit.createImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*", null, Flags.AccStatic, null);
+	    compilationUnit.createImport("org.springframework.test.web.servlet.result.MockMvcResultMatchers.status", null, Flags.AccStatic, null);
 	}
     }
 
@@ -383,11 +392,15 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		createMockField(testClassType, fieldNameAndType.getValue(), fieldNameAndType.getKey(), spring);
 	    }
 	}
+	if (spring && GeneratorUtils.isSpringController(baseClass)) {
+	    testClassType.createField("MockMvc mockMvc;", null, false, null);
+	}
+
     }
 
     private void createMockField(IType testClassType, String mockClass, String mockName, boolean springTest) throws JavaModelException {
 	if (GeneratorUtils.findField(testClassType, mockName) == null) {
-	    testClassType.createField(GeneratorUtils.createAnnoForDependency(springTest) + getPublicModifierIfNeeded() +
+	    testClassType.createField(GeneratorUtils.createAnnoForDependency(springTest) +
 		    mockClass + " " + mockName + ";", null, false, null);
 	}
     }

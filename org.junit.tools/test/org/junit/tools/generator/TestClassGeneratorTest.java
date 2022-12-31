@@ -449,7 +449,7 @@ public class TestClassGeneratorTest {
 	// given
 	IType type = Mockito.mock(IType.class);
 	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
-	ICompilationUnit baseClass = createSpringClassWithAutowiredField("RestController", "QSomeService;", "someService");
+	ICompilationUnit baseClass = createSpringClassWithAutowiredField("Component", "QSomeService;", "someService");
 
 	JUTPreferences.setRelevantSpringAnnotations(new String[] { "Controller", "RestController", "Service", "Component" });
 	// when
@@ -457,6 +457,20 @@ public class TestClassGeneratorTest {
 	// then
 	verify(type).createField("@Mock\n"
 		+ "SomeService someService;", null, false, null);
+    }
+
+    @Test
+    public void testMocksForDependencies_shouldCreateMockMvcForRestController() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	ICompilationUnit baseClass = createSpringClassWithAutowiredField("RestController", "QSomeService;", "someService");
+
+	JUTPreferences.setRelevantSpringAnnotations(new String[] { "Controller", "RestController", "Service", "Component" });
+	// when
+	underTest.createMocksForDependencies(type, baseClass, true);
+	// then
+	verify(type).createField("MockMvc mockMvc;", null, false, null);
     }
 
     // helper methods

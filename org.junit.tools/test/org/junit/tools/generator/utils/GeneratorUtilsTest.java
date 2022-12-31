@@ -94,4 +94,19 @@ public class GeneratorUtilsTest {
 	assertThat(actual).isTrue();
     }
 
+    @Test
+    public void testIsSpringController_shouldReturnTrueOnAnyControllerAnnotatedClass() throws Exception {
+	// given
+	ICompilationUnit baseClass = mock(ICompilationUnit.class);
+	IType testType = mock(IType.class);
+	when(baseClass.getTypes()).thenReturn(new IType[] { testType });
+	IAnnotation springAnnotation = mock(IAnnotation.class);
+	when(testType.getAnnotations()).thenReturn(new IAnnotation[] { springAnnotation });
+	when(springAnnotation.getElementName()).thenReturn("RestController");
+	// when
+	boolean actual = GeneratorUtils.isSpringController(baseClass);
+	// then
+	assertThat(actual).isTrue();
+    }
+
 }
