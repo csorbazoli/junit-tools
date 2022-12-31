@@ -63,6 +63,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	String testClassName = utmClassesAndPackages.getTestClassName();
 	// ICompilationUnit baseClass = utmClassesAndPackages.getBaseClass();
 	String baseClassName = utmClassesAndPackages.getBaseClassName();
+	boolean springController = GeneratorUtils.isSpringController(utmClassesAndPackages.getBaseClass());
 	IType testClassType;
 
 	// begin task
@@ -107,7 +108,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create standard-methods (setup, teardown, ..., only if creation is enabled)
-	createStandardMethods(testClassType, tmlSettings);
+	createStandardMethods(testClassType, tmlTest, springController);
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -143,12 +144,18 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     /**
      * Creates the standard methods.
      */
-    private void createStandardMethods(IType type, Settings tmlSettings) throws JavaModelException {
+    private void createStandardMethods(IType type, Test tmlTest, boolean springController) throws JavaModelException {
+	Settings tmlSettings = tmlTest.getSettings();
 	if (tmlSettings == null) {
 	    return;
 	}
 
-	if (tmlSettings.isSetUp()) {
+	if (tmlTest.isSpring() && springController) {
+	    // need to init mockMvc for rest endpoint testing
+	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION, null,
+		    "mockMvc = MockMvcBuilders.standaloneSetup(underTest).build();", false,
+		    ANNO_JUNIT_BEFORE);
+	} else if (tmlSettings.isSetUp()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION, null, "", false,
 		    ANNO_JUNIT_BEFORE);
 	}
@@ -257,9 +264,6 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    annotations.append("@Slf4j").append(RETURN);
 	}
 
-	// TODO depending on the method/class we might need different annotations
-	// none needed for class with static methods only
-	// JUTPreferences.getMockFramework() = mockito or easymock
 	if (isSpringTest) {
 	    annotations.append("@SpringBootTest").append(RETURN);
 	    annotations.append("@ActiveProfiles(\"test\")").append(RETURN);
