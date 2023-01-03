@@ -29,6 +29,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
     private Label classExample;
     private Label springClassExample;
     private Label methodExample;
+    private Label mvcMethodExample;
     private Label superTypeExample;
 
     private boolean srcFolderIsEqual = false;
@@ -40,6 +41,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
     private StringFieldEditor fieldSpringClassPost;
     private StringFieldEditor fieldMethodPre;
     private StringFieldEditor fieldMethodPost;
+    private StringFieldEditor fieldMvcMethodPost;
     private StringFieldEditor fieldSuperType; // can be useful for EasyMockSupport
 
     public JUTPreferenceMainPage() {
@@ -147,12 +149,14 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	    protected void valueChanged() {
 		super.valueChanged();
 		setExampleValueMethod();
+		setMvcExampleValueMethod();
 	    }
 
 	    @Override
 	    protected void doLoad() {
 		super.doLoad();
 		setExampleValueMethod();
+		setMvcExampleValueMethod();
 	    }
 	};
 	addField(fieldMethodPre);
@@ -178,6 +182,28 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 
 	methodExample = new Label(getFieldEditorParent(), SWT.NONE);
 	methodExample.setLayoutData(createGridDataWithIndent());
+
+	// MVC method postfix
+	fieldMvcMethodPost = new StringFieldEditor(TEST_MVC_METHOD_POSTFIX,
+		Messages.JUTPreferenceMainPage_Test_Mvc_Method_postfix,
+		getFieldEditorParent()) {
+	    @Override
+	    protected void valueChanged() {
+		super.valueChanged();
+		setMvcExampleValueMethod();
+	    }
+
+	    @Override
+	    protected void doLoad() {
+		super.doLoad();
+		setMvcExampleValueMethod();
+	    }
+
+	};
+	addField(fieldMvcMethodPost);
+
+	mvcMethodExample = new Label(getFieldEditorParent(), SWT.NONE);
+	mvcMethodExample.setLayoutData(createGridDataWithIndent());
 
 	// super type
 	fieldSuperType = new StringFieldEditor(TEST_CLASS_SUPER_TYPE,
@@ -274,6 +300,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	classExample.getParent().layout();
 
 	setExampleValueMethod();
+	setMvcExampleValueMethod();
     }
 
     private void setExampleValueSpringClass() {
@@ -301,6 +328,7 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	springClassExample.getParent().layout();
 
 	setExampleValueMethod();
+	setMvcExampleValueMethod();
     }
 
     protected void setExampleValueMethod() {
@@ -308,8 +336,6 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 
 	if ("".equals(fieldMethodPre.getStringValue())
 		&& "".equals(fieldMethodPost.getStringValue())) {
-//	    methodIsEqual = true;
-
 	    if (srcFolderIsEqual
 		    && classIsEqual) {
 		methodExample.setText("Base and test method is equal");
@@ -318,8 +344,6 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 			.setText("Base method name and test method name are equal");
 	    }
 	} else {
-//	    methodIsEqual = false;
-
 	    String methodName = "";
 	    if (fieldMethodPre.getStringValue().equals("")) {
 		methodName = "calculate";
@@ -337,6 +361,39 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	}
 
 	methodExample.getParent().layout();
+	getFieldEditorParent().layout();
+    }
+
+    protected void setMvcExampleValueMethod() {
+	checkValid();
+
+	if ("".equals(fieldMethodPre.getStringValue())
+		&& "".equals(fieldMvcMethodPost.getStringValue())) {
+	    if (srcFolderIsEqual
+		    && classIsEqual) {
+		mvcMethodExample.setText("Base and test method is equal");
+	    } else {
+		mvcMethodExample
+			.setText("Base method name and test method name are equal");
+	    }
+	} else {
+	    String methodName = "";
+	    if (fieldMethodPre.getStringValue().equals("")) {
+		methodName = "calculate";
+	    } else {
+		methodName = "Calculate";
+	    }
+
+	    mvcMethodExample
+		    .setText("If the method under test is \"calculate\" the test method is \""
+			    + fieldMethodPre.getStringValue()
+			    + methodName
+			    + GeneratorUtils.firstCharToUpper(fieldMvcMethodPost
+				    .getStringValue())
+			    + "\"");
+	}
+
+	mvcMethodExample.getParent().layout();
 	getFieldEditorParent().layout();
     }
 

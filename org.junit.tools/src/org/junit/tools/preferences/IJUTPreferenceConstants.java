@@ -18,6 +18,7 @@ public interface IJUTPreferenceConstants {
     public static final String SPRING_TEST_CLASS_POSTFIX = "SPRING_TEST_CLASS_POSTFIX";
     public static final String TEST_METHOD_PREFIX = "TEST_METHOD_PREFIX";
     public static final String TEST_METHOD_POSTFIX = "TEST_METHOD_POSTFIX";
+    public static final String TEST_MVC_METHOD_POSTFIX = "TEST_MVC_METHOD_POSTFIX";
     public static final String TEST_CLASS_SUPER_TYPE = "TEST_CLASS_SUPER_TYPE";
     public static final String TEST_METHOD_FILTER_NAME = "TEST_METHOD_FILTER_NAME";
     public static final String TEST_METHOD_FILTER_MODIFIER = "TEST_METHOD_FILTER_MODIFIER";

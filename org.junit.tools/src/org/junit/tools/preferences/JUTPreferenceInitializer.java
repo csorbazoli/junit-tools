@@ -31,6 +31,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 
 	store.setDefault(TEST_METHOD_PREFIX, "test");
 	store.setDefault(TEST_METHOD_POSTFIX, "");
+	store.setDefault(TEST_MVC_METHOD_POSTFIX, "_MVC");
 	store.setDefault(TEST_CLASS_SUPER_TYPE, "");
 
 	store.setDefault(TEST_METHOD_FILTER_NAME, "");

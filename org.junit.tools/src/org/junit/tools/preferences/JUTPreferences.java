@@ -25,6 +25,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String testSourceFolderName = null;
     private static String testMethodPrefix = null;
     private static String testMethodPostfix = null;
+    private static String testMvcMethodPostfix = null;
     private static String testClassPrefix = null;
     private static String testClassPostfix = null;
     private static String testClassSuperType = null;
@@ -82,6 +83,13 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	    testMethodPostfix = getPreference(TEST_METHOD_POSTFIX);
 	}
 	return testMethodPostfix;
+    }
+
+    public static String getTestMvcMethodPostfix() {
+	if (testMvcMethodPostfix == null) {
+	    testMvcMethodPostfix = getPreference(TEST_MVC_METHOD_POSTFIX);
+	}
+	return testMvcMethodPostfix;
     }
 
     protected static void setMockClassAnnotations(String[] mockClassAnnotations) {
@@ -234,6 +242,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     protected static void setTestMethodPostfix(String testmethodPostfixPref) {
 	JUTPreferences.testMethodPostfix = testmethodPostfixPref;
+    }
+
+    protected static void setTestMvcMethodPostfix(String testmethodPostfixPref) {
+	JUTPreferences.testMvcMethodPostfix = testmethodPostfixPref;
     }
 
     public static String getTestMethodPrefix() {
@@ -398,6 +410,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    return;
 			} else if (event.getProperty() == TEST_METHOD_POSTFIX) {
 			    setTestMethodPostfix((String) event.getNewValue());
+			    return;
+			} else if (event.getProperty() == TEST_MVC_METHOD_POSTFIX) {
+			    setTestMvcMethodPostfix((String) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == TEST_METHOD_FILTER_MODIFIER) {
 			    setTestMethodFilterModifier(convertToArray((String) event
