@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.junittoolsdemo.models.DemoObject;
@@ -33,6 +34,11 @@ public class DemoController {
 	public String update(@RequestHeader(required = false) String demoHeader, @RequestBody DemoObject object) {
 		service.updateObject(object, demoHeader);
 		return object.getDemoString();
+	}
+
+	@RequestMapping(path = "/delete/{name}", method = RequestMethod.DELETE)
+	public DemoObject delete(@PathVariable String name) {
+		return service.deleteObjectByName(name).orElse(null);
 	}
 
 }

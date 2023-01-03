@@ -1,5 +1,7 @@
 package com.example.junittoolsdemo.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,6 +25,10 @@ public class DemoService {
 		if (StringUtils.hasLength(value)) {
 			object.setDemoString(value);
 		}
+	}
+
+	public Optional<DemoObject> deleteObjectByName(String name) {
+		return Optional.empty();
 	}
 
 }
