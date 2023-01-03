@@ -685,4 +685,22 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return IJUTPreferenceConstants.MOCKFW_EASYMOCK.equals(JUTPreferences.getMockFramework());
     }
 
+    public static String determineHttpMethod(IMethod method) throws JavaModelException {
+	String ret = null;
+	for (IAnnotation annotation : method.getAnnotations()) {
+	    if (annotation.getElementName().endsWith("Mapping")) {
+		ret = annotation.getElementName().replace("Mapping", "").toLowerCase();
+		if (ret.isEmpty()) {
+		    for (IMemberValuePair attr : annotation.getMemberValuePairs()) {
+			if ("method".equals(attr.getMemberName())) {
+			    ret = String.valueOf(attr.getValue()).toLowerCase();
+			}
+		    }
+		}
+		break;
+	    }
+	}
+	return ret;
+    }
+
 }

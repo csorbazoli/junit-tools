@@ -21,7 +21,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.tools.TestHelper;
 import org.junit.tools.generator.model.tml.Assertion;
 import org.junit.tools.generator.model.tml.AssertionType;
 import org.junit.tools.generator.model.tml.Method;
@@ -63,25 +62,6 @@ public class TestClassGeneratorTest {
 	assertEquals("String testString = \"testValue\";\n"
 		+ "int testInt = 123;\n"
 		+ "", methodBody.toString());
-    }
-
-    @Test
-    public void testCreateParamNameList() {
-	// given
-	Param stringParam = new Param();
-	stringParam.setName("testString");
-	stringParam.setPrimitive(true);
-	stringParam.setType("String");
-	Param intParam = new Param();
-	intParam.setName("testInt");
-	intParam.setPrimitive(true);
-	intParam.setType("int");
-	List<Param> params = Arrays.asList(stringParam, intParam);
-	TestHelper.initDefaultValueMapping();
-	// when
-	String actual = underTest.createParamNameList(params, true);
-	// then
-	assertEquals("testString, testInt", actual);
     }
 
     @Test
@@ -429,6 +409,69 @@ public class TestClassGeneratorTest {
 		+ "String actual=underTest.someMethod(testString, testInt);\n"
 		+ "// then\n"
 		+ "assertThat(actual).isEqualTo(\"testValueForAssertion\");",
+		actual);
+    }
+
+    @Test
+    public void testCreateMvcTestMethodBody() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	Method tmlMethod = new Method();
+	tmlMethod.setName("someMethod");
+	tmlMethod.setModifier("public");
+	Result methodResult = new Result();
+	methodResult.setName("actual");
+	methodResult.setType("TestBean");
+	tmlMethod.setResult(methodResult);
+	tmlMethod.setStatic(false);
+	Param intParam = new Param();
+	intParam.setName("id");
+	intParam.setPrimitive(true);
+	intParam.setType("int");
+	Param beanParam = new Param();
+	beanParam.setName("data");
+	beanParam.setPrimitive(false);
+	beanParam.setType("TestBean");
+	tmlMethod.getParam().add(intParam);
+	tmlMethod.getParam().add(beanParam);
+	TestCase testCase = new TestCase();
+	testCase.setName("TestCase1");
+	testCase.setTestBase("TestBase");
+	Assertion assertion = new Assertion();
+	assertion.setBase("{result}");
+	assertion.setType(AssertionType.EQUALS_J5);
+	assertion.setValue("TestUtils.readTestFile(\"TestBean_someMethod.json\")");
+	testCase.getAssertion().add(assertion);
+	Precondition precondition = new Precondition();
+	precondition.setComment("TestComment");
+	testCase.getPreconditions().add(precondition);
+	ParamAssignment intParamAssignment = new ParamAssignment();
+	intParamAssignment.setParamType("int");
+	intParamAssignment.setParamName("id");
+	intParamAssignment.setAssignment("123");
+	ParamAssignment beanParamAssignment = new ParamAssignment();
+	beanParamAssignment.setParamType("TestBean");
+	beanParamAssignment.setParamName("data");
+	beanParamAssignment.setAssignment("TestValueFactory.fillField(new TestBean())");
+	testCase.getParamAssignments().add(intParamAssignment);
+	testCase.getParamAssignments().add(beanParamAssignment);
+	tmlMethod.getTestCase().add(testCase);
+	// when
+	String actual = underTest.createMvcTestMethodBody(type, tmlMethod, "someMethod", "SomeClass", "get");
+	// then
+	assertEquals("// given\n"
+		+ "int id = 123;\n"
+		+ "TestBean data = TestValueFactory.fillField(new TestBean());\n"
+		+ "// when\n"
+		+ "String actual = mockMvc.perform(get(\"URL\")\n" // TODO should determine the path as well, i.e. /update/{id}
+		+ ".param(\"id\", id)\n"
+		+ ".content(TestUtils.objectToJson(data))\n"
+		+ ".accept(\"application/json\"))\n"
+		+ ".andExpect(status().isOk())\n"
+		+ ".andReturn()\n"
+		+ ".getResponse().getContentAsString();\n"
+		+ "// then\n"
+		+ "assertThat(actual).isEqualTo(TestUtils.readTestFile(\"TestBean_someMethod.json\"));",
 		actual);
     }
 

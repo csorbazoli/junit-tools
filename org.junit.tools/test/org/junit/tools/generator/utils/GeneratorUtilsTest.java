@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ILocalVariable;
+import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.junit.Test;
@@ -107,6 +108,36 @@ public class GeneratorUtilsTest {
 	boolean actual = GeneratorUtils.isSpringController(baseClass);
 	// then
 	assertThat(actual).isTrue();
+    }
+
+    @Test
+    public void testDetermineHttpMethod_shouldReturnHttpMethodAccordingToXMappingAnnotation() throws Exception {
+	// given
+	IMethod method = mock(IMethod.class);
+	IAnnotation mappingAnnotation = mock(IAnnotation.class);
+	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
+	when(mappingAnnotation.getElementName()).thenReturn("GetMapping");
+	// when
+	String actual = GeneratorUtils.determineHttpMethod(method);
+	// then
+	assertThat(actual).isEqualTo("get");
+    }
+
+    @Test
+    public void testDetermineHttpMethod_shouldReturnHttpMethodAccordingToMappingAnnotationsMethodAttribute() throws Exception {
+	// given
+	IMethod method = mock(IMethod.class);
+	IAnnotation mappingAnnotation = mock(IAnnotation.class);
+	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
+	when(mappingAnnotation.getElementName()).thenReturn("Mapping");
+	IMemberValuePair attribute = mock(IMemberValuePair.class);
+	when(mappingAnnotation.getMemberValuePairs()).thenReturn(new IMemberValuePair[] { attribute });
+	when(attribute.getMemberName()).thenReturn("method");
+	when(attribute.getValue()).thenReturn("POST");
+	// when
+	String actual = GeneratorUtils.determineHttpMethod(method);
+	// then
+	assertThat(actual).isEqualTo("post");
     }
 
 }

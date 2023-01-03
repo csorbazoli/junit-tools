@@ -3,6 +3,7 @@ package org.junit.tools.generator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,6 +42,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     protected String testmethodPrefix;
 
     protected String testmethodPostfix;
+
+    protected String testmvcMethodPostfix;
 
     protected boolean defaultTestbaseMethodCreated = false;
 
@@ -116,10 +119,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-methods
-	if (createTestMethods(testClassType, model.getMethodMap(), model.getMethodsToCreate(), tmlSettings, baseClassName,
-		monitor, increment)) {
-	    return null;
-	}
+	createTestMethods(testClassType, model.getMethodMap(), model.getMethodsToCreate(), tmlSettings, baseClassName,
+		springController && tmlTest.isSpring(), monitor, increment);
 
 	// create static standard-imports
 	createStandardStaticImports(testClass, tmlTest);
@@ -410,14 +411,19 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     private boolean createTestMethods(IType type, HashMap<IMethod, Method> methodMap, List<IMethod> methodsToCreate,
-	    Settings tmlSettings, String baseClassName, IProgressMonitor monitor, int increment)
+	    Settings tmlSettings, String baseClassName, boolean mvcTest, IProgressMonitor monitor, int increment)
 	    throws JavaModelException {
 
 	int i = 0;
 
 	for (IMethod methodToCreate : methodsToCreate) {
 	    Method tmlMethod = methodMap.get(methodToCreate);
-	    createTestMethod(type, tmlMethod, baseClassName);
+	    String httpMethod = mvcTest ? GeneratorUtils.determineHttpMethod(methodToCreate) : null;
+	    if (httpMethod != null) {
+		createMvcTestMethod(type, tmlMethod, baseClassName, httpMethod);
+	    } else {
+		createTestMethod(type, tmlMethod, baseClassName);
+	    }
 
 	    if (i++ == increment) {
 		i = 0;
@@ -429,6 +435,28 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	return false;
+    }
+
+    private void createMvcTestMethod(IType type, Method tmlMethod, String baseClassName, String httpMethod)
+	    throws JavaModelException {
+
+	// create test-method-name
+	String testMethodName;
+	String testMethodNamePrefix = getTestmethodPrefix();
+	String testMethodNamePostfix = getMvcTestmethodPostfix();
+	if (testMethodNamePrefix != null && testMethodNamePrefix.length() > 0) {
+	    testMethodName = testMethodNamePrefix + GeneratorUtils.firstCharToUpper(tmlMethod.getName())
+		    + testMethodNamePostfix;
+	} else {
+	    testMethodName = tmlMethod.getName() + testMethodNamePostfix;
+	}
+
+	// create test-method-body
+	String testMethodBody = createMvcTestMethodBody(type, tmlMethod, testMethodName, baseClassName, httpMethod);
+
+	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, "Exception", null, testMethodBody, false,
+		// annoMethodRef,
+		ANNO_JUNIT_TEST);
     }
 
     private void createTestMethod(IType type, Method tmlMethod, String baseClassName)
@@ -451,6 +479,72 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, "Exception", null, testMethodBody, false,
 		// annoMethodRef,
 		ANNO_JUNIT_TEST);
+    }
+
+    protected String createMvcTestMethodBody(IType type, Method tmlMethod, String methodName, String baseClassName, String httpMethod)
+	    throws JavaModelException {
+	StringBuilder sbTestMethodBody = new StringBuilder();
+	List<Param> params = tmlMethod.getParam();
+	String testbaseMethodName = "";
+	String testBaseVariableName = UNDER_TEST; // GeneratorUtils.firstCharToLower(baseClassName);
+
+	// create result-variable
+	Result result = tmlMethod.getResult();
+	String resultVariableName = "";
+	String resultType = "String";
+	if (result != null) {
+	    resultVariableName = result.getName();
+	}
+
+	List<TestCase> testCases = tmlMethod.getTestCase();
+
+	for (TestCase tmlTestcase : testCases) {
+
+	    createMvcTestCaseBody(sbTestMethodBody, tmlMethod.getName(), resultVariableName, resultType,
+		    params, tmlTestcase.getParamAssignments(), httpMethod);
+
+	    // assertions
+	    createAssertionsMethodBody(sbTestMethodBody, resultVariableName, resultType, testBaseVariableName,
+		    tmlTestcase);
+	}
+
+	return sbTestMethodBody.toString();
+    }
+
+    private void createMvcTestCaseBody(StringBuilder sbTestMethodBody, String methodName, String resultVariableName,
+	    String resultType, List<Param> params, List<ParamAssignment> paramAssignments, String httpMethod) {
+
+	if (isGherkinStyle()) {
+	    sbTestMethodBody.append("// given").append(RETURN);
+	}
+
+	// create param assignments
+	createParamAssignments(paramAssignments, sbTestMethodBody);
+
+	// result
+	if (isGherkinStyle()) {
+	    sbTestMethodBody.append("// when").append(RETURN);
+	}
+
+	if (resultVariableName.length() > 0) {
+	    sbTestMethodBody.append(resultType).append(" ").append(resultVariableName).append(" = ");
+	}
+
+	sbTestMethodBody.append("mockMvc.perform(").append(httpMethod)
+		.append("(\"URL\")"); // TODO can we determine it from the @RequestMapping(\"basePath\") and
+				      // @XMapping(value = \"additionalPath\")
+
+	// create parameter list
+	String paramNameList = createMvcParamList(params);
+
+	// method-call
+	sbTestMethodBody.append(paramNameList)
+		.append(RETURN)
+		.append(".accept(\"application/json\"))").append(RETURN)
+		.append(".andExpect(status().isOk())").append(RETURN)
+		.append(".andReturn()").append(RETURN)
+		.append(".getResponse().getContentAsString();");
+
     }
 
     protected String createTestMethodBody(IType type, Method tmlMethod, String methodName, String baseClassName) throws JavaModelException {
@@ -513,10 +607,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    sbTestMethodBody.append(resultType).append(" ").append(resultVariableName).append("=");
 	}
 
-	String paramNameList;
-
 	// create parameter list
-	paramNameList = createParamNameList(params);
+	String paramNameList = createParamNameList(params);
 
 	// method-call
 	sbTestMethodBody.append(baseName).append(".").append(methodName).append("(").append(paramNameList)
@@ -525,34 +617,30 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     private String createParamNameList(List<Param> params) {
-	return createParamNameList(params, false);
+	return params.stream()
+		.map(Param::getName)
+		.collect(Collectors.joining(", "));
+
     }
 
-    protected String createParamNameList(List<Param> params, boolean useTypeForNull) {
-
+    private String createMvcParamList(List<Param> params) {
 	StringBuilder sbParamList = new StringBuilder();
-	String comma = "";
-
 	for (Param param : params) {
 
-	    sbParamList.append(comma);
-	    if (useTypeForNull) {
-		String initValue = "null";
-		if (param.getType() != null) {
-		    initValue = JDTUtils.createInitValue(param.getType(), param.getName());
-		}
-
-		if (initValue.equals("null")) {
-		    sbParamList.append(param.getType() + ".class");
-		} else {
-		    sbParamList.append(param.getName());
-		}
-
+	    if (param.isPrimitive()) {
+		sbParamList.append(RETURN)
+			.append(".param(\"")
+			.append(param.getName())
+			.append("\", ")
+			.append(param.getName())
+			.append(")");
 	    } else {
-		sbParamList.append(param.getName());
+		sbParamList.append(RETURN)
+			.append(".content(TestUtils.objectToJson(")
+			.append(param.getName())
+			.append("))");
 	    }
 
-	    comma = ", ";
 	}
 
 	return sbParamList.toString();
@@ -695,15 +783,20 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return testmethodPrefix;
     }
 
-    /**
-     * @return the test method post fix
-     */
     protected String getTestmethodPostfix() {
 	if (testmethodPostfix == null) {
 	    testmethodPostfix = JUTPreferences.getTestMethodPostfix();
 	}
 
 	return testmethodPostfix;
+    }
+
+    protected String getMvcTestmethodPostfix() {
+	if (testmvcMethodPostfix == null) {
+	    testmvcMethodPostfix = JUTPreferences.getTestMvcMethodPostfix();
+	}
+
+	return testmvcMethodPostfix;
     }
 
 }
