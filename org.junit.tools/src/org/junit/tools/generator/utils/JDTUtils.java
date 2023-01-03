@@ -1288,6 +1288,10 @@ public class JDTUtils implements IGeneratorConstants {
 	return type.startsWith(TYPE_INTEGER);
     }
 
+    public static boolean isPrimitive(String type) {
+	return PRIMITIVE_TYPES.contains(type);
+    }
+
     public static IMethod getSelectedMethod(IFileEditorInput fileEditorInput)
 	    throws JavaModelException {
 	ITextEditor editor = (ITextEditor) EclipseUIUtils.getActiveEditor();

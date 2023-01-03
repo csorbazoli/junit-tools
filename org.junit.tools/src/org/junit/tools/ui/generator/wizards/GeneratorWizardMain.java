@@ -401,6 +401,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    param.setName(parameter.getElementName());
 	    param.setType(Signature.getSignatureSimpleName(parameter
 		    .getTypeSignature()));
+	    param.setPrimitive(JDTUtils.isPrimitive(param.getType()));
 
 	    tmlMethod.getParam().add(param);
 	}

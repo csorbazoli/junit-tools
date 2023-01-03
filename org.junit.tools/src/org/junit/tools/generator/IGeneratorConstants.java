@@ -1,5 +1,9 @@
 package org.junit.tools.generator;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * General constants for the generators.
  * 
@@ -26,6 +30,10 @@ public interface IGeneratorConstants {
     public static final String TYPE_LONG = "long";
     public static final String TYPE_FLOAT = "float";
     public static final String TYPE_BOOLEAN = "boolean";
+
+    public static final Set<String> PRIMITIVE_TYPES = new HashSet<>(Arrays.asList(TYPE_CHAR, TYPE_BYTE,
+	    TYPE_DOUBLE, TYPE_INT, TYPE_LONG, TYPE_FLOAT, TYPE_BOOLEAN,
+	    TYPE_STRING));
 
     public static final String TYPE_ARRAY = "[]";
 

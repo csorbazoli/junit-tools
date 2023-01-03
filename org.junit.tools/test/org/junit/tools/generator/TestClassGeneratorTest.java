@@ -457,13 +457,13 @@ public class TestClassGeneratorTest {
 	testCase.getParamAssignments().add(beanParamAssignment);
 	tmlMethod.getTestCase().add(testCase);
 	// when
-	String actual = underTest.createMvcTestMethodBody(type, tmlMethod, "someMethod", "SomeClass", "get");
+	String actual = underTest.createMvcTestMethodBody(type, tmlMethod, "someMethod", "SomeClass", "get", "/rest/v1/update/{id}");
 	// then
 	assertEquals("// given\n"
 		+ "int id = 123;\n"
 		+ "TestBean data = TestValueFactory.fillField(new TestBean());\n"
 		+ "// when\n"
-		+ "String actual = mockMvc.perform(get(\"URL\")\n" // TODO should determine the path as well, i.e. /update/{id}
+		+ "String actual = mockMvc.perform(get(\"/rest/v1/update/{id}\")\n" // TODO should determine the path as well, i.e.
 		+ ".param(\"id\", id)\n"
 		+ ".content(TestUtils.objectToJson(data))\n"
 		+ ".accept(\"application/json\"))\n"

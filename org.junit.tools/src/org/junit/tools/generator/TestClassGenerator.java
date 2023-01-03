@@ -66,7 +66,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	String testClassName = utmClassesAndPackages.getTestClassName();
 	// ICompilationUnit baseClass = utmClassesAndPackages.getBaseClass();
 	String baseClassName = utmClassesAndPackages.getBaseClassName();
-	boolean springController = GeneratorUtils.isSpringController(utmClassesAndPackages.getBaseClass());
+	ICompilationUnit baseClass = utmClassesAndPackages.getBaseClass();
+	boolean springController = GeneratorUtils.isSpringController(baseClass);
 	IType testClassType;
 
 	// begin task
@@ -103,7 +104,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	// create standard-class-fields
 	createStandardClassFields(testClassType, baseClassName, tmlTest.isSpring());
-	createMocksForDependencies(testClassType, utmClassesAndPackages.getBaseClass(), tmlTest.isSpring());
+	createMocksForDependencies(testClassType, baseClass, tmlTest.isSpring());
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -119,7 +120,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-methods
-	createTestMethods(testClassType, model.getMethodMap(), model.getMethodsToCreate(), tmlSettings, baseClassName,
+	createTestMethods(testClassType, model.getMethodMap(), model.getMethodsToCreate(), tmlSettings, baseClass,
 		springController && tmlTest.isSpring(), monitor, increment);
 
 	// create static standard-imports
@@ -155,25 +156,27 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    // need to init mockMvc for rest endpoint testing
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION, null,
 		    "mockMvc = MockMvcBuilders.standaloneSetup(underTest).build();", false,
-		    ANNO_JUNIT_BEFORE);
+		    isUsingJunit4() ? ANNO_JUNIT_BEFORE : "@BeforeEach");
 	} else if (tmlSettings.isSetUp()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION, null, "", false,
-		    ANNO_JUNIT_BEFORE);
+		    isUsingJunit4() ? ANNO_JUNIT_BEFORE : "@BeforeEach");
 	}
 
 	if (tmlSettings.isSetUpBeforeClass()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded() + MOD_STATIC_WITH_BLANK, TYPE_VOID, STANDARD_METHOD_BEFORE_ClASS,
-		    EXCEPTION, null, "", false, ANNO_JUNIT_BEFORE_CLASS);
+		    EXCEPTION, null, "", false,
+		    isUsingJunit4() ? ANNO_JUNIT_BEFORE_CLASS : "@BeforeAll");
 	}
 
 	if (tmlSettings.isTearDown()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_AFTER, EXCEPTION, null, "", false,
-		    ANNO_JUNIT_AFTER);
+		    isUsingJunit4() ? ANNO_JUNIT_AFTER : "@AfterEach");
 	}
 
 	if (tmlSettings.isTearDownBeforeClass()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded() + MOD_STATIC_WITH_BLANK, TYPE_VOID, STANDARD_METHOD_AFTER_CLASS,
-		    "Exception", null, "", false, ANNO_JUNIT_AFTER_CLASS);
+		    "Exception", null, "", false,
+		    isUsingJunit4() ? ANNO_JUNIT_AFTER_CLASS : "@AfterAll");
 	}
     }
 
@@ -397,7 +400,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		createMockField(testClassType, fieldNameAndType.getValue(), fieldNameAndType.getKey(), spring);
 	    }
 	}
-	if (spring && GeneratorUtils.isSpringController(baseClass)) {
+	if (spring && GeneratorUtils.isSpringController(baseClass)
+		&& GeneratorUtils.findField(testClassType, "mockMvc") == null) {
 	    testClassType.createField("MockMvc mockMvc;", null, false, null);
 	}
 
@@ -411,16 +415,22 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     private boolean createTestMethods(IType type, HashMap<IMethod, Method> methodMap, List<IMethod> methodsToCreate,
-	    Settings tmlSettings, String baseClassName, boolean mvcTest, IProgressMonitor monitor, int increment)
+	    Settings tmlSettings, ICompilationUnit baseClass, boolean mvcTest, IProgressMonitor monitor, int increment)
 	    throws JavaModelException {
 
 	int i = 0;
+
+	String baseClassName = baseClass.getElementName();
+	String basePath = "";
+	if (mvcTest) {
+	    basePath = GeneratorUtils.determineRequestPath(baseClass.findPrimaryType());
+	}
 
 	for (IMethod methodToCreate : methodsToCreate) {
 	    Method tmlMethod = methodMap.get(methodToCreate);
 	    String httpMethod = mvcTest ? GeneratorUtils.determineHttpMethod(methodToCreate) : null;
 	    if (httpMethod != null) {
-		createMvcTestMethod(type, tmlMethod, baseClassName, httpMethod);
+		createMvcTestMethod(type, tmlMethod, baseClassName, httpMethod, basePath + GeneratorUtils.determineRequestPath(methodToCreate));
 	    } else {
 		createTestMethod(type, tmlMethod, baseClassName);
 	    }
@@ -437,7 +447,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return false;
     }
 
-    private void createMvcTestMethod(IType type, Method tmlMethod, String baseClassName, String httpMethod)
+    private void createMvcTestMethod(IType type, Method tmlMethod, String baseClassName, String httpMethod, String urlPath)
 	    throws JavaModelException {
 
 	// create test-method-name
@@ -452,7 +462,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-method-body
-	String testMethodBody = createMvcTestMethodBody(type, tmlMethod, testMethodName, baseClassName, httpMethod);
+	String testMethodBody = createMvcTestMethodBody(type, tmlMethod, testMethodName, baseClassName, httpMethod, urlPath);
 
 	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, "Exception", null, testMethodBody, false,
 		// annoMethodRef,
@@ -481,11 +491,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		ANNO_JUNIT_TEST);
     }
 
-    protected String createMvcTestMethodBody(IType type, Method tmlMethod, String methodName, String baseClassName, String httpMethod)
+    protected String createMvcTestMethodBody(IType type, Method tmlMethod, String methodName, String baseClassName, String httpMethod, String urlPath)
 	    throws JavaModelException {
 	StringBuilder sbTestMethodBody = new StringBuilder();
 	List<Param> params = tmlMethod.getParam();
-	String testbaseMethodName = "";
 	String testBaseVariableName = UNDER_TEST; // GeneratorUtils.firstCharToLower(baseClassName);
 
 	// create result-variable
@@ -501,7 +510,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	for (TestCase tmlTestcase : testCases) {
 
 	    createMvcTestCaseBody(sbTestMethodBody, tmlMethod.getName(), resultVariableName, resultType,
-		    params, tmlTestcase.getParamAssignments(), httpMethod);
+		    params, tmlTestcase.getParamAssignments(), httpMethod, urlPath);
 
 	    // assertions
 	    createAssertionsMethodBody(sbTestMethodBody, resultVariableName, resultType, testBaseVariableName,
@@ -512,7 +521,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     private void createMvcTestCaseBody(StringBuilder sbTestMethodBody, String methodName, String resultVariableName,
-	    String resultType, List<Param> params, List<ParamAssignment> paramAssignments, String httpMethod) {
+	    String resultType, List<Param> params, List<ParamAssignment> paramAssignments, String httpMethod, String urlPath) {
 
 	if (isGherkinStyle()) {
 	    sbTestMethodBody.append("// given").append(RETURN);
@@ -531,8 +540,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	sbTestMethodBody.append("mockMvc.perform(").append(httpMethod)
-		.append("(\"URL\")"); // TODO can we determine it from the @RequestMapping(\"basePath\") and
-				      // @XMapping(value = \"additionalPath\")
+		.append("(\"").append(urlPath).append("\")");
 
 	// create parameter list
 	String paramNameList = createMvcParamList(params);

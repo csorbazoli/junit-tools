@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jdt.core.IAnnotatable;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -690,11 +691,34 @@ public class GeneratorUtils implements IGeneratorConstants {
 	for (IAnnotation annotation : method.getAnnotations()) {
 	    if (annotation.getElementName().endsWith("Mapping")) {
 		ret = annotation.getElementName().replace("Mapping", "").toLowerCase();
-		if (ret.isEmpty()) {
+		if ("request".equals(ret)) {
 		    for (IMemberValuePair attr : annotation.getMemberValuePairs()) {
 			if ("method".equals(attr.getMemberName())) {
-			    ret = String.valueOf(attr.getValue()).toLowerCase();
+			    ret = String.valueOf(attr.getValue())
+				    .toLowerCase();
+			    ret = ret.substring(ret.lastIndexOf('.') + 1);
+			    break;
 			}
+		    }
+		}
+		break;
+	    }
+	}
+	return ret;
+    }
+
+    /**
+     * @param element class or method that has RequestMapping or some specific
+     *                mapping annotation (e.g. GetMapping)
+     */
+    public static String determineRequestPath(IAnnotatable element) throws JavaModelException {
+	String ret = "";
+	for (IAnnotation annotation : element.getAnnotations()) {
+	    if (annotation.getElementName().endsWith("Mapping")) {
+		for (IMemberValuePair attr : annotation.getMemberValuePairs()) {
+		    if ("value".equals(attr.getMemberName()) || "path".equals(attr.getMemberName())) {
+			ret = String.valueOf(attr.getValue());
+			break;
 		    }
 		}
 		break;

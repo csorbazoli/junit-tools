@@ -129,15 +129,63 @@ public class GeneratorUtilsTest {
 	IMethod method = mock(IMethod.class);
 	IAnnotation mappingAnnotation = mock(IAnnotation.class);
 	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
-	when(mappingAnnotation.getElementName()).thenReturn("Mapping");
+	when(mappingAnnotation.getElementName()).thenReturn("RequestMapping");
 	IMemberValuePair attribute = mock(IMemberValuePair.class);
 	when(mappingAnnotation.getMemberValuePairs()).thenReturn(new IMemberValuePair[] { attribute });
 	when(attribute.getMemberName()).thenReturn("method");
-	when(attribute.getValue()).thenReturn("POST");
+	when(attribute.getValue()).thenReturn("RequestMethod.POST");
 	// when
 	String actual = GeneratorUtils.determineHttpMethod(method);
 	// then
 	assertThat(actual).isEqualTo("post");
+    }
+
+    @Test
+    public void testDetermineRequestPath_shouldReturnPathAttributeIfGiven() throws Exception {
+	// given
+	IMethod method = mock(IMethod.class);
+	IAnnotation mappingAnnotation = mock(IAnnotation.class);
+	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
+	when(mappingAnnotation.getElementName()).thenReturn("GetMapping");
+	IMemberValuePair attribute = mock(IMemberValuePair.class);
+	when(mappingAnnotation.getMemberValuePairs()).thenReturn(new IMemberValuePair[] { attribute });
+	when(attribute.getMemberName()).thenReturn("path");
+	when(attribute.getValue()).thenReturn("/test");
+	// when
+	String actual = GeneratorUtils.determineRequestPath(method);
+	// then
+	assertThat(actual).isEqualTo("/test");
+    }
+
+    @Test
+    public void testDetermineRequestPath_shouldReturnValueAttributeIfPathNotGiven() throws Exception {
+	// given
+	IMethod method = mock(IMethod.class);
+	IAnnotation mappingAnnotation = mock(IAnnotation.class);
+	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
+	when(mappingAnnotation.getElementName()).thenReturn("GetMapping");
+	IMemberValuePair attribute = mock(IMemberValuePair.class);
+	when(mappingAnnotation.getMemberValuePairs()).thenReturn(new IMemberValuePair[] { attribute });
+	when(attribute.getMemberName()).thenReturn("value");
+	when(attribute.getValue()).thenReturn("/test");
+	// when
+	String actual = GeneratorUtils.determineRequestPath(method);
+	// then
+	assertThat(actual).isEqualTo("/test");
+    }
+
+    @Test
+    public void testDetermineRequestPath_shouldReturnEmptyStringIfPathAttributeIsNotSpecified() throws Exception {
+	// given
+	IMethod method = mock(IMethod.class);
+	IAnnotation mappingAnnotation = mock(IAnnotation.class);
+	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
+	when(mappingAnnotation.getElementName()).thenReturn("GetMapping");
+	when(mappingAnnotation.getMemberValuePairs()).thenReturn(new IMemberValuePair[] {});
+	// when
+	String actual = GeneratorUtils.determineRequestPath(method);
+	// then
+	assertThat(actual).isEmpty();
     }
 
 }
