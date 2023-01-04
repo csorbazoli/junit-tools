@@ -73,8 +73,9 @@ public class TestCasesGenerator {
 	    expected = "TestUtils.readTestFile(\"" + tmlMethod.getName() + "/" + tmlMethod.getResult().getType() + ".json\")";
 	} else {
 	    defaultAssertion.setBase("{result}");
+	    expected = JDTUtils.replaceValuePlaceholders(expected, "Expected", tmlMethod.getResult().getType());
 	}
-	defaultAssertion.setValue(expected); // TODO this should be a test value or TestUtils.readTestFile()
+	defaultAssertion.setValue(expected);
 	return defaultAssertion;
     }
 

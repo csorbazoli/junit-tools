@@ -1201,13 +1201,20 @@ public class JDTUtils implements IGeneratorConstants {
 	}
 	if (StringUtils.isBlank(value)) {
 	    value = "null";
-	} else if (value.contains("${")) {
-	    value = value.replace("${Name}", GeneratorUtils.firstCharToUpper(name))
-		    .replace("${name}", name)
-		    .replace("${Class}", type);
+	} else {
+	    value = replaceValuePlaceholders(value, name, type);
 	}
 
 	return value;
+    }
+
+    public static String replaceValuePlaceholders(String expression, String name, String type) {
+	if (expression.contains("${")) {
+	    return expression.replace("${Name}", GeneratorUtils.firstCharToUpper(name))
+		    .replace("${name}", name)
+		    .replace("${Class}", type);
+	}
+	return expression;
     }
 
     public static String createParamList(IMethod method)

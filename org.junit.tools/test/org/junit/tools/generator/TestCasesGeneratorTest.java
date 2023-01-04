@@ -50,7 +50,7 @@ public class TestCasesGeneratorTest {
 	// then
 	assertEquals(1, method.getTestCase().size());
 	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("String {result}#EQUALS_J5#\"Test${Name}\"", firstTestCase.getAssertion().stream()
+	assertEquals("String {result}#EQUALS_J5#\"TestExpected\"", firstTestCase.getAssertion().stream()
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 		.collect(Collectors.joining()));
 	assertEquals("String someParam = \"TestSomeParam\"", firstTestCase.getParamAssignments().stream()
