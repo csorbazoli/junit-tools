@@ -60,6 +60,10 @@ public class GeneratorMainView extends Composite {
 	return btnToggleOther;
     }
 
+    public Button getBtnTestUtils() {
+	return btnTestUtils;
+    }
+
     public Button getBtnSetup() {
 	return btnSetup;
     }
@@ -93,6 +97,8 @@ public class GeneratorMainView extends Composite {
     private final Button btnToggleStandardMethods;
 
     private final Button btnToggleOther;
+
+    private final Button btnTestUtils;
 
     private final Button btnSetup;
 
@@ -244,6 +250,9 @@ public class GeneratorMainView extends Composite {
 
 	btnLogger = new Button(composite_7, SWT.CHECK);
 	btnLogger.setText(Messages.GeneratorWizardMainPage_logger);
+
+	btnTestUtils = new Button(composite_7, SWT.CHECK);
+	btnTestUtils.setText(Messages.GeneratorWizardMainPage_TestUtils);
 
 	btnFailassertion = new Button(composite_7, SWT.CHECK);
 	btnFailassertion

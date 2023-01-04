@@ -120,6 +120,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
     protected void handleToggleOther() {
 	toggleButton(getPage().getView().getBtnLogger());
 	toggleButton(getPage().getView().getBtnFailassertion());
+	toggleButton(getPage().getView().getBtnTestUtils());
     }
 
     /**
@@ -250,6 +251,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 
 	// other
 	page.getView().getBtnLogger().setSelection(settings.isLogger());
+	page.getView().getBtnTestUtils().setSelection(settings.isTestUtils());
 
     }
 
@@ -304,6 +306,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    settings.setTearDown(JUTPreferences.getPreferenceBoolean("TeardownSelection", false));
 	    settings.setTearDownAfterClass(JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", false));
 	    settings.setLogger(JUTPreferences.getPreferenceBoolean("LoggerSelection", false));
+	    settings.setTestUtils(JUTPreferences.getPreferenceBoolean("TestUtilsSelection", true));
 	} else {
 	    settings.setSetUp(page.getView().getBtnSetup().getSelection());
 	    settings.setSetUpBeforeClass(page.getView().getBtnSetupbeforeclass()
@@ -313,6 +316,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 		    .getBtnTeardownafterclass().getSelection());
 	    // other
 	    settings.setLogger(page.getView().getBtnLogger().getSelection());
+	    settings.setTestUtils(page.getView().getBtnTestUtils().getSelection());
 
 	    // save selections as defaults for next execution
 	    JUTPreferences.getPreferenceBoolean("SetupSelection", settings.isSetUp());
@@ -320,6 +324,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    JUTPreferences.getPreferenceBoolean("TeardownSelection", settings.isTearDown());
 	    JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", settings.isTearDownAfterClass());
 	    JUTPreferences.getPreferenceBoolean("LoggerSelection", settings.isLogger());
+	    JUTPreferences.getPreferenceBoolean("TestUtilsSelection", settings.isTestUtils());
 	}
     }
 

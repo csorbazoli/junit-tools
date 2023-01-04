@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 	"tearDown",
 	"tearDownBeforeClass",
 	"logger",
+	"testUtils",
 })
 public class Settings {
 
@@ -52,6 +53,7 @@ public class Settings {
     protected boolean tearDown;
     protected boolean tearDownAfterClass;
     protected boolean logger;
+    protected boolean testUtils = true;
 
     /**
      * Gets the value of the setUp property.
@@ -99,6 +101,14 @@ public class Settings {
      */
     public void setTearDown(boolean value) {
 	this.tearDown = value;
+    }
+
+    public boolean isTestUtils() {
+	return testUtils;
+    }
+
+    public void setTestUtils(boolean value) {
+	this.testUtils = value;
     }
 
     /**

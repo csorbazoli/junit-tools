@@ -64,6 +64,8 @@ public class Messages extends NLS {
 
     public static String GeneratorWizardMainPage_logger;
 
+    public static String GeneratorWizardMainPage_TestUtils;
+
     public static String GeneratorWizardMainPage_low;
 
     public static String GeneratorWizardMainPage_main_settings;

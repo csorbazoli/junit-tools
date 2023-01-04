@@ -37,7 +37,6 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     // from annotations-page
     private static String[] testClassAnnotations = null;
-    private static String[] mockClassAnnotations = null;
 
     // from filter-page
     private static String[] testMethodFilterName = null;
@@ -96,10 +95,6 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return testMvcMethodPostfix;
     }
 
-    protected static void setMockClassAnnotations(String[] mockClassAnnotations) {
-	JUTPreferences.mockClassAnnotations = mockClassAnnotations;
-    }
-
     public static void setTestClassAnnotations(String[] testClassAnnotations) {
 	JUTPreferences.testClassAnnotations = testClassAnnotations;
     }
@@ -109,13 +104,6 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	    testClassAnnotations = convertToArray(getPreference(TEST_CLASS_ANNOTATIONS));
 	}
 	return testClassAnnotations;
-    }
-
-    public static String[] getMockClassAnnotations() {
-	if (mockClassAnnotations == null) {
-	    mockClassAnnotations = convertToArray(getPreference(MOCK_CLASS_ANNOTATIONS));
-	}
-	return mockClassAnnotations;
     }
 
     protected static void setStaticBindings(String[] staticBindings) {
@@ -448,10 +436,6 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    return;
 			} else if (event.getProperty() == TEST_CLASS_ANNOTATIONS) {
 			    setTestClassAnnotations(convertToArray((String) event
-				    .getNewValue()));
-			    return;
-			} else if (event.getProperty() == MOCK_CLASS_ANNOTATIONS) {
-			    setMockClassAnnotations(convertToArray((String) event
 				    .getNewValue()));
 			    return;
 			} else if (event.getProperty() == STATIC_BINDINGS) {
