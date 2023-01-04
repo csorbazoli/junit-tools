@@ -173,7 +173,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		    isUsingJunit4() ? ANNO_JUNIT_AFTER : "@AfterEach");
 	}
 
-	if (tmlSettings.isTearDownBeforeClass()) {
+	if (tmlSettings.isTearDownAfterClass()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded() + MOD_STATIC_WITH_BLANK, TYPE_VOID, STANDARD_METHOD_AFTER_CLASS,
 		    "Exception", null, "", false,
 		    isUsingJunit4() ? ANNO_JUNIT_AFTER_CLASS : "@AfterAll");

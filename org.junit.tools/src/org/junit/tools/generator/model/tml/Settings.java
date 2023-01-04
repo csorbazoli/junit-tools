@@ -50,7 +50,7 @@ public class Settings {
     protected boolean setUp;
     protected boolean setUpBeforeClass;
     protected boolean tearDown;
-    protected boolean tearDownBeforeClass;
+    protected boolean tearDownAfterClass;
     protected boolean logger;
 
     /**
@@ -105,16 +105,16 @@ public class Settings {
      * Gets the value of the tearDownBeforeClass property.
      * 
      */
-    public boolean isTearDownBeforeClass() {
-	return tearDownBeforeClass;
+    public boolean isTearDownAfterClass() {
+	return tearDownAfterClass;
     }
 
     /**
      * Sets the value of the tearDownBeforeClass property.
      * 
      */
-    public void setTearDownBeforeClass(boolean value) {
-	this.tearDownBeforeClass = value;
+    public void setTearDownAfterClass(boolean value) {
+	this.tearDownAfterClass = value;
     }
 
     /**

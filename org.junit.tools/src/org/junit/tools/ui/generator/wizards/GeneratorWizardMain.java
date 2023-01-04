@@ -246,7 +246,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 		.setSelection(settings.isSetUpBeforeClass());
 	page.getView().getBtnTeardown().setSelection(settings.isTearDown());
 	page.getView().getBtnTeardownafterclass()
-		.setSelection(settings.isTearDownBeforeClass());
+		.setSelection(settings.isTearDownAfterClass());
 
 	// other
 	page.getView().getBtnLogger().setSelection(settings.isLogger());
@@ -299,18 +299,27 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 
 	// standard methods
 	if (page.getView() == null) {
-	    // TODO use defaults from last execution
+	    settings.setSetUp(JUTPreferences.getPreferenceBoolean("SetupSelection", false));
+	    settings.setSetUpBeforeClass(JUTPreferences.getPreferenceBoolean("SetupbeforeclassSelection", false));
+	    settings.setTearDown(JUTPreferences.getPreferenceBoolean("TeardownSelection", false));
+	    settings.setTearDownAfterClass(JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", false));
+	    settings.setLogger(JUTPreferences.getPreferenceBoolean("LoggerSelection", false));
 	} else {
-	    // TODO save selections as defaults for next execution
 	    settings.setSetUp(page.getView().getBtnSetup().getSelection());
 	    settings.setSetUpBeforeClass(page.getView().getBtnSetupbeforeclass()
 		    .getSelection());
 	    settings.setTearDown(page.getView().getBtnTeardown().getSelection());
-	    settings.setTearDownBeforeClass(page.getView()
+	    settings.setTearDownAfterClass(page.getView()
 		    .getBtnTeardownafterclass().getSelection());
-
 	    // other
 	    settings.setLogger(page.getView().getBtnLogger().getSelection());
+
+	    // save selections as defaults for next execution
+	    JUTPreferences.getPreferenceBoolean("SetupSelection", settings.isSetUp());
+	    JUTPreferences.getPreferenceBoolean("SetupbeforeclassSelection", settings.isSetUpBeforeClass());
+	    JUTPreferences.getPreferenceBoolean("TeardownSelection", settings.isTearDown());
+	    JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", settings.isTearDownAfterClass());
+	    JUTPreferences.getPreferenceBoolean("LoggerSelection", settings.isLogger());
 	}
     }
 

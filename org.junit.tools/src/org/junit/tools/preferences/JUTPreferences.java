@@ -63,6 +63,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return getPreferenceStore().getBoolean(name);
     }
 
+    public static void setPreferenceBoolean(String name, boolean newVal) {
+	getPreferenceStore().setValue(name, newVal);
+    }
+
     public static String getPreference(String name) {
 	return getPreferenceStore().getString(name);
     }
