@@ -31,7 +31,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String testClassSuperType = null;
     private static String springTestClassPostfix = null;
     private static Boolean gherkinStyleEnabled = true;
-    private static Boolean showSettingsBeforeGenerate = false;
+    private static Boolean showSettingsBeforeGenerate = null;
     private static String mockFramework = null;
     private static int junitVersion = 5;
 

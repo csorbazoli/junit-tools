@@ -33,8 +33,7 @@ public abstract class GeneratorWizardBasePage extends WizardPage {
      * @param pageName
      * @param model
      */
-    public GeneratorWizardBasePage(String title, String description,
-	    String pageName, GeneratorModel model) {
+    public GeneratorWizardBasePage(String title, String description, String pageName, GeneratorModel model) {
 	super(pageName);
 	setTitle(title);
 	setDescription(description);

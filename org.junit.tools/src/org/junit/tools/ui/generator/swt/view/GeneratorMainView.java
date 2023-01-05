@@ -24,9 +24,9 @@ public class GeneratorMainView extends Composite {
 	return methodPrefix;
     }
 
-    public Text getTxtTestProject() {
-	return txtTestProject;
-    }
+//    public Text getTxtTestProject() {
+//	return txtTestProject;
+//    }
 
     /*
      * public Button getBtnPrioHigh() { return btnPrioHigh; }
@@ -64,6 +64,10 @@ public class GeneratorMainView extends Composite {
 	return btnTestUtils;
     }
 
+    public Button getBtnShowThisDialog() {
+	return btnShowThisDialog;
+    }
+
     public Button getBtnSetup() {
 	return btnSetup;
     }
@@ -76,7 +80,7 @@ public class GeneratorMainView extends Composite {
 
     private final Text methodPrefix;
 
-    private final Text txtTestProject;
+//    private final Text txtTestProject;
 
     /*
      * private final Button btnPrioHigh;
@@ -101,6 +105,8 @@ public class GeneratorMainView extends Composite {
     private final Button btnTestUtils;
 
     private final Button btnSetup;
+
+    private final Button btnShowThisDialog;
 
     private final GroupMethodSelectionView methodSelectionGroup;
 
@@ -141,15 +147,15 @@ public class GeneratorMainView extends Composite {
 	gl_composite_2.horizontalSpacing = 0;
 	composite_2.setLayout(gl_composite_2);
 
-	Label lblTestproject = new Label(composite_2, SWT.NONE);
-	lblTestproject.setText(Messages.GeneratorWizardMainPage_Testproject);
+//	Label lblTestproject = new Label(composite_2, SWT.NONE);
+//	lblTestproject.setText(Messages.GeneratorWizardMainPage_Testproject);
+//
+//	txtTestProject = new Text(composite_2, SWT.BORDER);
+//	txtTestProject.setEditable(false);
+//	txtTestProject.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+//		false));
 
-	txtTestProject = new Text(composite_2, SWT.BORDER);
-	txtTestProject.setEditable(false);
-	txtTestProject.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-		false));
-
-	new Label(composite_2, SWT.NONE);
+//	new Label(composite_2, SWT.NONE);
 
 	Label lblMethodprefix = new Label(composite_2, SWT.NONE);
 	lblMethodprefix
@@ -262,6 +268,18 @@ public class GeneratorMainView extends Composite {
 	btnToggleOther.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 		false, 1, 1));
 	btnToggleOther.setText(Messages.GeneratorWizardMainPage_toggle);
+
+	Composite composite_8 = new Composite(projectContainer, SWT.NONE);
+	RowLayout rl_composite_8 = new RowLayout(SWT.HORIZONTAL);
+	rl_composite_8.marginTop = 20;
+	rl_composite_8.marginLeft = 0;
+	rl_composite_8.marginRight = 0;
+	rl_composite_8.marginBottom = 0;
+	composite_8.setLayout(rl_composite_8);
+
+	btnShowThisDialog = new Button(composite_8, SWT.CHECK);
+	btnShowThisDialog.setText(Messages.GeneratorWizardMainPage_ShowThisDialog);
+	btnShowThisDialog.setSelection(true);
 
 	// composite_1.setContent(grpMainSettings);
 	// composite_1.setMinSize(grpMainSettings.computeSize(SWT.DEFAULT,

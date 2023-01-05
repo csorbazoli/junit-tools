@@ -106,9 +106,9 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 		.getJavaProjectFromDialog(getPage().getShell());
 
 	if (project != null) {
-	    getPage().getView().getTxtTestProject()
-		    .setText(project.getElementName());
-	    getPage().getView().getTxtTestProject().setData(project);
+//	    getPage().getView().getTxtTestProject()
+//		    .setText(project.getElementName());
+//	    getPage().getView().getTxtTestProject().setData(project);
 	    selectedTestProject = project;
 	}
 
@@ -191,11 +191,8 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	Test tmlTest = getModel().getTmlTest();
 	initDefaults(page);
 
-	if (tmlTest != null) {
-	    // initialize settings
-	    initPageSettings(page, tmlTest.getSettings());
-
-	}
+	// initialize settings
+	initPageSettings(page, tmlTest == null ? null : tmlTest.getSettings());
 
 	methodSelection = new GroupMethodSelectionCtrl();
 
@@ -219,11 +216,11 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
      * @param page
      */
     private void initDefaults(GeneratorWizardMainPage page) {
-	String baseProjectName = getModel().getJUTElements().getProjects()
-		.getBaseProject().getElementName();
-	String testProjectName = baseProjectName;
+//	String baseProjectName = getModel().getJUTElements().getProjects()
+//		.getBaseProject().getElementName();
+//	String testProjectName = baseProjectName;
 
-	page.getView().getTxtTestProject().setText(testProjectName);
+//	page.getView().getTxtTestProject().setText(testProjectName);
 
 	page.getView().getMethodPrefix()
 		.setText(JUTPreferences.getTestMethodPrefix());
@@ -235,23 +232,29 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
      * @param page
      * @param settings
      */
-    private void initPageSettings(GeneratorWizardMainPage page,
-	    Settings settings) {
+    private void initPageSettings(GeneratorWizardMainPage page, Settings settings) {
 	if (settings == null) {
-	    return;
+	    settings = getObjectFactory().createSettings();
 	}
+
+	settings.setSetUp(JUTPreferences.getPreferenceBoolean("SetupSelection", false));
+	settings.setSetUpBeforeClass(JUTPreferences.getPreferenceBoolean("SetupbeforeclassSelection", false));
+	settings.setTearDown(JUTPreferences.getPreferenceBoolean("TeardownSelection", false));
+	settings.setTearDownAfterClass(JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", false));
+	settings.setLogger(JUTPreferences.getPreferenceBoolean("LoggerSelection", false));
+	settings.setTestUtils(JUTPreferences.getPreferenceBoolean("TestUtilsSelection", true));
 
 	// standard methods
 	page.getView().getBtnSetup().setSelection(settings.isSetUp());
-	page.getView().getBtnSetupbeforeclass()
-		.setSelection(settings.isSetUpBeforeClass());
+	page.getView().getBtnSetupbeforeclass().setSelection(settings.isSetUpBeforeClass());
 	page.getView().getBtnTeardown().setSelection(settings.isTearDown());
-	page.getView().getBtnTeardownafterclass()
-		.setSelection(settings.isTearDownAfterClass());
+	page.getView().getBtnTeardownafterclass().setSelection(settings.isTearDownAfterClass());
 
 	// other
 	page.getView().getBtnLogger().setSelection(settings.isLogger());
 	page.getView().getBtnTestUtils().setSelection(settings.isTestUtils());
+
+	page.getView().getBtnShowThisDialog().setSelection(true);
 
     }
 
@@ -319,12 +322,14 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    settings.setTestUtils(page.getView().getBtnTestUtils().getSelection());
 
 	    // save selections as defaults for next execution
-	    JUTPreferences.getPreferenceBoolean("SetupSelection", settings.isSetUp());
-	    JUTPreferences.getPreferenceBoolean("SetupbeforeclassSelection", settings.isSetUpBeforeClass());
-	    JUTPreferences.getPreferenceBoolean("TeardownSelection", settings.isTearDown());
-	    JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", settings.isTearDownAfterClass());
-	    JUTPreferences.getPreferenceBoolean("LoggerSelection", settings.isLogger());
-	    JUTPreferences.getPreferenceBoolean("TestUtilsSelection", settings.isTestUtils());
+	    JUTPreferences.setPreferenceBoolean("SetupSelection", settings.isSetUp());
+	    JUTPreferences.setPreferenceBoolean("SetupbeforeclassSelection", settings.isSetUpBeforeClass());
+	    JUTPreferences.setPreferenceBoolean("TeardownSelection", settings.isTearDown());
+	    JUTPreferences.setPreferenceBoolean("TeardownafterclassSelection", settings.isTearDownAfterClass());
+	    JUTPreferences.setPreferenceBoolean("LoggerSelection", settings.isLogger());
+	    JUTPreferences.setPreferenceBoolean("TestUtilsSelection", settings.isTestUtils());
+
+	    JUTPreferences.setShowSettingsBeforeGenerate(page.getView().getBtnShowThisDialog().getSelection());
 	}
     }
 

@@ -96,6 +96,8 @@ public class Messages extends NLS {
 
     public static String GeneratorWizardMainPage_toggle;
 
+    public static String GeneratorWizardMainPage_ShowThisDialog;
+
     public static String GeneratorWizardMainPage_Testmethod_prefix;
 
     public static String GeneratorWizardMainPage_Testpriority;

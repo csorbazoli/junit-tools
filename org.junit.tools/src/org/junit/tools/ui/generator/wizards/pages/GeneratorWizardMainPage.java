@@ -17,22 +17,16 @@ import org.junit.tools.ui.generator.wizards.GeneratorWizardMain;
  */
 public class GeneratorWizardMainPage extends GeneratorWizardBasePage {
 
-    private final GeneratorModel model;
+    private Vector<IMethod> methods;
+    private GeneratorMainView mainView = null;
 
     public GeneratorWizardMainPage(String title, String description,
 	    String pageName, GeneratorModel model) {
 	super(title, description, pageName, model);
-	this.model = model;
     }
-
-    private Vector<IMethod> methods;
-
-    private GeneratorMainView mainView = null;
 
     @Override
     public void createControl(Composite parent) {
-
-//	ICompilationUnit testClass = model.getJUTElements().getClassesAndPackages().getTestClass();
 
 	mainView = new GeneratorMainView(parent, SWT.NONE);
 	setControl(mainView);
