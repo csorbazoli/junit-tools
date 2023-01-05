@@ -1,5 +1,9 @@
 package org.junit.tools.base;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.StandardCopyOption;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -10,6 +14,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -127,8 +132,7 @@ public class MainController implements IGeneratorConstants {
 	    final IWorkbenchWindow activeWorkbenchWindow,
 	    JUTElements jutElements, boolean springTest) throws JUTException, JUTWarning {
 	if (jutElements == null) {
-	    throw new JUTWarning(
-		    "No elements found! Perhaps baseclass changed.");
+	    throw new JUTWarning("No elements found! Perhaps baseclass changed.");
 	}
 
 	JUTProjects projects = jutElements.getProjects();
@@ -137,22 +141,20 @@ public class MainController implements IGeneratorConstants {
 	}
 
 	try {
-	    JUTClassesAndPackages classesAndPackages = jutElements
-		    .getClassesAndPackages();
+	    JUTClassesAndPackages classesAndPackages = jutElements.getClassesAndPackages();
 	    String testClassName = classesAndPackages.getTestClassName();
 	    ICompilationUnit testClass = classesAndPackages.getTestClass();
 
-	    Test tmlTest = null;
-
 	    // create the model
-	    final GeneratorModel model = new GeneratorModel(jutElements, tmlTest);
+	    final GeneratorModel model = new GeneratorModel(jutElements, null);
 
 	    // Open wizard (only if needed)
 	    if (!runGeneratorWizard(model, activeWorkbenchWindow)) {
 		return false;
 	    }
 
-	    model.getTmlTest().setSpring(springTest && GeneratorUtils.hasSpringAnnotation(classesAndPackages.getBaseClass()));
+	    Test tmlTest = model.getTmlTest();
+	    tmlTest.setSpring(springTest && GeneratorUtils.hasSpringAnnotation(classesAndPackages.getBaseClass()));
 
 	    // generate test-cases (in tml)
 	    try {
@@ -160,8 +162,7 @@ public class MainController implements IGeneratorConstants {
 		tcg.generateTestCases(model);
 	    } catch (Exception ex) {
 		// only log the exception
-		logger.warning("Exception occured during the test-cases-generation! "
-			+ ex.getMessage());
+		logger.warning("Exception occured during the test-cases-generation! " + ex.getMessage());
 	    }
 
 	    // save and close opened test-class-file
@@ -177,8 +178,7 @@ public class MainController implements IGeneratorConstants {
 			for (ITestClassGenerator testClassGenerator : getExtensionHandler()
 				.getTestClassGenerators()) {
 			    generatedClass = testClassGenerator.generate(model,
-				    getExtensionHandler()
-					    .getTestDataFactories(),
+				    getExtensionHandler().getTestDataFactories(),
 				    monitor);
 			}
 			setGeneratedTestClass(generatedClass);
@@ -201,15 +201,18 @@ public class MainController implements IGeneratorConstants {
 		throw new JUTException(errorException);
 	    }
 
+	    // create TestUtls package if needed
+	    if (tmlTest.getSettings().isTestUtils()) {
+		createTestUtilsPackage(classesAndPackages.getTestFolder());
+	    }
+
 	    // make source beautiful
-	    IWorkbenchPartSite site = activeWorkbenchWindow.getActivePage()
-		    .getActivePart().getSite();
+	    IWorkbenchPartSite site = activeWorkbenchWindow.getActivePage().getActivePart().getSite();
 	    EclipseUIUtils.organizeImports(site, testClass);
 	    EclipseUIUtils.format(site, testClass);
 
 	    // open in editor
-	    openInEditor(activeWorkbenchWindow.getShell(),
-		    (IFile) getGeneratedTestClass().getResource());
+	    openInEditor(activeWorkbenchWindow.getShell(), (IFile) getGeneratedTestClass().getResource());
 
 	} catch (JUTException ex) {
 	    throw ex;
@@ -218,6 +221,34 @@ public class MainController implements IGeneratorConstants {
 	}
 
 	return true;
+    }
+
+    private void createTestUtilsPackage(IPackageFragmentRoot testFolderRoot) throws JUTWarning {
+	File testFolderPath = testFolderRoot.getResource().getLocation().toFile();
+	createTestSourceIfMissing(testFolderPath, "testutils/TestUtils.java");
+	createTestSourceIfMissing(testFolderPath, "testutils/TestValueFactory.java");
+    }
+
+    private void createTestSourceIfMissing(File testFolderRoot, String path) throws JUTWarning {
+	File testFolder = testFolderRoot;
+	if (testFolder.exists()) {
+	    File testSrc = new File(testFolder, path);
+	    if (!testSrc.exists()) {
+		copyResourceTo("res/" + path, testSrc);
+	    }
+	}
+    }
+
+    private void copyResourceTo(String resourcePath, File testSrc) throws JUTWarning {
+	try (InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(resourcePath);) {
+	    // FileUtils.copyInputStreamToFile(resourceAsStream, testSrc);
+	    java.nio.file.Files.copy(
+		    resourceAsStream,
+		    testSrc.toPath(),
+		    StandardCopyOption.REPLACE_EXISTING);
+	} catch (IOException e) {
+	    throw new JUTWarning("Couldn't create file [" + testSrc + "]: " + e.getMessage());
+	}
     }
 
     protected void setError(boolean error, Exception ex) {
