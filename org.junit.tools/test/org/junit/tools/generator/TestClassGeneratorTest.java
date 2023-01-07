@@ -448,7 +448,7 @@ public class TestClassGeneratorTest {
 	testCase.getParamAssignments().add(beanParamAssignment);
 	tmlMethod.getTestCase().add(testCase);
 	// when
-	String actual = underTest.createMvcTestMethodBody(type, tmlMethod, "someMethod", "SomeClass", "get", "/rest/v1/update/{id}");
+	String actual = underTest.createMvcTestMethodBody(tmlMethod, "get", "/rest/v1/update/{id}");
 	// then
 	assertEquals("// given\n"
 		+ "int id = 123;\n"

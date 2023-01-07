@@ -430,7 +430,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    Method tmlMethod = methodMap.get(methodToCreate);
 	    String httpMethod = mvcTest ? GeneratorUtils.determineHttpMethod(methodToCreate) : null;
 	    if (httpMethod != null) {
-		createMvcTestMethod(type, tmlMethod, baseClassName, httpMethod, basePath + GeneratorUtils.determineRequestPath(methodToCreate));
+		createMvcTestMethod(type, tmlMethod, httpMethod, basePath + GeneratorUtils.determineRequestPath(methodToCreate));
 	    } else {
 		createTestMethod(type, tmlMethod, baseClassName);
 	    }
@@ -447,7 +447,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return false;
     }
 
-    private void createMvcTestMethod(IType type, Method tmlMethod, String baseClassName, String httpMethod, String urlPath)
+    private void createMvcTestMethod(IType type, Method tmlMethod, String httpMethod, String urlPath)
 	    throws JavaModelException {
 
 	// create test-method-name
@@ -462,7 +462,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-method-body
-	String testMethodBody = createMvcTestMethodBody(type, tmlMethod, testMethodName, baseClassName, httpMethod, urlPath);
+	String testMethodBody = createMvcTestMethodBody(tmlMethod, httpMethod, urlPath);
 
 	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, "Exception", null, testMethodBody, false,
 		// annoMethodRef,
@@ -491,7 +491,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		ANNO_JUNIT_TEST);
     }
 
-    protected String createMvcTestMethodBody(IType type, Method tmlMethod, String methodName, String baseClassName, String httpMethod, String urlPath)
+    protected String createMvcTestMethodBody(Method tmlMethod, String httpMethod, String urlPath)
 	    throws JavaModelException {
 	StringBuilder sbTestMethodBody = new StringBuilder();
 	List<Param> params = tmlMethod.getParam();
@@ -509,8 +509,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	for (TestCase tmlTestcase : testCases) {
 
-	    createMvcTestCaseBody(sbTestMethodBody, tmlMethod.getName(), resultVariableName, resultType,
-		    params, tmlTestcase.getParamAssignments(), httpMethod, urlPath);
+	    createMvcTestCaseBody(sbTestMethodBody, resultVariableName, resultType, params,
+		    tmlTestcase.getParamAssignments(), httpMethod, urlPath);
 
 	    // assertions
 	    createAssertionsMethodBody(sbTestMethodBody, resultVariableName, resultType, testBaseVariableName,
@@ -520,8 +520,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return sbTestMethodBody.toString();
     }
 
-    private void createMvcTestCaseBody(StringBuilder sbTestMethodBody, String methodName, String resultVariableName,
-	    String resultType, List<Param> params, List<ParamAssignment> paramAssignments, String httpMethod, String urlPath) {
+    private void createMvcTestCaseBody(StringBuilder sbTestMethodBody, String resultVariableName, String resultType,
+	    List<Param> params, List<ParamAssignment> paramAssignments, String httpMethod, String urlPath) {
 
 	if (isGherkinStyle()) {
 	    sbTestMethodBody.append("// given").append(RETURN);
@@ -543,10 +543,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		.append("(\"").append(urlPath).append("\")");
 
 	// create parameter list
-	String paramNameList = createMvcParamList(params);
-
 	// method-call
-	sbTestMethodBody.append(paramNameList)
+	sbTestMethodBody.append(createMvcParamList(params))
 		.append(RETURN)
 		.append(".accept(\"application/json\"))").append(RETURN)
 		.append(".andExpect(status().isOk())").append(RETURN)
