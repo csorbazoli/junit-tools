@@ -1,67 +1,35 @@
 {
   "param" : [ {
-    "name" : "name value",
-    "type" : "type value",
+    "name" : "someService",
+    "type" : "String",
     "primitive" : true,
     "annotations" : [ {
-      "name" : "name value",
+      "name" : "PathVariable",
       "attributes" : [ {
-        "name" : "name value",
-        "type" : "type value",
-        "value" : "value value"
+        "name" : "name",
+        "type" : "String",
+        "value" : "someParam"
       } ]
     } ]
   } ],
-  "paramsDefault" : [ {
-    "paramType" : "paramType value",
-    "paramName" : "paramName value",
-    "assignment" : "assignment value"
-  } ],
-  "preconditions" : [ {
-    "condition" : [ "condition value" ],
-    "comment" : "comment value"
-  } ],
-  "testCase" : [ {
-    "paramAssignments" : [ {
-      "paramType" : "paramType value",
-      "paramName" : "paramName value",
-      "assignment" : "assignment value"
-    } ],
-    "preconditions" : [ {
-      "condition" : [ "condition value" ],
-      "comment" : "comment value"
-    } ],
-    "assertion" : [ {
-      "value" : "value value",
-      "message" : "message value",
-      "base" : "base value",
-      "baseType" : "baseType value",
-      "type" : "EQUALS"
-    } ],
-    "name" : "name value",
-    "testBase" : "testBase value"
-  } ],
+  "paramsDefault" : [ ],
+  "preconditions" : [ ],
+  "testCase" : [ ],
   "result" : {
-    "value" : "value value",
-    "name" : "name value",
-    "type" : "type value"
+    "value" : null,
+    "name" : "actual",
+    "type" : "int"
   },
-  "assertion" : [ {
-    "value" : "value value",
-    "message" : "message value",
-    "base" : "base value",
-    "baseType" : "baseType value",
-    "type" : "EQUALS"
-  } ],
+  "assertion" : [ ],
   "annotations" : [ {
-    "name" : "name value",
+    "name" : "RequestMapping",
     "attributes" : [ {
-      "name" : "name value",
-      "type" : "type value",
-      "value" : "value value"
+      "name" : "method",
+      "type" : "String",
+      "value" : "RequestMethod.POST"
     } ]
   } ],
-  "name" : null,
+  "name" : "someMethod",
   "modifier" : "",
   "signature" : null,
   "static" : false

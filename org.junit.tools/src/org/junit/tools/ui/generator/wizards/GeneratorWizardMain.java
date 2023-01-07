@@ -2,10 +2,13 @@ package org.junit.tools.ui.generator.wizards;
 
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.stream.Stream;
 
+import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ILocalVariable;
+import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
@@ -17,6 +20,8 @@ import org.junit.tools.generator.IGeneratorConstants;
 import org.junit.tools.generator.model.GeneratorModel;
 import org.junit.tools.generator.model.JUTElements;
 import org.junit.tools.generator.model.JUTElements.JUTConstructorsAndMethods;
+import org.junit.tools.generator.model.tml.Annotation;
+import org.junit.tools.generator.model.tml.Attribute;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.Result;
@@ -409,6 +414,10 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	tmlMethod.setStatic(JDTUtils.isStatic(method));
 	tmlMethod.setSignature(method.getSignature());
 
+	// method annotations
+	convertAnnotations(method.getAnnotations())
+		.forEach(tmlMethod.getAnnotations()::add);
+
 	// parameters
 	ILocalVariable[] parameters = method.getParameters();
 
@@ -419,6 +428,10 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    param.setType(Signature.getSignatureSimpleName(parameter
 		    .getTypeSignature()));
 	    param.setPrimitive(JDTUtils.isPrimitive(param.getType()));
+
+	    // param annotations
+	    convertAnnotations(parameter.getAnnotations())
+		    .forEach(param.getAnnotations()::add);
 
 	    tmlMethod.getParam().add(param);
 	}
@@ -431,6 +444,42 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    result.setType(Signature.getSignatureSimpleName(returnType));
 	    tmlMethod.setResult(result);
 	}
+    }
+
+    private Stream<Annotation> convertAnnotations(IAnnotation[] annotations) {
+	if (annotations == null) {
+	    return Stream.empty();
+	}
+	return Stream.of(annotations)
+		.map(this::convertAnnotation);
+    }
+
+    private Annotation convertAnnotation(IAnnotation anno) {
+	Annotation ret = new Annotation();
+	ret.setName(anno.getElementName());
+	try {
+	    convertAnnotationAttributes(anno.getMemberValuePairs())
+		    .forEach(ret.getAttributes()::add);
+	} catch (JavaModelException e) {
+	    throw new RuntimeException(e);
+	}
+	return ret;
+    }
+
+    private Stream<Attribute> convertAnnotationAttributes(IMemberValuePair[] memberValuePairs) {
+	if (memberValuePairs == null) {
+	    return Stream.empty();
+	}
+	return Stream.of(memberValuePairs)
+		.map(this::convertAnnotationAttribute);
+    }
+
+    private Attribute convertAnnotationAttribute(IMemberValuePair valuePair) {
+	Attribute ret = new Attribute();
+	ret.setName(valuePair.getMemberName());
+	ret.setType("String");
+	ret.setValue(String.valueOf(valuePair.getValue()));
+	return ret;
     }
 
     public IJavaProject getSelectedProject() {
