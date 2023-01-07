@@ -5,19 +5,23 @@
 // Generated on: 2015.11.22 at 02:08:56 AM CET 
 //
 
-
 package org.junit.tools.generator.model.tml;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for Param complex type.
+ * <p>
+ * Java class for Param complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="Param">
@@ -26,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="primitive" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;element name="annotations" type="{http://www.junit-tools.org/tml/tml.xsd}Annotation" maxOccurs="unbounded" minOccurs="0"/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -44,76 +49,73 @@ public class Param {
     @XmlAttribute(name = "primitive")
     protected Boolean primitive;
 
+    protected List<Annotation> annotations;
+
     /**
      * Gets the value of the name property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getName() {
-        return name;
+	return name;
     }
 
     /**
      * Sets the value of the name property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setName(String value) {
-        this.name = value;
+	this.name = value;
     }
 
     /**
      * Gets the value of the type property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getType() {
-        return type;
+	return type;
     }
 
     /**
      * Sets the value of the type property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setType(String value) {
-        this.type = value;
+	this.type = value;
     }
 
     /**
      * Gets the value of the primitive property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     * @return possible object is {@link Boolean }
+     * 
      */
     public Boolean isPrimitive() {
-        return primitive;
+	return primitive;
     }
 
     /**
      * Sets the value of the primitive property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     * @param value allowed object is {@link Boolean }
+     * 
      */
     public void setPrimitive(Boolean value) {
-        this.primitive = value;
+	this.primitive = value;
+    }
+
+    public List<Annotation> getAnnotations() {
+	if (annotations == null) {
+	    annotations = new ArrayList<>();
+	}
+	return this.annotations;
     }
 
 }
