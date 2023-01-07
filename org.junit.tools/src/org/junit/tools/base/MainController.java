@@ -470,7 +470,7 @@ public class MainController implements IGeneratorConstants {
 	if (constructorsAndMethods == null) {
 	    throw new JUTWarning(
 		    "No constructors and methods were found! Perhaps the preferences are wrong or some manual changes were done which are not compatible. "
-			    + "Elsewise create an issue or contact the JUnit-Tools-Team.");
+			    + "Elsewise create an issue in GitHub repository of the plugin.");
 	}
 
 	IMethod selectedMethod = jutElements.getConstructorsAndMethods()
