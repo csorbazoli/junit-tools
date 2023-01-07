@@ -3,6 +3,7 @@ package org.junit.tools.generator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,8 +18,10 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.tools.generator.model.GeneratorModel;
 import org.junit.tools.generator.model.JUTElements.JUTClassesAndPackages;
+import org.junit.tools.generator.model.tml.Annotation;
 import org.junit.tools.generator.model.tml.Assertion;
 import org.junit.tools.generator.model.tml.AssertionType;
+import org.junit.tools.generator.model.tml.Attribute;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.ParamAssignment;
@@ -632,24 +635,68 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	StringBuilder sbParamList = new StringBuilder();
 	for (Param param : params) {
 
-	    if (param.isPrimitive()) {
+	    Optional<String> headerName = getHeaderNameIfSpecified(param);
+	    if (headerName.isPresent()) {
 		sbParamList.append(RETURN)
-			.append(".param(\"")
-			.append(param.getName())
+			.append(".header(\"")
+			.append(headerName.get())
 			.append("\", ")
 			.append(param.getName())
 			.append(")");
-	    } else {
+	    } else if (isRequestBody(param)) {
 		sbParamList.append(RETURN)
 			.append(".content(TestUtils.objectToJson(")
 			.append(param.getName())
 			.append("))");
+	    } else {
+		String paramName = getParameterName(param);
+		sbParamList.append(RETURN)
+			.append(".param(\"")
+			.append(paramName)
+			.append("\", ")
+			.append(param.getName())
+			.append(")");
 	    }
 
 	}
 
 	return sbParamList.toString();
 
+    }
+
+    private String getParameterName(Param param) {
+	Optional<String> ret = Optional.empty();
+	Optional<Annotation> annotation = param.getAnnotations().stream()
+		.filter(anno -> "RequestParam".equals(anno.getName()) || "PathVariable".equals(anno.getName()))
+		.findFirst();
+	if (annotation.isPresent()) {
+	    ret = getNameAttribute(annotation.get());
+	}
+	return ret.orElse(param.getName());
+    }
+
+    private Optional<String> getNameAttribute(Annotation anno) {
+	return anno.getAttributes().stream()
+		.filter(attr -> "name".equals(attr.getName()))
+		.map(Attribute::getValue)
+		.findFirst();
+    }
+
+    private boolean isRequestBody(Param param) {
+	return param.getAnnotations().stream()
+		.anyMatch(anno -> "RequestBody".equals(anno.getName()));
+    }
+
+    private Optional<String> getHeaderNameIfSpecified(Param param) {
+	Optional<String> ret = Optional.empty();
+	Optional<Annotation> annotation = param.getAnnotations().stream()
+		.filter(anno -> "RequestHeader".equals(anno.getName()))
+		.findFirst();
+	if (annotation.isPresent()) {
+	    ret = Optional.of(getNameAttribute(annotation.get())
+		    .orElse(param.getName()));
+	}
+	return ret;
     }
 
     /**

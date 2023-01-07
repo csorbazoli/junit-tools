@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -21,8 +22,10 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.tools.generator.model.tml.Annotation;
 import org.junit.tools.generator.model.tml.Assertion;
 import org.junit.tools.generator.model.tml.AssertionType;
+import org.junit.tools.generator.model.tml.Attribute;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.ParamAssignment;
@@ -30,6 +33,7 @@ import org.junit.tools.generator.model.tml.Precondition;
 import org.junit.tools.generator.model.tml.Result;
 import org.junit.tools.generator.model.tml.Settings;
 import org.junit.tools.generator.model.tml.TestCase;
+import org.junit.tools.generator.utils.TestUtils;
 import org.junit.tools.preferences.JUTPreferences;
 import org.mockito.Mockito;
 
@@ -415,15 +419,33 @@ public class TestClassGeneratorTest {
 	methodResult.setType("TestBean");
 	tmlMethod.setResult(methodResult);
 	tmlMethod.setStatic(false);
-	Param intParam = new Param();
-	intParam.setName("id");
+
+	Param intParam = new Param(); // RequestParam
+	intParam.setName("objectId");
 	intParam.setPrimitive(true);
 	intParam.setType("int");
-	Param beanParam = new Param();
+
+	Param nameParam = new Param(); // PathVariable
+	nameParam.setName("newName");
+	nameParam.setPrimitive(true);
+	nameParam.setType("String");
+	nameParam.getAnnotations().add(createAnnotation("PathVariable"));
+
+	Param headerParam = new Param(); // RequestHeader
+	headerParam.setName("trackingId");
+	headerParam.setPrimitive(true);
+	headerParam.setType("String");
+	headerParam.getAnnotations().add(createAnnotation("RequestHeader"));
+
+	Param beanParam = new Param(); // RequestBody
 	beanParam.setName("data");
 	beanParam.setPrimitive(false);
 	beanParam.setType("TestBean");
+	beanParam.getAnnotations().add(createAnnotation("RequestBody"));
+
 	tmlMethod.getParam().add(intParam);
+	tmlMethod.getParam().add(nameParam);
+	tmlMethod.getParam().add(headerParam);
 	tmlMethod.getParam().add(beanParam);
 	TestCase testCase = new TestCase();
 	testCase.setName("TestCase1");
@@ -436,34 +458,116 @@ public class TestClassGeneratorTest {
 	Precondition precondition = new Precondition();
 	precondition.setComment("TestComment");
 	testCase.getPreconditions().add(precondition);
+
 	ParamAssignment intParamAssignment = new ParamAssignment();
 	intParamAssignment.setParamType("int");
-	intParamAssignment.setParamName("id");
+	intParamAssignment.setParamName("objectId");
 	intParamAssignment.setAssignment("123");
+	ParamAssignment nameParamAssignment = new ParamAssignment();
+	nameParamAssignment.setParamType("String");
+	nameParamAssignment.setParamName("newName");
+	nameParamAssignment.setAssignment("\"TestName\"");
+	ParamAssignment headerParamAssignment = new ParamAssignment();
+	headerParamAssignment.setParamType("String");
+	headerParamAssignment.setParamName("trackingId");
+	headerParamAssignment.setAssignment("\"TestTrackingId\"");
 	ParamAssignment beanParamAssignment = new ParamAssignment();
 	beanParamAssignment.setParamType("TestBean");
 	beanParamAssignment.setParamName("data");
 	beanParamAssignment.setAssignment("TestValueFactory.fillField(new TestBean())");
 	testCase.getParamAssignments().add(intParamAssignment);
+	testCase.getParamAssignments().add(nameParamAssignment);
+	testCase.getParamAssignments().add(headerParamAssignment);
 	testCase.getParamAssignments().add(beanParamAssignment);
 	tmlMethod.getTestCase().add(testCase);
 	// when
-	String actual = underTest.createMvcTestMethodBody(tmlMethod, "get", "/rest/v1/update/{id}");
+	String actual = underTest.createMvcTestMethodBody(tmlMethod, "get", "/rest/v1/update/{objectId}");
 	// then
-	assertEquals("// given\n"
-		+ "int id = 123;\n"
-		+ "TestBean data = TestValueFactory.fillField(new TestBean());\n"
-		+ "// when\n"
-		+ "String actual = mockMvc.perform(get(\"/rest/v1/update/{id}\")\n"
-		+ ".param(\"id\", id)\n"
-		+ ".content(TestUtils.objectToJson(data))\n"
-		+ ".accept(\"application/json\"))\n"
-		+ ".andExpect(status().isOk())\n"
-		+ ".andReturn()\n"
-		+ ".getResponse().getContentAsString();\n"
-		+ "// then\n"
-		+ "assertThat(actual).isEqualTo(TestUtils.readTestFile(\"TestBean_someMethod.json\"));",
-		actual);
+	assertThat(actual).isEqualTo(TestUtils.readTestFile("generated/Method_mvc.txt"));
+    }
+
+    @Test
+    public void testCreateMvcTestMethodBody_withNamesOverridden() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	Method tmlMethod = new Method();
+	tmlMethod.setName("someMethod");
+	tmlMethod.setModifier("public");
+	Result methodResult = new Result();
+	methodResult.setName("actual");
+	methodResult.setType("TestBean");
+	tmlMethod.setResult(methodResult);
+	tmlMethod.setStatic(false);
+
+	Param intParam = new Param(); // RequestParam
+	intParam.setName("id");
+	intParam.setPrimitive(true);
+	intParam.setType("int");
+	intParam.getAnnotations().add(createAnnotation("RequestParam",
+		createAttribute("name", "objectId"),
+		createAttribute("required", "true")));
+
+	Param nameParam = new Param(); // PathVariable
+	nameParam.setName("name");
+	nameParam.setPrimitive(true);
+	nameParam.setType("String");
+	nameParam.getAnnotations().add(createAnnotation("PathVariable",
+		createAttribute("name", "newName")));
+
+	Param headerParam = new Param(); // RequestHeader
+	headerParam.setName("trackingId");
+	headerParam.setPrimitive(true);
+	headerParam.setType("String");
+	headerParam.getAnnotations().add(createAnnotation("RequestHeader",
+		createAttribute("name", "x-tracking-id")));
+
+	Param beanParam = new Param(); // RequestBody
+	beanParam.setName("data");
+	beanParam.setPrimitive(false);
+	beanParam.setType("TestBean");
+	beanParam.getAnnotations().add(createAnnotation("RequestBody"));
+
+	tmlMethod.getParam().add(intParam);
+	tmlMethod.getParam().add(nameParam);
+	tmlMethod.getParam().add(headerParam);
+	tmlMethod.getParam().add(beanParam);
+	TestCase testCase = new TestCase();
+	testCase.setName("TestCase1");
+	testCase.setTestBase("TestBase");
+	Assertion assertion = new Assertion();
+	assertion.setBase("{result}");
+	assertion.setType(AssertionType.EQUALS);
+	assertion.setValue("TestUtils.readTestFile(\"TestBean_someMethod.json\")");
+	testCase.getAssertion().add(assertion);
+	Precondition precondition = new Precondition();
+	precondition.setComment("TestComment");
+	testCase.getPreconditions().add(precondition);
+
+	ParamAssignment intParamAssignment = new ParamAssignment();
+	intParamAssignment.setParamType("int");
+	intParamAssignment.setParamName("id");
+	intParamAssignment.setAssignment("123");
+	ParamAssignment nameParamAssignment = new ParamAssignment();
+	nameParamAssignment.setParamType("String");
+	nameParamAssignment.setParamName("name");
+	nameParamAssignment.setAssignment("\"TestName\"");
+	ParamAssignment headerParamAssignment = new ParamAssignment();
+	headerParamAssignment.setParamType("String");
+	headerParamAssignment.setParamName("trackingId");
+	headerParamAssignment.setAssignment("\"TestTrackingId\"");
+	ParamAssignment beanParamAssignment = new ParamAssignment();
+	beanParamAssignment.setParamType("TestBean");
+	beanParamAssignment.setParamName("data");
+	beanParamAssignment.setAssignment("TestValueFactory.fillField(new TestBean())");
+	testCase.getParamAssignments().add(intParamAssignment);
+	testCase.getParamAssignments().add(nameParamAssignment);
+	testCase.getParamAssignments().add(headerParamAssignment);
+	testCase.getParamAssignments().add(beanParamAssignment);
+	tmlMethod.getTestCase().add(testCase);
+	// when
+	String actual = underTest.createMvcTestMethodBody(tmlMethod, "get", "/rest/v1/update/{objectId}");
+	// then
+	assertThat(actual).isEqualTo(TestUtils.readTestFile("generated/Method_mvc_override_names.txt"));
     }
 
     @Test
@@ -542,6 +646,23 @@ public class TestClassGeneratorTest {
 	underTest.createStandardClassFields(type, "SomeClass", false);
 	// then
 	verify(type, never()).createField(anyString(), any(), anyBoolean(), any());
+    }
+
+    // helper methods
+    private Annotation createAnnotation(String name, Attribute... attributes) {
+	Annotation ret = new Annotation();
+	ret.setName(name);
+	Stream.of(attributes)
+		.forEach(ret.getAttributes()::add);
+	return ret;
+    }
+
+    private Attribute createAttribute(String name, String value) {
+	Attribute ret = new Attribute();
+	ret.setName(name);
+	ret.setType("String");
+	ret.setValue(value);
+	return ret;
     }
 
 }
