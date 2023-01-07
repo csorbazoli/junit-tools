@@ -36,7 +36,7 @@ public class TestCasesGenerator {
 	    testCase.setTestBase("");
 	    testCase.setName("default test");
 
-	    Assertion assertion = createDefaultAssertion(tmlMethod);
+	    Assertion assertion = createAssertionForResult(tmlMethod);
 	    if (assertion != null) {
 		testCase.getAssertion().add(assertion);
 	    }
@@ -60,22 +60,28 @@ public class TestCasesGenerator {
 	return ret;
     }
 
-    private Assertion createDefaultAssertion(Method tmlMethod) {
+    private Assertion createAssertionForResult(Method tmlMethod) {
 	if (tmlMethod.getResult() == null) {
 	    return null;
 	}
 	Assertion defaultAssertion = new Assertion();
 	defaultAssertion.setBaseType(tmlMethod.getResult().getType());
-	defaultAssertion.setType(AssertionType.EQUALS_J5);
-	String expected = JUTPreferences.getDefaultValuesByType().get(tmlMethod.getResult().getType());
-	if (expected == null) {
-	    defaultAssertion.setBase("TestUtils.objectToJson({result})");
-	    expected = "TestUtils.readTestFile(\"" + tmlMethod.getName() + "/" + tmlMethod.getResult().getType() + ".json\")";
-	} else {
+	if ("Boolean".equalsIgnoreCase(tmlMethod.getResult().getType())) {
+	    defaultAssertion.setType(AssertionType.IS_TRUE_J5);
 	    defaultAssertion.setBase("{result}");
-	    expected = JDTUtils.replaceValuePlaceholders(expected, "Expected", tmlMethod.getResult().getType());
+	    defaultAssertion.setValue("");
+	} else {
+	    defaultAssertion.setType(AssertionType.EQUALS_J5);
+	    String expected = JUTPreferences.getDefaultValuesByType().get(tmlMethod.getResult().getType());
+	    if (expected == null) {
+		defaultAssertion.setBase("TestUtils.objectToJson({result})");
+		expected = "TestUtils.readTestFile(\"" + tmlMethod.getName() + "/" + tmlMethod.getResult().getType() + ".json\")";
+	    } else {
+		defaultAssertion.setBase("{result}");
+		expected = JDTUtils.replaceValuePlaceholders(expected, "Expected", tmlMethod.getResult().getType());
+	    }
+	    defaultAssertion.setValue(expected);
 	}
-	defaultAssertion.setValue(expected);
 	return defaultAssertion;
     }
 

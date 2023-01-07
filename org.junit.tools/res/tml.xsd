@@ -131,6 +131,7 @@
       <enumeration value="EQUALS_J5"></enumeration>
       <enumeration value="NOT_EQUALS"></enumeration>
       <enumeration value="IS_TRUE"></enumeration>
+      <enumeration value="IS_TRUE_J5"></enumeration>
       <enumeration value="IS_FALSE"></enumeration>
       <enumeration value="CREATER_THAN"></enumeration>
       <enumeration value="LOWER_THAN"></enumeration>

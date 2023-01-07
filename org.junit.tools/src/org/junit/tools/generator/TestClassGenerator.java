@@ -770,6 +770,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    assertionType = "assertFalse";
 	} else if (type == AssertionType.EQUALS_J5) {
 	    assertionType = "isEqualTo";
+	} else if (type == AssertionType.IS_TRUE_J5) {
+	    assertionType = "isTrue";
 	}
 	return assertionType;
     }

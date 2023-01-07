@@ -47,7 +47,9 @@ public enum AssertionType {
     IS_FALSE,
     CREATER_THAN,
     LOWER_THAN,
-    EQUALS_J5(true);
+    EQUALS_J5(true),
+    IS_TRUE_J5(true),
+    ;
 
     private final boolean junit5;
 
