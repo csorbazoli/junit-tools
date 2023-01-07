@@ -430,7 +430,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    Method tmlMethod = methodMap.get(methodToCreate);
 	    String httpMethod = mvcTest ? GeneratorUtils.determineHttpMethod(methodToCreate) : null;
 	    if (httpMethod != null) {
-		createMvcTestMethod(type, tmlMethod, httpMethod, basePath + GeneratorUtils.determineRequestPath(methodToCreate));
+		createMvcTestMethod(type, tmlMethod, methodToCreate, httpMethod, basePath);
 	    } else {
 		createTestMethod(type, tmlMethod, baseClassName);
 	    }
@@ -447,7 +447,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return false;
     }
 
-    private void createMvcTestMethod(IType type, Method tmlMethod, String httpMethod, String urlPath)
+    private void createMvcTestMethod(IType type, Method tmlMethod, IMethod testedMethod, String httpMethod, String basePath)
 	    throws JavaModelException {
 
 	// create test-method-name
@@ -462,7 +462,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-method-body
-	String testMethodBody = createMvcTestMethodBody(tmlMethod, httpMethod, urlPath);
+	String testMethodBody = createMvcTestMethodBody(tmlMethod, httpMethod, basePath + GeneratorUtils.determineRequestPath(testedMethod));
 
 	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, "Exception", null, testMethodBody, false,
 		// annoMethodRef,

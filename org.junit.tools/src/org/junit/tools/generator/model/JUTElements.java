@@ -375,6 +375,10 @@ public class JUTElements {
 	this.constructorsAndMethods = constructorsAndMethods;
     }
 
+    public JUTClassesAndPackages createClassesAndPackages() {
+	return new JUTClassesAndPackages();
+    }
+
     public JUTProjects initProjects(IJavaProject project, ICompilationUnit cu, boolean springTest) throws JUTWarning {
 	JUTProjects tmpProjects = new JUTProjects();
 
@@ -497,13 +501,13 @@ public class JUTElements {
 	    initProjects(cu.getJavaProject(), springTest);
 	}
 
-	JUTClassesAndPackages jutClassesAndPackages = initPackages(JDTUtils.getPackage(cu));
+	JUTClassesAndPackages ret = initPackages(JDTUtils.getPackage(cu));
 
 	if (projects.isBaseProjectSelected()) {
 	    baseCu = cuList.get(0);
 
 	    if (projects.getTestProject() != null) {
-		testPackage = jutClassesAndPackages.getTestPackage();
+		testPackage = ret.getTestPackage();
 
 		baseCuName = baseCu.getElementName().replace(".java", "");
 
@@ -518,7 +522,7 @@ public class JUTElements {
 	    }
 	} else {
 	    testCu = cuList.get(0);
-	    testPackage = jutClassesAndPackages.getTestPackage();
+	    testPackage = ret.getTestPackage();
 
 	    testCuName = testCu.getElementName().replace(".java", "");
 	    baseCuName = testCu.getElementName().replace(testClassPostfix + ".java", "");
@@ -526,7 +530,7 @@ public class JUTElements {
 		baseCuName = baseCuName.replaceFirst(testClassPrefix, "");
 	    }
 
-	    if (jutClassesAndPackages.getBasePackages().size() == 0) {
+	    if (ret.getBasePackages().size() == 0) {
 		if (testPackage == null) {
 		    throw new JUTWarning("The base and test package could not be found! Test-Class-Name: " + testCuName
 			    + " Base-Class-Name: " + baseCuName);
@@ -537,7 +541,7 @@ public class JUTElements {
 		}
 	    }
 
-	    for (IPackageFragment tmpBasePackage : jutClassesAndPackages.getBasePackages()) {
+	    for (IPackageFragment tmpBasePackage : ret.getBasePackages()) {
 		baseCu = tmpBasePackage.getCompilationUnit(baseCuName + ".java");
 
 		if (baseCu != null && baseCu.exists()) {
@@ -553,12 +557,12 @@ public class JUTElements {
 			    + testCuName);
 	}
 
-	jutClassesAndPackages.setBaseTest(baseCu);
-	jutClassesAndPackages.setBaseClassName(baseCuName);
-	jutClassesAndPackages.setTestClass(testCu);
-	jutClassesAndPackages.setTestClassName(testCuName);
+	ret.setBaseTest(baseCu);
+	ret.setBaseClassName(baseCuName);
+	ret.setTestClass(testCu);
+	ret.setTestClassName(testCuName);
 
-	return jutClassesAndPackages;
+	return ret;
     }
 
     /**

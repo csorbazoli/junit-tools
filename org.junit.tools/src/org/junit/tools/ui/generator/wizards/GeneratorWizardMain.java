@@ -403,9 +403,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
      */
     public void updateModelMethod(IMethod method, Method tmlMethod)
 	    throws JavaModelException {
-	Result result;
-	Param param;
-	String returnType;
 
 	tmlMethod.setName(method.getElementName());
 	tmlMethod.setModifier(JDTUtils.getMethodModifier(method));
@@ -415,6 +412,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	// parameters
 	ILocalVariable[] parameters = method.getParameters();
 
+	Param param;
 	for (ILocalVariable parameter : parameters) {
 	    param = getObjectFactory().createParam();
 	    param.setName(parameter.getElementName());
@@ -426,9 +424,9 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	}
 
 	// return type
-	returnType = method.getReturnType();
+	String returnType = method.getReturnType();
 	if (returnType != null && !returnType.equals("V")) {
-	    result = getObjectFactory().createResult();
+	    Result result = getObjectFactory().createResult();
 	    result.setName("actual");
 	    result.setType(Signature.getSignatureSimpleName(returnType));
 	    tmlMethod.setResult(result);
