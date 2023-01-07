@@ -65,15 +65,6 @@ public class TestClassGeneratorTest {
     }
 
     @Test
-    public void testCreateAssertionType() {
-	// given
-	// when
-	String actual = underTest.createAssertionType(AssertionType.EQUALS_J5, "test");
-	// then
-	assertEquals("isEqualTo", actual);
-    }
-
-    @Test
     public void testCreateAssertionsMethodBody_simpleExpectedValue() {
 	// given
 	StringBuilder sbTestMethodBody = new StringBuilder();
@@ -84,7 +75,7 @@ public class TestClassGeneratorTest {
 	assertion.setBase("{result}");
 	assertion.setBaseType("String");
 	assertion.setMessage("test message");
-	assertion.setType(AssertionType.EQUALS_J5);
+	assertion.setType(AssertionType.EQUALS);
 	assertion.setValue("\"test value\"");
 	testCase.getAssertion().add(assertion);
 	// when
@@ -123,7 +114,7 @@ public class TestClassGeneratorTest {
 	assertion.setBase("TestUtils.objectToJson({result})");
 	assertion.setBaseType("TestBean");
 	assertion.setMessage("test message");
-	assertion.setType(AssertionType.EQUALS_J5);
+	assertion.setType(AssertionType.EQUALS);
 	assertion.setValue("TestUtils.readTestFile(\"testedMethod/TestBean.json\")");
 	testCase.getAssertion().add(assertion);
 	// when
@@ -382,7 +373,7 @@ public class TestClassGeneratorTest {
 	testCase.setTestBase("TestBase");
 	Assertion assertion = new Assertion();
 	assertion.setBase("{result}");
-	assertion.setType(AssertionType.EQUALS_J5);
+	assertion.setType(AssertionType.EQUALS);
 	assertion.setValue("\"testValueForAssertion\"");
 	testCase.getAssertion().add(assertion);
 	Precondition precondition = new Precondition();
@@ -439,7 +430,7 @@ public class TestClassGeneratorTest {
 	testCase.setTestBase("TestBase");
 	Assertion assertion = new Assertion();
 	assertion.setBase("{result}");
-	assertion.setType(AssertionType.EQUALS_J5);
+	assertion.setType(AssertionType.EQUALS);
 	assertion.setValue("TestUtils.readTestFile(\"TestBean_someMethod.json\")");
 	testCase.getAssertion().add(assertion);
 	Precondition precondition = new Precondition();
@@ -463,7 +454,7 @@ public class TestClassGeneratorTest {
 		+ "int id = 123;\n"
 		+ "TestBean data = TestValueFactory.fillField(new TestBean());\n"
 		+ "// when\n"
-		+ "String actual = mockMvc.perform(get(\"/rest/v1/update/{id}\")\n" // TODO should determine the path as well, i.e.
+		+ "String actual = mockMvc.perform(get(\"/rest/v1/update/{id}\")\n"
 		+ ".param(\"id\", id)\n"
 		+ ".content(TestUtils.objectToJson(data))\n"
 		+ ".accept(\"application/json\"))\n"

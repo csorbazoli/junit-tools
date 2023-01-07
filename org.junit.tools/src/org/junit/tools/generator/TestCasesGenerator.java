@@ -67,11 +67,11 @@ public class TestCasesGenerator {
 	Assertion defaultAssertion = new Assertion();
 	defaultAssertion.setBaseType(tmlMethod.getResult().getType());
 	if ("Boolean".equalsIgnoreCase(tmlMethod.getResult().getType())) {
-	    defaultAssertion.setType(AssertionType.IS_TRUE_J5);
+	    defaultAssertion.setType(AssertionType.IS_TRUE);
 	    defaultAssertion.setBase("{result}");
 	    defaultAssertion.setValue("");
 	} else {
-	    defaultAssertion.setType(AssertionType.EQUALS_J5);
+	    defaultAssertion.setType(AssertionType.EQUALS);
 	    String expected = JUTPreferences.getDefaultValuesByType().get(tmlMethod.getResult().getType());
 	    if (expected == null) {
 		defaultAssertion.setBase("TestUtils.objectToJson({result})");

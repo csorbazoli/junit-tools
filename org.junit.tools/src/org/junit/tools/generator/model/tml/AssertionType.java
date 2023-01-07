@@ -22,14 +22,8 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;simpleType name="AssertionType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="IS_NULL"/>
- *     &lt;enumeration value="NOT_NULL"/>
  *     &lt;enumeration value="EQUALS"/>
- *     &lt;enumeration value="NOT_EQUALS"/>
  *     &lt;enumeration value="IS_TRUE"/>
- *     &lt;enumeration value="IS_FALSE"/>
- *     &lt;enumeration value="CREATER_THAN"/>
- *     &lt;enumeration value="LOWER_THAN"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -39,34 +33,22 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum AssertionType {
 
-    IS_NULL,
-    NOT_NULL,
-    EQUALS,
-    NOT_EQUALS,
-    IS_TRUE,
-    IS_FALSE,
-    CREATER_THAN,
-    LOWER_THAN,
-    EQUALS_J5(true),
-    IS_TRUE_J5(true),
+    EQUALS("isEqualTo"),
+    IS_TRUE("isTrue"),
     ;
 
-    private final boolean junit5;
+    private final String method;
 
-    AssertionType() {
-	this(false);
-    }
-
-    AssertionType(boolean isJunit5) {
-	this.junit5 = isJunit5;
+    AssertionType(String method) {
+	this.method = method;
     }
 
     public String value() {
 	return name();
     }
 
-    public boolean isJUnit5() {
-	return junit5;
+    public String getMethod() {
+	return method;
     }
 
     public static AssertionType fromValue(String v) {

@@ -685,95 +685,32 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	for (Assertion tmlAssertion : tmlTestCase.getAssertion()) {
 	    // base
 	    String base;
-	    String baseType;
 	    if (tmlAssertion.getBase().contains("{result}")) {
 		if ("".equals(resultVariableName)) {
 		    continue;
 		}
 
 		base = tmlAssertion.getBase().replace("{result}", resultVariableName);
-		baseType = resultType;
 	    } else {
 		base = testBaseVariableName + "." + tmlAssertion.getBase() + "()";
-		baseType = tmlAssertion.getBaseType();
 	    }
 
 	    // assertion-type
 	    AssertionType type = tmlAssertion.getType();
-	    String assertionType = createAssertionType(type, baseType);
+	    String assertionType = type.getMethod();
 
 	    // Assertion
-	    if (type.isJUnit5()) {
-		sbTestMethodBody.append(RETURN + "assertThat(" + base + ").");
-		if (tmlAssertion.getMessage() != null && tmlAssertion.getMessage().length() > 0) {
-		    String message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
-		    sbTestMethodBody.append("withFailMessage(").append(QUOTES).append(message).append(QUOTES).append(").");
-		}
-		sbTestMethodBody.append(assertionType).append("(")
-			.append(tmlAssertion.getValue());
-	    } else {
-		sbTestMethodBody.append(RETURN + "Assert.").append(assertionType).append("(");
-
-		// message
-		String message = "";
-		if (StringUtils.isNotBlank(tmlAssertion.getMessage())) {
-		    message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
-		    sbTestMethodBody.append(QUOTES).append(message).append(QUOTES).append(", ");
-		}
-
-		// actual
-		if (type == AssertionType.EQUALS || type == AssertionType.NOT_EQUALS) {
-		    // test-value
-		    String testValue = tmlAssertion.getValue();
-		    testValue = JDTUtils.formatValue(testValue, baseType, "result");
-		    sbTestMethodBody.append(testValue).append(", ");
-
-		    // expected
-		    sbTestMethodBody.append(base);
-
-		    // delta
-		    if (JDTUtils.isNumber(baseType) && !JDTUtils.isArray(baseType)) {
-			sbTestMethodBody.append(", 0");
-		    }
-		} else {
-		    // expected
-		    sbTestMethodBody.append(base);
-		}
+	    sbTestMethodBody.append(RETURN + "assertThat(" + base + ").");
+	    if (tmlAssertion.getMessage() != null && tmlAssertion.getMessage().length() > 0) {
+		String message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
+		sbTestMethodBody.append("withFailMessage(").append(QUOTES).append(message).append(QUOTES).append(").");
 	    }
+	    sbTestMethodBody.append(assertionType).append("(")
+		    .append(tmlAssertion.getValue());
 
 	    sbTestMethodBody.append(");");
 	}
 
-    }
-
-    /**
-     * Returns the assertion as String.
-     */
-    protected String createAssertionType(AssertionType type, String baseType) {
-	String assertionType = "assertEquals";
-
-	if (type == AssertionType.EQUALS) {
-	    if (JDTUtils.isArray(baseType)) {
-		assertionType = "assertArrayEquals";
-	    } else {
-		assertionType = "assertEquals";
-	    }
-	} else if (type == AssertionType.NOT_EQUALS) {
-	    assertionType = "assertNotEquals";
-	} else if (type == AssertionType.IS_NULL) {
-	    assertionType = "assertNull";
-	} else if (type == AssertionType.NOT_NULL) {
-	    assertionType = "assertNotNull";
-	} else if (type == AssertionType.IS_TRUE) {
-	    assertionType = "assertTrue";
-	} else if (type == AssertionType.IS_FALSE) {
-	    assertionType = "assertFalse";
-	} else if (type == AssertionType.EQUALS_J5) {
-	    assertionType = "isEqualTo";
-	} else if (type == AssertionType.IS_TRUE_J5) {
-	    assertionType = "isTrue";
-	}
-	return assertionType;
     }
 
     private boolean isGherkinStyle() {
