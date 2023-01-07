@@ -24,7 +24,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 public class TestUtils {
 
     private static Logger log = Logger.getLogger("TestUtils");
-    private static final String SRC_TEST_RESOURCES = "test/"; // "src/test/resources/";
+    private static final String SRC_TEST_RESOURCES = "test-resources/"; // "src/test/resources/";
 
     public static class TestUtilException extends RuntimeException {
 	private static final long serialVersionUID = 429319185965049555L;
