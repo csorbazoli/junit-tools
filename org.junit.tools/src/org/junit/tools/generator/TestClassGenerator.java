@@ -420,7 +420,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	int i = 0;
 
-	String baseClassName = baseClass.getElementName();
+	String baseClassName = baseClass.findPrimaryType().getElementName();
 	String basePath = "";
 	if (mvcTest) {
 	    basePath = GeneratorUtils.determineRequestPath(baseClass.findPrimaryType());
@@ -606,7 +606,6 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create param assignments
 	createParamAssignments(paramAssignments, sbTestMethodBody);
 
-	// result
 	if (isGherkinStyle()) {
 	    sbTestMethodBody.append("// when").append(RETURN);
 	}
