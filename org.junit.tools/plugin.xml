@@ -8,11 +8,11 @@
    <extension
      point="org.eclipse.ui.bindings">
 
-	  <key 
+	  <key  
 	        commandId="org.junit.tools.handler.SwitchClass"
 	        contextId="org.eclipse.ui.contexts.window"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="Ctrl+J">
+	        sequence="Ctrl+Shift+J">
 	  </key>
 	
 	  <key
@@ -33,9 +33,11 @@
    
    <extension
      point="org.eclipse.ui.commands">
+
+      <category id="org.junit.tools.commands.category" name="JUnitTools4Spring"/>
 	  
 	  <command
-	        categoryId="org.eclipse.ui.category.window"
+	        categoryId="org.junit.tools.commands.category"
 	        defaultHandler="org.junit.tools.handler.SwitchClassHandler"
 	        description="Switches between test-class and test-subject"
 	        id="org.junit.tools.handler.SwitchClass"
@@ -43,7 +45,7 @@
 	  </command>
 	       
 	  <command
-	        categoryId="org.eclipse.ui.category.window"
+	        categoryId="org.junit.tools.commands.category"
 	        defaultHandler="org.junit.tools.handler.GenerateTestClassHandler"
 	        description="Generate a unit test-class with test-cases"
 	        id="org.junit.tools.handler.GenerateTestClass"
@@ -51,7 +53,7 @@
 	  </command>
 
 	  <command
-	        categoryId="org.eclipse.ui.category.window"
+	        categoryId="org.junit.tools.commands.category"
 	        defaultHandler="org.junit.tools.handler.GenerateSpringTestClassHandler"
 	        description="Generate a unit test-class with Spring Context with test-cases"
 	        id="org.junit.tools.handler.GenerateSpringTestClass"

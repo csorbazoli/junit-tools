@@ -15,8 +15,7 @@ import org.junit.tools.base.MainController;
 import org.junit.tools.ui.utils.EclipseUIUtils;
 
 /**
- * Command for the generation of a test-class. The standard shortcut is
- * ctrl-shift-<.
+ * Command for the generation of a test-class. The standard shortcut is ctrl-u.
  * 
  * @author JUnit-Tools-Team
  * 
