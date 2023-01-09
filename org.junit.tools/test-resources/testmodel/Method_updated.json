@@ -1,8 +1,9 @@
 {
   "param" : [ {
-    "name" : "someService",
+    "name" : "someName",
     "type" : "String",
     "primitive" : true,
+    "hasDefaultConstructor" : false,
     "annotations" : [ {
       "name" : "PathVariable",
       "attributes" : [ {
@@ -11,6 +12,12 @@
         "value" : "someParam"
       } ]
     } ]
+  }, {
+    "name" : "someObject",
+    "type" : "TestClass",
+    "primitive" : false,
+    "hasDefaultConstructor" : true,
+    "annotations" : [ ]
   } ],
   "paramsDefault" : [ ],
   "preconditions" : [ ],

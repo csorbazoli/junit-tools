@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="primitive" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="hasDefaultConstructor" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;element name="annotations" type="{http://www.junit-tools.org/tml/tml.xsd}Annotation" maxOccurs="unbounded" minOccurs="0"/>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -48,6 +49,8 @@ public class Param {
     protected String type;
     @XmlAttribute(name = "primitive")
     protected Boolean primitive;
+    @XmlAttribute(name = "hasDefaultConstructor")
+    protected Boolean hasDefaultConstructor;
 
     protected List<Annotation> annotations;
 
@@ -116,6 +119,14 @@ public class Param {
 	    annotations = new ArrayList<>();
 	}
 	return this.annotations;
+    }
+
+    public boolean getHasDefaultConstructor() {
+	return Boolean.TRUE.equals(hasDefaultConstructor);
+    }
+
+    public void setHasDefaultConstructor(Boolean hasDefaultConstructor) {
+	this.hasDefaultConstructor = hasDefaultConstructor;
     }
 
 }

@@ -54,7 +54,7 @@ public class TestCasesGenerator {
 	    ParamAssignment assignment = new ParamAssignment();
 	    assignment.setParamType(param.getType());
 	    assignment.setParamName(param.getName());
-	    assignment.setAssignment(JDTUtils.createInitValue(param.getType(), param.getName()));
+	    assignment.setAssignment(JDTUtils.createInitValue(param.getType(), param.getName(), true));
 	    ret.add(assignment);
 	}
 	return ret;

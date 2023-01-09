@@ -428,6 +428,10 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    param.setType(Signature.getSignatureSimpleName(parameter
 		    .getTypeSignature()));
 	    param.setPrimitive(JDTUtils.isPrimitive(param.getType()));
+	    param.setHasDefaultConstructor(!param.isPrimitive());
+	    // TODO how to determine the actual IType of the parameter so that we could
+	    // check with JDTUtils.hasDefaultConstructor(paramType) whether it has default
+	    // constructor
 
 	    // param annotations
 	    convertAnnotations(parameter.getAnnotations())

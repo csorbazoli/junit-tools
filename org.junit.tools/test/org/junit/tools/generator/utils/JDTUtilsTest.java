@@ -1,10 +1,15 @@
 package org.junit.tools.generator.utils;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
 import org.junit.Test;
 import org.junit.tools.preferences.JUTPreferences;
 
@@ -17,7 +22,7 @@ public class JDTUtilsTest {
 	valueMap.put("String", "\"Test${Name}\"");
 	JUTPreferences.setDefaultValuesByType(valueMap);
 	// when
-	String actual = JDTUtils.createInitValue("String", "param");
+	String actual = JDTUtils.createInitValue("String", "param", true);
 	// then
 	assertEquals("\"TestParam\"", actual);
     }
@@ -29,7 +34,7 @@ public class JDTUtilsTest {
 	valueMap.put("char", "'c'");
 	JUTPreferences.setDefaultValuesByType(valueMap);
 	// when
-	String actual = JDTUtils.createInitValue("char", "param");
+	String actual = JDTUtils.createInitValue("char", "param", true);
 	// then
 	assertEquals("'c'", actual);
     }
@@ -41,7 +46,7 @@ public class JDTUtilsTest {
 	JUTPreferences.setDefaultValuesByType(valueMap);
 	JUTPreferences.setDefaultValueForJavaBeans("TestValueFactory.fillFields(new ${Class}())");
 	// when
-	String actual = JDTUtils.createInitValue("TestObject", "param");
+	String actual = JDTUtils.createInitValue("TestObject", "param", true);
 	// then
 	assertEquals("TestValueFactory.fillFields(new TestObject())", actual);
     }
@@ -54,7 +59,7 @@ public class JDTUtilsTest {
 	JUTPreferences.setDefaultValueForJavaBeans("");
 	JUTPreferences.setDefaultValueFallback("Mockito.mock(${Class}.class)");
 	// when
-	String actual = JDTUtils.createInitValue("TestObject", "param");
+	String actual = JDTUtils.createInitValue("TestObject", "param", true);
 	// then
 	assertEquals("Mockito.mock(TestObject.class)", actual);
     }
@@ -67,9 +72,21 @@ public class JDTUtilsTest {
 	JUTPreferences.setDefaultValueForJavaBeans("");
 	JUTPreferences.setDefaultValueFallback("");
 	// when
-	String actual = JDTUtils.createInitValue("TestObject", "param");
+	String actual = JDTUtils.createInitValue("TestObject", "param", true);
 	// then
 	assertEquals("null", actual);
     }
 
+    @Test
+    public void testHasDefaultContructor() {
+	// given
+	IType type = mock(IType.class);
+	when(type.getElementName()).thenReturn("TestClass");
+	IMethod constructorMethod = mock(IMethod.class);
+	when(type.getMethod("TestClass", null)).thenReturn(constructorMethod);
+	// when
+	boolean actual = JDTUtils.hasDefaultConstructor(type);
+	// then
+	assertThat(actual).isTrue();
+    }
 }

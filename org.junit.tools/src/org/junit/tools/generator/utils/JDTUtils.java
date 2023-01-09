@@ -1151,7 +1151,7 @@ public class JDTUtils implements IGeneratorConstants {
 	String resultValue = "";
 
 	if (StringUtils.isBlank(value)) {
-	    resultValue = createInitValue(type, name);
+	    resultValue = createInitValue(type, name, true);
 	    resultValue = decorateValue(resultValue, type);
 	} else if (isArray(type)) {
 	    String[] values = value.split(",");
@@ -1161,7 +1161,7 @@ public class JDTUtils implements IGeneratorConstants {
 		tmpValue = tmpValue.trim();
 
 		if ("".equals(tmpValue)) {
-		    tmpValue = createInitValue(type, name);
+		    tmpValue = createInitValue(type, name, true);
 		}
 
 		tmpValue = decorateValue(tmpValue, type);
@@ -1186,18 +1186,20 @@ public class JDTUtils implements IGeneratorConstants {
 
     /**
      * Creates a initializer value.
+     * 
+     * @param hasDefaultConstructor TODO
      */
-    public static String createInitValue(String type, String name) {
+    public static String createInitValue(String type, String name, boolean hasDefaultConstructor) {
 	Map<String, String> defaultValueMapping = JUTPreferences.getDefaultValuesByType();
 	String lookupType = type.replace("[]", "");
-	String value = defaultValueMapping.get(lookupType);
+	String value = null;
 	if (defaultValueMapping.containsKey(lookupType)) {
 	    value = defaultValueMapping.get(lookupType);
-	} else {
-	    value = JUTPreferences.getDefaultValueForJavaBeans(); // TODO how do we know if it has default constructor?
-	    if (StringUtils.isBlank(value)) {
-		value = JUTPreferences.getDefaultValueFallback();
-	    }
+	} else if (hasDefaultConstructor) {
+	    value = JUTPreferences.getDefaultValueForJavaBeans();
+	}
+	if (StringUtils.isBlank(value)) {
+	    value = JUTPreferences.getDefaultValueFallback();
 	}
 	if (StringUtils.isBlank(value)) {
 	    value = "null";
@@ -1439,6 +1441,11 @@ public class JDTUtils implements IGeneratorConstants {
 	}
 
 	return new Vector<IJavaElement>();
+    }
+
+    public static boolean hasDefaultConstructor(IType type) {
+	String className = type.getElementName();
+	return type.getMethod(className, null) != null;
     }
 
 }

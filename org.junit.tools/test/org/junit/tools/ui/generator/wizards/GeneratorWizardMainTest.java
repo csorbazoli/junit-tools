@@ -72,13 +72,23 @@ public class GeneratorWizardMainTest {
 	when(attribute.getMemberName()).thenReturn("method");
 	when(attribute.getValue()).thenReturn("RequestMethod.POST");
 
-	ILocalVariable param = mock(ILocalVariable.class);
-	when(param.getElementName()).thenReturn("someService");
-	when(param.getTypeSignature()).thenReturn("QString;");
-	when(method.getParameters()).thenReturn(new ILocalVariable[] { param });
+	ILocalVariable param1 = mock(ILocalVariable.class);
+	when(param1.getElementName()).thenReturn("someName");
+	when(param1.getTypeSignature()).thenReturn("QString;");
+	ILocalVariable param2 = mock(ILocalVariable.class);
+	when(param2.getElementName()).thenReturn("someObject");
+	when(param2.getTypeSignature()).thenReturn("QTestClass;");
+//	ITypeRoot typeRoot = mock(ITypeRoot.class);
+//	IType paramType = mock(IType.class);
+//	when(paramType.getElementName()).thenReturn("TestClass");
+//	IMethod constructorMethod = mock(IMethod.class);
+//	when(paramType.getMethod("TestClass", null)).thenReturn(constructorMethod);
+//	when(typeRoot.findPrimaryType()).thenReturn(paramType);
+//	when(param2.getTypeRoot()).thenReturn(typeRoot);
+	when(method.getParameters()).thenReturn(new ILocalVariable[] { param1, param2 });
 
 	IAnnotation paramAnnotation = mock(IAnnotation.class);
-	when(param.getAnnotations()).thenReturn(new IAnnotation[] { paramAnnotation });
+	when(param1.getAnnotations()).thenReturn(new IAnnotation[] { paramAnnotation });
 	when(paramAnnotation.getElementName()).thenReturn("PathVariable");
 	IMemberValuePair paramAttribute = mock(IMemberValuePair.class);
 	when(paramAnnotation.getMemberValuePairs()).thenReturn(new IMemberValuePair[] { paramAttribute });
