@@ -2,7 +2,7 @@
 <feature
       id="junit_tools_spring"
       label="JUnit Tools for Spring Development"
-      version="1.2.1"
+      version="1.2.2"
       provider-name="csorbazoli">
 
    <description url="http://www.example.com/description">
@@ -17,11 +17,15 @@
       [Enter License Description here.]
    </license>
 
+   <url>
+      <update url="https://csorbazoli.github.io/junit-tools-updatesite"/>
+   </url>
+
    <plugin
          id="junit.tools.spring"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.2"
          unpack="false"/>
 
 </feature>
