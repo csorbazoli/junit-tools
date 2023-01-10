@@ -85,9 +85,9 @@ public class TestValueFactoryTest {
 	// when
 	TestValueFactory.fillFields(item);
 	// then
-	assertEquals("map value = 123", item.getMap().entrySet().stream()
+	assertEquals("TestMap = 123", item.getMap().entrySet().stream()
 		.map(e -> e.getKey() + " = " + e.getValue()).collect(Collectors.joining("\n")));
-	assertArrayEquals(new Object[] { "names value" }, item.getNames().toArray());
+	assertArrayEquals(new Object[] { "TestNames" }, item.getNames().toArray());
 	assertArrayEquals(new Object[] { 123 }, item.getNumbers().toArray());
     }
 
@@ -99,11 +99,11 @@ public class TestValueFactoryTest {
 	TestValueFactory.fillFields(item);
 	// then
 	assertEquals('a', item.getCharacter());
-	assertEquals(23.45d, item.getNumericDouble(), 0d);
-	assertEquals(37.89f, item.getNumericFloat(), 0d);
+	assertEquals(12.3456d, item.getNumericDouble(), 0d);
+	assertEquals(23.4567f, item.getNumericFloat(), 0d);
 	assertEquals(123, item.getNumericInteger());
 	assertEquals(123456L, item.getNumericLong());
-	assertEquals(27, item.getNumericByte());
+	assertEquals(23, item.getNumericByte());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class TestValueFactoryTest {
 	// when
 	TestValueFactory.fillFields(item);
 	// then
-	assertEquals("name value", item.name);
+	assertEquals("TestName", item.name);
 	assertEquals(123, item.number);
     }
 
@@ -124,7 +124,7 @@ public class TestValueFactoryTest {
 	// when
 	TestValueFactory.fillFields(item);
 	// then
-	assertEquals("typeName value", item.getTypeName());
+	assertEquals("TestTypeName", item.getTypeName());
 	assertEquals("Object", item.getValue());
     }
 
@@ -215,7 +215,7 @@ public class TestValueFactoryTest {
 	// when
 	Object actual = TestValueFactory.getValueForPrimitiveTypes(type, name);
 	// then
-	assertEquals(23.45, actual);
+	assertEquals(12.3456, actual);
     }
 
     @Test
@@ -288,7 +288,7 @@ public class TestValueFactoryTest {
 	DummyClassWithDeprecatedFields actual = TestValueFactory.fillFieldsWithoutDeprecated(item);
 	// then
 	assertNotNull(actual);
-	assertEquals("name value", actual.getName());
+	assertEquals("TestName", actual.getName());
 	assertEquals(0, actual.getNumber());
     }
 
@@ -300,7 +300,7 @@ public class TestValueFactoryTest {
 	DummyClassWithDeprecatedFields actual = TestValueFactory.fillFields(item);
 	// then
 	assertNotNull(actual);
-	assertEquals("name value", actual.getName());
+	assertEquals("TestName", actual.getName());
 	assertEquals(123, actual.getNumber());
     }
 
@@ -314,7 +314,7 @@ public class TestValueFactoryTest {
 	// then
 	assertTrue("Should be TestValue: " + actual.getClass().getName(), actual instanceof TestValue);
 	TestValue t = (TestValue) actual;
-	assertEquals("typeName value", t.getTypeName());
+	assertEquals("TestTypeName", t.getTypeName());
 	assertEquals("Object", t.getValue());
     }
 
@@ -328,10 +328,10 @@ public class TestValueFactoryTest {
 	// then
 	assertTrue(actual instanceof ParentItem);
 	ParentItem t = (ParentItem) actual;
-	assertEquals("myName value", t.getMyName());
+	assertEquals("TestMyName", t.getMyName());
 	assertEquals(1, t.getChildren().size());
 	ChildItem firstChild = t.getChildren().get(0);
-	assertEquals("myName value", firstChild.getMyName());
+	assertEquals("TestMyName", firstChild.getMyName());
 	assertEquals(t, firstChild.getMyParent());
     }
 
@@ -343,7 +343,7 @@ public class TestValueFactoryTest {
 	// when
 	Object actual = TestValueFactory.getValueForType(type, name);
 	// then
-	assertEquals("param value", actual);
+	assertEquals("TestParam", actual);
     }
 
     @Test
@@ -376,7 +376,7 @@ public class TestValueFactoryTest {
 	// when
 	Object actual = TestValueFactory.getValueForType(type, name);
 	// then
-	assertEquals((byte) 27, actual);
+	assertEquals((byte) 23, actual);
     }
 
     @Test
@@ -420,7 +420,7 @@ public class TestValueFactoryTest {
 	// when
 	Object actual = TestValueFactory.getValueForType(type, name);
 	// then
-	assertEquals(37.89f, actual);
+	assertEquals(23.4567f, actual);
     }
 
     @Test
@@ -432,7 +432,7 @@ public class TestValueFactoryTest {
 	Object actual = TestValueFactory.getValueForType(type, name);
 	// then
 	assertEquals(1, ((Set<?>) actual).size());
-	assertEquals("[param value]", String.valueOf(actual));
+	assertEquals("[TestParam]", String.valueOf(actual));
     }
 
     @Test
@@ -444,7 +444,7 @@ public class TestValueFactoryTest {
 	Object actual = TestValueFactory.getValueForType(type, name);
 	// then
 	assertEquals(1, ((String[]) actual).length);
-	assertEquals("[param value]", Arrays.toString((String[]) actual));
+	assertEquals("[TestParam]", Arrays.toString((String[]) actual));
     }
 
     @Test
@@ -457,7 +457,7 @@ public class TestValueFactoryTest {
 	// then
 	assertTrue("Should be Map: " + actual.getClass().getName(), actual instanceof Map);
 	assertEquals(1, ((Map<?, ?>) actual).size());
-	assertEquals("{param value=123}", String.valueOf(actual));
+	assertEquals("{TestParam=123}", String.valueOf(actual));
     }
 
     @Test
@@ -470,7 +470,7 @@ public class TestValueFactoryTest {
 	// then
 	assertTrue("Should be SortedMap: " + actual.getClass().getName(), actual instanceof SortedMap);
 	assertEquals(1, ((Map<?, ?>) actual).size());
-	assertEquals("{param value=123}", String.valueOf(actual));
+	assertEquals("{TestParam=123}", String.valueOf(actual));
     }
 
     @Test
@@ -483,7 +483,7 @@ public class TestValueFactoryTest {
 	// then
 	assertTrue("Should be SortedSet: " + actual.getClass().getName(), actual instanceof SortedSet);
 	assertEquals(1, ((SortedSet<?>) actual).size());
-	assertEquals("[param value]", String.valueOf(actual));
+	assertEquals("[TestParam]", String.valueOf(actual));
     }
 
     @Test
@@ -495,7 +495,7 @@ public class TestValueFactoryTest {
 	Object actual = TestValueFactory.getValueForType(type, name);
 	// then
 	assertTrue("Should be LocalDate: " + actual.getClass().getName(), actual instanceof Date);
-	assertEquals("2019-03-26T12:34:56+01:00", formatDateTime((Date) actual));
+	assertEquals("2023-12-25T22:34:56.789+01:00", formatDateTime((Date) actual));
     }
 
     @Test
@@ -597,7 +597,7 @@ public class TestValueFactoryTest {
 	// then
 	assertTrue("Should be BigDecimal: " + actual.getClass().getName(),
 		actual instanceof BigDecimal);
-	assertEquals(1023, ((BigDecimal) actual).intValue());
+	assertEquals(543, ((BigDecimal) actual).intValue());
     }
 
     @Test

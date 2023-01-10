@@ -22,6 +22,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Deque;
@@ -55,13 +56,13 @@ public class TestValueFactory {
 	private static final int DEPTH_LIMIT = 100;
 
 	private static final char CHAR = 'a';
-	private static final byte BYTE = 27;
+	private static final byte BYTE = 23;
 	private static final int INT = 123;
 	private static final long LONG = 123456L;
-	private static final float FLOAT = 37.89f;
-	private static final double DOUBLE = 23.45d;
+	private static final float FLOAT = 23.4567f;
+    	private static final double DOUBLE = 12.3456d;
 	private static final int BIGINTEGER = 127;
-	private static final int BIGDECIMAL = 1023;
+	private static final double BIGDECIMAL = 543.21;
 
 	private TestValueFactory() {
 		// private constructor
@@ -172,7 +173,7 @@ public class TestValueFactory {
 		} else if (float.class.equals(type) || Float.class.equals(type)) {
 			ret = FLOAT;
 		} else if (String.class.equals(type)) {
-			ret = name + " value";
+		    	ret = "Test" + StringUtils.capitalize(name);
 		} else {
 			ret = null;
 		}
@@ -212,7 +213,7 @@ public class TestValueFactory {
 			} else if (Pattern.class.equals(clazz)) {
 				ret = Pattern.compile(".*");
 			} else if (Date.class.equals(clazz)) {
-				ret = createDate();
+			    	ret = getTestDate();
 			} else if (LocalDate.class.equals(clazz)) {
 				ret = LocalDate.of(2019, 3, 26);
 			} else if (LocalTime.class.equals(clazz)) {
@@ -250,8 +251,7 @@ public class TestValueFactory {
 		try {
 			Class<?> clazz = getClassOfType(type);
 			ret = createInstanceByName(type, name, ret, clazz);
-		} catch (InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException
-				| InvocationTargetException e) {
+		} catch (Exception e) {
 			log.warning("Failed to create initial value for " + getTypeAsString(type) + ": " + e.getMessage());
 		}
 		return ret;
@@ -273,9 +273,13 @@ public class TestValueFactory {
 		return ret;
 	}
 
-	private static Date createDate() {
-		return new Date(
-				LocalDateTime.of(2019, 3, 26, 12, 34, 56).atZone(ZoneId.of("+0100")).toInstant().toEpochMilli());
+        public static Date getTestDate() {
+    	Date ret;
+    	Calendar date = Calendar.getInstance(Locale.US);
+    	date.set(2023, 11, 25, 21, 34, 56);
+    	date.set(Calendar.MILLISECOND, 789);
+    	ret = Date.from(date.toInstant());
+    	return ret;
 	}
 
 	private static GregorianCalendar createGregorianCalendar() {
@@ -451,9 +455,11 @@ public class TestValueFactory {
 	private static Class<?> getClassOfType(Type type) {
 		if (type instanceof Class<?>) {
 			return (Class<?>) type;
-		} else if (type instanceof ParameterizedType) {
+		}
+		if (type instanceof ParameterizedType) {
 			return (Class<?>) ((ParameterizedType) type).getRawType();
-		} else if (type instanceof TypeVariable) {
+		}
+		if (type instanceof TypeVariable) {
 			return Object.class;
 		}
 		return null;

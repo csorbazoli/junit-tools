@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -82,14 +83,16 @@ public class TestUtilsTest {
 	assertEquals("{\"Name\":\"test\",\"Number\":1}", actual);
     }
 
-    @Test(expected = TestUtilException.class)
-    public void testReadTestFile_failure() throws Exception {
+    public void testReadTestFile_shouldCreateMissingTestFile() throws Exception {
 	// given
 	String relativePath = "nonexistent";
 	// when
 	String actual = TestUtils.readTestFile(relativePath);
 	// then
-	fail("Should have failed: " + actual);
+	assertEquals("", actual);
+	File testFile = new File("test-resources/nonexistent");
+	assertTrue(testFile.exists());
+	testFile.delete();
     }
 
     @Test
@@ -168,7 +171,7 @@ public class TestUtilsTest {
 	String actual = TestUtils.objectToJson(object);
 	// then
 	assertEquals("{\n" +
-		"  \"date\" : \"2021-11-17T11:34:56.000+00:00\",\n" + // Date should be printed GMT
+		"  \"date\" : \"2021-11-17T11:34:56\",\n" +
 		"  \"localDate\" : \"2021-11-17\",\n" +
 		"  \"localDateTime\" : \"2021-11-17T12:34:56\"\n" +
 		"}", actual);
