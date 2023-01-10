@@ -2,7 +2,7 @@
 <feature
       id="junit_tools_spring"
       label="JUnit Tools for Spring Development"
-      version="1.2.2"
+      version="1.2.3"
       provider-name="csorbazoli">
 
    <description url="http://www.example.com/description">
@@ -25,7 +25,7 @@
          id="junit.tools.spring"
          download-size="0"
          install-size="0"
-         version="1.2.2"
+         version="1.2.3"
          unpack="false"/>
 
 </feature>
