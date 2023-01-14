@@ -31,18 +31,16 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
     }
 
     private List listAnnotationsTestClass;
-
     private Text newAnnotationTestClass;
-
-    private List listAnnotationsMockClass;
-
-    private Text newAnnotationMockClass;
-    private GridData gd_cmpAnnotationsMockClass;
     private GridData data_2;
-    private GridData data_3;
     private GridData gd_newAnnotationTestClass;
-    private GridData gd_newAnnotationMockClass;
     private GridData gd_cmpAnnotationsTestClass;
+
+    private List listAnnotationsSpringClass;
+    private Text newAnnotationSpringClass;
+    private GridData data_3;
+    private GridData gd_newAnnotationSpringClass;
+    private GridData gd_cmpAnnotationsSpringClass;
 
     /**
      * @see PreferencePage#createContents(Composite)
@@ -69,7 +67,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	cmpAnnotationsTestClass.setLayoutData(gd_cmpAnnotationsTestClass);
 	cmpAnnotationsTestClass.setLayout(new GridLayout());
 
-	listAnnotationsTestClass = new List(cmpAnnotationsTestClass, SWT.BORDER);
+	listAnnotationsTestClass = new List(cmpAnnotationsTestClass, SWT.BORDER | SWT.V_SCROLL);
 	listAnnotationsTestClass.setItems(getAnnotationsTestClass());
 
 	// Create a data that takes up the extra space in the dialog and spans
@@ -77,8 +75,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	data = new GridData(GridData.FILL_BOTH);
 	listAnnotationsTestClass.setLayoutData(data);
 
-	Composite buttonCompositeFilterName = new Composite(
-		cmpAnnotationsTestClass, SWT.NULL);
+	Composite buttonCompositeFilterName = new Composite(cmpAnnotationsTestClass, SWT.NULL);
 
 	GridLayout buttonLayout = new GridLayout();
 	buttonLayout.numColumns = 2;
@@ -86,14 +83,12 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 
 	// Create a data that takes up the extra space in the dialog and spans
 	// both columns.
-	data_2 = new GridData(GridData.FILL_BOTH
-		| GridData.VERTICAL_ALIGN_BEGINNING);
+	data_2 = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
 	data_2.verticalAlignment = SWT.CENTER;
 	data_2.grabExcessVerticalSpace = false;
 	buttonCompositeFilterName.setLayoutData(data_2);
 
-	Button addButton = new Button(buttonCompositeFilterName, SWT.PUSH
-		| SWT.CENTER);
+	Button addButton = new Button(buttonCompositeFilterName, SWT.PUSH | SWT.CENTER);
 
 	addButton.setText("Add to List"); //$NON-NLS-1$
 	addButton.addSelectionListener(new SelectionAdapter() {
@@ -136,29 +131,27 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	// test-method-filter modifier
 	Group cmpAnnotationsMockClass = new Group(cmpMain, SWT.NONE);
 	cmpAnnotationsMockClass
-		.setText("Additional annotations for the mock-class");
+		.setText("Relevant annotations of Spring related classes");
 
 	// Create a data that takes up the extra space in the dialog .
-	gd_cmpAnnotationsMockClass = new GridData(GridData.FILL_HORIZONTAL);
-	gd_cmpAnnotationsMockClass.verticalAlignment = SWT.FILL;
-	gd_cmpAnnotationsMockClass.grabExcessVerticalSpace = true;
-	gd_cmpAnnotationsMockClass.grabExcessHorizontalSpace = true;
-	cmpAnnotationsMockClass.setLayoutData(gd_cmpAnnotationsMockClass);
+	gd_cmpAnnotationsSpringClass = new GridData(GridData.FILL_HORIZONTAL);
+	gd_cmpAnnotationsSpringClass.verticalAlignment = SWT.FILL;
+	gd_cmpAnnotationsSpringClass.grabExcessVerticalSpace = true;
+	gd_cmpAnnotationsSpringClass.grabExcessHorizontalSpace = true;
+	cmpAnnotationsMockClass.setLayoutData(gd_cmpAnnotationsSpringClass);
 
 	GridLayout gl_cmpAnnotationsMockClass = new GridLayout();
 	cmpAnnotationsMockClass.setLayout(gl_cmpAnnotationsMockClass);
 
-	listAnnotationsMockClass = new List(cmpAnnotationsMockClass,
-		SWT.BORDER);
-	listAnnotationsMockClass.setItems(getAnnotationsMockClass());
+	listAnnotationsSpringClass = new List(cmpAnnotationsMockClass, SWT.BORDER | SWT.V_SCROLL);
+	listAnnotationsSpringClass.setItems(getAnnotationsSpringClass());
 
 	// Create a data that takes up the extra space in the dialog and spans
 	// both columns.
 	data = new GridData(GridData.FILL_BOTH);
-	listAnnotationsMockClass.setLayoutData(data);
+	listAnnotationsSpringClass.setLayoutData(data);
 
-	Composite buttonComposite = new Composite(cmpAnnotationsMockClass,
-		SWT.NULL);
+	Composite buttonComposite = new Composite(cmpAnnotationsMockClass, SWT.NULL);
 
 	buttonLayout = new GridLayout();
 	buttonLayout.numColumns = 2;
@@ -166,8 +159,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 
 	// Create a data that takes up the extra space in the dialog and spans
 	// both columns.
-	data_3 = new GridData(GridData.FILL_BOTH
-		| GridData.VERTICAL_ALIGN_BEGINNING);
+	data_3 = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
 	data_3.verticalAlignment = SWT.CENTER;
 	data_3.grabExcessVerticalSpace = false;
 	buttonComposite.setLayoutData(data_3);
@@ -178,23 +170,22 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	addButton.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent event) {
-		String newEntry = newAnnotationMockClass.getText();
-		for (String item : listAnnotationsMockClass.getItems()) {
+		String newEntry = newAnnotationSpringClass.getText();
+		for (String item : listAnnotationsSpringClass.getItems()) {
 		    if (newEntry.equals(item)) {
 			return;
 		    }
 		}
 
-		listAnnotationsMockClass.add(newEntry,
-			listAnnotationsMockClass.getItemCount());
+		listAnnotationsSpringClass.add(newEntry, listAnnotationsSpringClass.getItemCount());
 	    }
 	});
 
-	newAnnotationMockClass = new Text(buttonComposite, SWT.BORDER);
+	newAnnotationSpringClass = new Text(buttonComposite, SWT.BORDER);
 	// Create a data that takes up the extra space in the dialog .
-	gd_newAnnotationMockClass = new GridData(GridData.FILL_HORIZONTAL);
-	gd_newAnnotationMockClass.grabExcessHorizontalSpace = true;
-	newAnnotationMockClass.setLayoutData(gd_newAnnotationMockClass);
+	gd_newAnnotationSpringClass = new GridData(GridData.FILL_HORIZONTAL);
+	gd_newAnnotationSpringClass.grabExcessHorizontalSpace = true;
+	newAnnotationSpringClass.setLayoutData(gd_newAnnotationSpringClass);
 
 	removeButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
 
@@ -202,7 +193,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	removeButton.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent event) {
-		listAnnotationsMockClass.remove(listAnnotationsMockClass
+		listAnnotationsSpringClass.remove(listAnnotationsSpringClass
 			.getSelectionIndex());
 	    }
 	});
@@ -227,43 +218,37 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
     @Override
     protected void performDefaults() {
 	listAnnotationsTestClass.setItems(getDefaultAnnotationsTestClass());
-	listAnnotationsMockClass.setItems(getDefaultAnnotationsMockClass());
+	listAnnotationsSpringClass.setItems(getDefaultAnnotationsSpringClass());
     }
 
     @Override
     public boolean performOk() {
 	setAnnotationsTestClass(listAnnotationsTestClass.getItems());
-	setAnnotationsMockClass(listAnnotationsMockClass.getItems());
+	setAnnotationsMockClass(listAnnotationsSpringClass.getItems());
 	return super.performOk();
     }
 
     public void setAnnotationsTestClass(String[] values) {
-	getPreferenceStore().setValue(TEST_CLASS_ANNOTATIONS,
-		JUTPreferences.convertFromArray(values));
+	getPreferenceStore().setValue(TEST_CLASS_ANNOTATIONS, JUTPreferences.convertFromArray(values));
     }
 
     public String[] getDefaultAnnotationsTestClass() {
-	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
-		TEST_CLASS_ANNOTATIONS));
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(TEST_CLASS_ANNOTATIONS));
     }
 
     public String[] getAnnotationsTestClass() {
-	return JUTPreferences.convertToArray(getPreferenceStore().getString(
-		TEST_CLASS_ANNOTATIONS));
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(TEST_CLASS_ANNOTATIONS));
     }
 
     public void setAnnotationsMockClass(String[] values) {
-	getPreferenceStore().setValue(MOCK_CLASS_ANNOTATIONS,
-		JUTPreferences.convertFromArray(values));
+	getPreferenceStore().setValue(SPRING_ANNOTATIONS, JUTPreferences.convertFromArray(values));
     }
 
-    public String[] getDefaultAnnotationsMockClass() {
-	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
-		MOCK_CLASS_ANNOTATIONS));
+    public String[] getDefaultAnnotationsSpringClass() {
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(SPRING_ANNOTATIONS));
     }
 
-    public String[] getAnnotationsMockClass() {
-	return JUTPreferences.convertToArray(getPreferenceStore().getString(
-		MOCK_CLASS_ANNOTATIONS));
+    public String[] getAnnotationsSpringClass() {
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(SPRING_ANNOTATIONS));
     }
 }

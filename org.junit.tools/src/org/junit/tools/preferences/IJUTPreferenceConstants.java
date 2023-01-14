@@ -8,9 +8,6 @@ package org.junit.tools.preferences;
  */
 public interface IJUTPreferenceConstants {
 
-    // TO DELETE
-    public static final String MOCK_CLASS_ANNOTATIONS = "MOCK_CLASS_ANNOTATIONS";
-
     // USEFUL
     public static final String TEST_SOURCE_FOLDER_NAME = "TEST_SOURCE_FOLDER_NAME";
     public static final String TEST_CLASS_PREFIX = "TEST_CLASS_PREFIX";
@@ -40,4 +37,5 @@ public interface IJUTPreferenceConstants {
 
     public static final String MOCKFW_MOCKITO = "mockito";
     public static final String MOCKFW_EASYMOCK = "easymock";
+
 }

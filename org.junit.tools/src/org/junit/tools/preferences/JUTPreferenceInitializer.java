@@ -37,9 +37,6 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 	store.setDefault(TEST_METHOD_FILTER_NAME, "");
 	store.setDefault(TEST_METHOD_FILTER_MODIFIER, DEFAULT_METHOD_FILTER_MODIFIER);
 
-	// this are not needed
-	store.setDefault(MOCK_CLASS_ANNOTATIONS, "");
-
 	// Important settings
 	store.setDefault(TEST_SOURCE_FOLDER_NAME, "src/test/java");
 	store.setDefault(MOCK_FRAMEWORK, MOCKFW_MOCKITO); // should we support EasyMock as well?
