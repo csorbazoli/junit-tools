@@ -71,6 +71,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	String baseClassName = utmClassesAndPackages.getBaseClassName();
 	ICompilationUnit baseClass = utmClassesAndPackages.getBaseClass();
 	boolean springController = GeneratorUtils.isSpringController(baseClass);
+	tmlTest.setOnlyStaticMethods(JDTUtils.isStaticMethods(model.getMethodsToCreate()));
 	IType testClassType;
 
 	// begin task
@@ -106,7 +107,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create standard-class-fields
-	createStandardClassFields(testClassType, baseClassName, tmlTest.isSpring());
+	createStandardClassFields(testClassType, baseClassName, tmlTest);
 	createMocksForDependencies(testClassType, baseClass, tmlTest.isSpring());
 
 	// increment task
@@ -271,20 +272,22 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    annotations.append("@Slf4j").append(RETURN);
 	}
 
-	if (isSpringTest) {
-	    annotations.append("@SpringBootTest").append(RETURN);
-	    annotations.append("@ActiveProfiles(\"test\")").append(RETURN);
-	    annotations.append("@ContextConfiguration(classes = { ").append(baseClassName).append(".class })").append(RETURN);
-	} else if (GeneratorUtils.isUsingEasyMock()) {
-	    if (isUsingJunit4()) {
-		annotations.append(GeneratorUtils.createAnnoRunWith("EasyMockRunner"));
+	if (!tmlTest.isOnlyStaticMethods()) {
+	    if (isSpringTest) {
+		annotations.append("@SpringBootTest").append(RETURN);
+		annotations.append("@ActiveProfiles(\"test\")").append(RETURN);
+		annotations.append("@ContextConfiguration(classes = { ").append(baseClassName).append(".class })").append(RETURN);
+	    } else if (GeneratorUtils.isUsingEasyMock()) {
+		if (isUsingJunit4()) {
+		    annotations.append(GeneratorUtils.createAnnoRunWith("EasyMockRunner"));
+		} else {
+		    annotations.append(GeneratorUtils.createAnnoExtendWith("EasyMockExtension"));
+		}
+	    } else if (isUsingJunit4()) {
+		annotations.append(GeneratorUtils.createAnnoRunWith("MockitoJUnitRunner"));
 	    } else {
-		annotations.append(GeneratorUtils.createAnnoExtendWith("EasyMockExtension"));
+		annotations.append(GeneratorUtils.createAnnoExtendWith("MockitoExtension"));
 	    }
-	} else if (isUsingJunit4()) {
-	    annotations.append(GeneratorUtils.createAnnoRunWith("MockitoJUnitRunner"));
-	} else {
-	    annotations.append(GeneratorUtils.createAnnoExtendWith("MockitoExtension"));
 	}
 
 	String[] testClassAnnotations = JUTPreferences.getTestClassAnnotations();
@@ -383,9 +386,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * 
      * @param b
      */
-    protected void createStandardClassFields(IType type, String testClassName, boolean springTest) throws JavaModelException {
-	if (GeneratorUtils.findField(type, UNDER_TEST) == null) {
-	    type.createField(GeneratorUtils.createAnnoForUnderTest(springTest) + getPublicModifierIfNeeded() +
+    protected void createStandardClassFields(IType type, String testClassName, Test tmlTest) throws JavaModelException {
+	if (!tmlTest.isOnlyStaticMethods() && GeneratorUtils.findField(type, UNDER_TEST) == null) {
+	    type.createField(GeneratorUtils.createAnnoForUnderTest(tmlTest.isSpring()) + getPublicModifierIfNeeded() +
 		    testClassName + " " + UNDER_TEST + ";", null, false, null);
 	}
     }

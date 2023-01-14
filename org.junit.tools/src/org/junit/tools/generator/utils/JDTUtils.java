@@ -1006,8 +1006,7 @@ public class JDTUtils implements IGeneratorConstants {
      * @return method modifier
      * @throws JavaModelException
      */
-    public static String getMethodModifier(IMethod method)
-	    throws JavaModelException {
+    public static String getMethodModifier(IMethod method) throws JavaModelException {
 	int methodFlags = method.getFlags();
 
 	if (Flags.isPublic(methodFlags)) {
@@ -1021,6 +1020,14 @@ public class JDTUtils implements IGeneratorConstants {
 	}
 
 	return ""; //$NON-NLS-1$
+    }
+
+    public static boolean isStaticMethods(List<IMethod> methodsToCreate) throws JavaModelException {
+	boolean ret = !methodsToCreate.isEmpty();
+	for (IMethod method : methodsToCreate) {
+	    ret &= Flags.isStatic(method.getFlags());
+	}
+	return ret;
     }
 
     /**

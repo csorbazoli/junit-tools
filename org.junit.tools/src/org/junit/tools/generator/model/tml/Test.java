@@ -69,6 +69,8 @@ public class Test {
     protected String version;
     @XmlAttribute(name = "spring")
     protected boolean spring;
+    @XmlAttribute(name = "onlyStaticMethods")
+    private boolean onlyStaticMethods;
 
     /**
      * Gets the value of the settings property.
@@ -205,6 +207,14 @@ public class Test {
 
     public void setSpring(boolean spring) {
 	this.spring = spring;
+    }
+
+    public boolean isOnlyStaticMethods() {
+	return onlyStaticMethods;
+    }
+
+    public void setOnlyStaticMethods(boolean value) {
+	this.onlyStaticMethods = value;
     }
 
 }

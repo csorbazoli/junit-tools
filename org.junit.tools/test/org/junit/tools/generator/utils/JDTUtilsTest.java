@@ -5,9 +5,12 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.junit.Test;
@@ -89,4 +92,33 @@ public class JDTUtilsTest {
 	// then
 	assertThat(actual).isTrue();
     }
+
+    @Test
+    public void testIsStaticMethodsh_shouldReturnTrueIfAllMethodsHaveStaticModifier() throws Exception {
+	// given
+	IMethod method1 = mock(IMethod.class);
+	when(method1.getFlags()).thenReturn(Flags.AccStatic | Flags.AccPublic);
+	IMethod method2 = mock(IMethod.class);
+	when(method2.getFlags()).thenReturn(Flags.AccStatic | Flags.AccPublic);
+	List<IMethod> methods = Arrays.asList(method1, method2);
+	// when
+	boolean actual = JDTUtils.isStaticMethods(methods);
+	// then
+	assertThat(actual).isTrue();
+    }
+
+    @Test
+    public void testIsStaticMethodsh_shouldReturnFalseIfAnyMethodHasNoStaticModifier() throws Exception {
+	// given
+	IMethod method1 = mock(IMethod.class);
+	when(method1.getFlags()).thenReturn(Flags.AccStatic | Flags.AccPublic);
+	IMethod method2 = mock(IMethod.class);
+	when(method2.getFlags()).thenReturn(Flags.AccPublic);
+	List<IMethod> methods = Arrays.asList(method1, method2);
+	// when
+	boolean actual = JDTUtils.isStaticMethods(methods);
+	// then
+	assertThat(actual).isFalse();
+    }
+
 }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -14,9 +15,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -303,6 +306,21 @@ public class TestClassGeneratorTest {
     }
 
     @Test
+    public void testCreateTestClassFrameAnnotations_staticMethod() {
+	// given
+	JUTPreferences.setTestClassAnnotations(new String[] {});
+	JUTPreferences.setJUnitVersion(5);
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	Settings settings = new Settings();
+	tmlTest.setSettings(settings);
+	tmlTest.setOnlyStaticMethods(true);
+	// when
+	String actual = underTest.createTestClassFrameAnnotations(tmlTest, "SomeClass");
+	// then
+	assertEquals("", actual);
+    }
+
+    @Test
     public void testCreateTestClassFrameAnnotations_Junit4() {
 	// given
 	JUTPreferences.setTestClassAnnotations(new String[0]);
@@ -576,10 +594,22 @@ public class TestClassGeneratorTest {
 	IType type = Mockito.mock(IType.class);
 	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
 	// when
-	underTest.createStandardClassFields(type, "SomeClass", false);
+	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
 	// then
 	verify(type).createField("@InjectMocks\n"
 		+ "SomeClass underTest;", null, false, null);
+    }
+
+    @Test
+    public void testCreateStandardClassFields_shouldNotCreateUnderTestForStaticMethods() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	tmlTest.setOnlyStaticMethods(true);
+	// when
+	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
+	// then
+	verify(type, never()).createField(anyString(), nullable(IJavaElement.class), anyBoolean(), nullable(IProgressMonitor.class));
     }
 
     @Test
@@ -643,7 +673,7 @@ public class TestClassGeneratorTest {
 	when(existingField.getElementName()).thenReturn("underTest");
 	when(type.getFields()).thenReturn(new IField[] { existingField });
 	// when
-	underTest.createStandardClassFields(type, "SomeClass", false);
+	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
 	// then
 	verify(type, never()).createField(anyString(), any(), anyBoolean(), any());
     }
