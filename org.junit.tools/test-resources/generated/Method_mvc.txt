@@ -4,8 +4,7 @@ String newName = "TestName";
 String trackingId = "TestTrackingId";
 TestBean data = TestValueFactory.fillField(new TestBean());
 // when
-String actual = mockMvc.perform(get("/rest/v1/update/{objectId}")
-.param("objectId", objectId)
+String actual = mockMvc.perform(get("/rest/v1/update/"+objectId)
 .param("newName", newName)
 .header("trackingId", trackingId)
 .content(TestUtils.objectToJson(data))

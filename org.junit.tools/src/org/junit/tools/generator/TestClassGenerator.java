@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,6 +43,8 @@ import org.junit.tools.preferences.JUTPreferences;
  * 
  */
 public class TestClassGenerator implements ITestClassGenerator, IGeneratorConstants {
+
+    private static final Pattern PATH_VARIABLE_PATTERN = Pattern.compile("\\{(\\w+)\\}");
 
     protected String testmethodPrefix;
 
@@ -514,16 +518,18 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	List<TestCase> testCases = tmlMethod.getTestCase();
 
 	for (TestCase tmlTestcase : testCases) {
-
 	    createMvcTestCaseBody(sbTestMethodBody, resultVariableName, resultType, params,
 		    tmlTestcase.getParamAssignments(), httpMethod, urlPath);
 
 	    // assertions
+	    tmlTestcase.getAssertion().stream() // don't do TestUtils.objectToJson as the result is already a String
+		    .forEach(assertion -> assertion.setBase("{result}"));
 	    createAssertionsMethodBody(sbTestMethodBody, resultVariableName, resultType, testBaseVariableName,
 		    tmlTestcase);
 	}
 
 	return sbTestMethodBody.toString();
+
     }
 
     private void createMvcTestCaseBody(StringBuilder sbTestMethodBody, String resultVariableName, String resultType,
@@ -545,8 +551,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    sbTestMethodBody.append(resultType).append(" ").append(resultVariableName).append(" = ");
 	}
 
+	String substitutedPath = "\"" + substituePathVariables(urlPath, params) + "\"";
 	sbTestMethodBody.append("mockMvc.perform(").append(httpMethod)
-		.append("(\"").append(urlPath).append("\")");
+		.append("(").append(substitutedPath.replace("+\"\"", "")).append(")");
 
 	// create parameter list
 	// method-call
@@ -557,6 +564,23 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		.append(".andReturn()").append(RETURN)
 		.append(".getResponse().getContentAsString();");
 
+    }
+
+    private String substituePathVariables(String urlPath, List<Param> params) {
+	StringBuffer ret = new StringBuffer();
+	Map<String, Param> paramMap = new HashMap<>();
+	params.forEach(param -> paramMap.put(getParameterName(param), param));
+	Matcher m = PATH_VARIABLE_PATTERN.matcher(urlPath);
+	while (m.find()) {
+	    String paramName = m.group(1);
+	    Param existingParam = paramMap.get(paramName);
+	    if (existingParam != null) {
+		m.appendReplacement(ret, "\"+" + existingParam.getName() + "+\"");
+		params.remove(existingParam);
+	    }
+	}
+	m.appendTail(ret);
+	return ret.toString();
     }
 
     protected String createTestMethodBody(IType type, Method tmlMethod, String methodName, String baseClassName) throws JavaModelException {

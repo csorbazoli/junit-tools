@@ -469,7 +469,7 @@ public class TestClassGeneratorTest {
 	testCase.setName("TestCase1");
 	testCase.setTestBase("TestBase");
 	Assertion assertion = new Assertion();
-	assertion.setBase("{result}");
+	assertion.setBase("TestUtils.objectToJson({result})");
 	assertion.setType(AssertionType.EQUALS);
 	assertion.setValue("TestUtils.readTestFile(\"TestBean_someMethod.json\")");
 	testCase.getAssertion().add(assertion);
