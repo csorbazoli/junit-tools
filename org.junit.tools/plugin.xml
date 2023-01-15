@@ -144,7 +144,7 @@
 	     
 	     <menu
 	           id="org.junit.tools"
-	           label="JUnit-Tools">
+	           label="JUnit-Tools 4 Spring">
 	           
 	        <command
 	              commandId="org.junit.tools.handler.SwitchClass"
@@ -274,7 +274,7 @@
   	<page
         class="org.junit.tools.ui.preferences.JUTPreferenceMainPage"
         id="org.junit.tools.ui.preferencepage"
-        name="JUnit-Tools">
+        name="JUnit-Tools 4 Spring">
   	</page>
     <page
         category="org.junit.tools.ui.preferencepage"
