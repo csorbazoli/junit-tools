@@ -278,9 +278,8 @@ public class MainController implements IGeneratorConstants {
      * @throws JUTWarning
      * @throws
      */
-    private JUTElements detectJUTElements(IStructuredSelection selection,
-	    IFileEditorInput fileEditorInput, boolean springTest) throws JUTException, JUTWarning,
-	    CoreException {
+    private JUTElements detectJUTElements(IStructuredSelection selection, IFileEditorInput fileEditorInput, boolean springTest)
+	    throws JUTException, JUTWarning, CoreException {
 
 	JUTElements jutElements = new JUTElements();
 
@@ -303,11 +302,9 @@ public class MainController implements IGeneratorConstants {
 	    throw new JUTWarning(Messages.General_warning_nothing_selected);
 	}
 
-	Vector<IJavaElement> elements = JDTUtils.getCompilationUnits(selection,
-		fileEditorInput);
+	Vector<IJavaElement> elements = JDTUtils.getCompilationUnits(selection, fileEditorInput);
 
-	Vector<ICompilationUnit> cuList;
-	cuList = new Vector<ICompilationUnit>();
+	Vector<ICompilationUnit> cuList = new Vector<ICompilationUnit>();
 
 	for (IJavaElement element : elements) {
 	    if (element instanceof ICompilationUnit) {
@@ -326,9 +323,7 @@ public class MainController implements IGeneratorConstants {
 	    }
 
 	    // base-class constructors and methods
-	    jutElements
-		    .setConstructorsAndMethods(getConstructorsAndMethods(jutElements
-			    .getClassesAndPackages().getBaseClass()));
+	    jutElements.setConstructorsAndMethods(getConstructorsAndMethods(jutElements.getClassesAndPackages().getBaseClass()));
 
 	    // set selected method
 	    IMethod selectedMethod = null;
@@ -343,8 +338,7 @@ public class MainController implements IGeneratorConstants {
 		selectedMethod = JDTUtils.getSelectedMethod(fileEditorInput);
 	    }
 
-	    jutElements.getConstructorsAndMethods().setSelectedMethod(
-		    selectedMethod);
+	    jutElements.getConstructorsAndMethods().setSelectedMethod(selectedMethod);
 
 	} else {
 	    // init projects without cu
@@ -433,15 +427,30 @@ public class MainController implements IGeneratorConstants {
     public boolean switchClass(IWorkbenchWindow activeWorkbenchWindow,
 	    IStructuredSelection selection) throws JUTException, JUTWarning,
 	    CoreException {
+	boolean ret = false;
 	JUTElements jutElements = detectJUTElements(selection, null, false);
-	if (jutElements == null) {
-	    jutElements = detectJUTElements(selection, null, true);
-	    if (jutElements == null) {
-		return false;
+	if (jutElements != null) { // if not found, then try finding Spring test
+	    ret = switchClass(activeWorkbenchWindow, jutElements);
+	    if (!ret) {
+		jutElements = detectJUTElements(selection, null, true);
+		if (jutElements != null) {
+		    ret = switchClass(activeWorkbenchWindow, jutElements);
+		}
 	    }
 	}
+	if (!ret) {
+	    Shell shell = activeWorkbenchWindow.getShell();
+	    if (MessageDialog
+		    .openConfirm(
+			    shell,
+			    "Generate new test-class?",
+			    "No existing test-class found (perhaps the configuration is wrong). Would you like to generate a new test-class?")) {
+		generateTestclass(activeWorkbenchWindow, jutElements, false);
+		ret = true;
+	    }
+	}
+	return ret;
 
-	return switchClass(activeWorkbenchWindow, jutElements);
     }
 
     /**
@@ -452,32 +461,44 @@ public class MainController implements IGeneratorConstants {
     public boolean switchClass(IWorkbenchWindow activeWorkbenchWindow,
 	    IFileEditorInput fileEditorInput) throws JUTException, JUTWarning,
 	    CoreException {
+	boolean ret = false;
 	JUTElements jutElements = detectJUTElements(null, fileEditorInput, false);
-	if (jutElements == null) {
-	    jutElements = detectJUTElements(null, fileEditorInput, true);
-	    if (jutElements == null) {
-		return false;
+	if (jutElements != null) {
+	    ret = switchClass(activeWorkbenchWindow, jutElements);
+	    if (!ret) {
+		jutElements = detectJUTElements(null, fileEditorInput, true);
+		if (jutElements != null) {
+		    ret = switchClass(activeWorkbenchWindow, jutElements);
+		}
 	    }
 	}
-	return switchClass(activeWorkbenchWindow, jutElements);
+	if (!ret) {
+	    Shell shell = activeWorkbenchWindow.getShell();
+	    if (MessageDialog
+		    .openConfirm(
+			    shell,
+			    "Generate new test-class?",
+			    "No existing test-class found (perhaps the configuration is wrong). Would you like to generate a new test-class?")) {
+		generateTestclass(activeWorkbenchWindow, jutElements, false);
+		ret = true;
+	    }
+	}
+	return ret;
     }
 
     private boolean switchClass(IWorkbenchWindow activeWorkbenchWindow,
 	    JUTElements jutElements) throws JUTException, JUTWarning,
 	    JavaModelException {
-	JUTConstructorsAndMethods constructorsAndMethods = jutElements
-		.getConstructorsAndMethods();
+	JUTConstructorsAndMethods constructorsAndMethods = jutElements.getConstructorsAndMethods();
 	if (constructorsAndMethods == null) {
 	    throw new JUTWarning(
 		    "No constructors and methods were found! Perhaps the preferences are wrong or some manual changes were done which are not compatible. "
 			    + "Elsewise create an issue in GitHub repository of the plugin (https://github.com/csorbazoli/junit-tools/issues)");
 	}
 
-	IMethod selectedMethod = jutElements.getConstructorsAndMethods()
-		.getSelectedMethod();
+	IMethod selectedMethod = jutElements.getConstructorsAndMethods().getSelectedMethod();
 	JUTProjects projects = jutElements.getProjects();
-	JUTClassesAndPackages classesAndPackages = jutElements
-		.getClassesAndPackages();
+	JUTClassesAndPackages classesAndPackages = jutElements.getClassesAndPackages();
 	ICompilationUnit classToOpen;
 	Shell shell = activeWorkbenchWindow.getShell();
 
@@ -486,9 +507,7 @@ public class MainController implements IGeneratorConstants {
 	    classToOpen = classesAndPackages.getTestClass();
 
 	    if (selectedMethod != null) {
-		mr = new MethodRef(
-			GeneratorUtils.createTestMethodName(selectedMethod
-				.getElementName()),
+		mr = new MethodRef(GeneratorUtils.createTestMethodName(selectedMethod.getElementName()),
 			selectedMethod.getSignature());
 	    }
 	} else {
@@ -500,26 +519,14 @@ public class MainController implements IGeneratorConstants {
 	}
 
 	if (classToOpen != null && classToOpen.exists()) {
-	    EclipseUIUtils.openInEditor(shell,
-		    (IFile) classToOpen.getResource());
+	    EclipseUIUtils.openInEditor(shell, (IFile) classToOpen.getResource());
 
 	    if (selectedMethod != null) {
 		EclipseUIUtils.selectMethodInEditor(mr);
 	    }
 
-	    return true;
-	} else if (projects.isBaseProjectSelected()) {
-	    boolean result = MessageDialog
-		    .openConfirm(
-			    shell,
-			    "Generate new test-class?",
-			    "No existing test-class found (perhaps the configuration is wrong). Would you like to generate a new test-class?");
-
-	    if (result) {
-		generateTestclass(activeWorkbenchWindow, jutElements, false);
-	    }
 	} else {
-	    return false;
+	    return !projects.isBaseProjectSelected();
 	}
 
 	return true;
