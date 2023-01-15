@@ -16,98 +16,18 @@ import org.junit.tools.messages.Messages;
 
 public class GeneratorMainView extends Composite {
 
-    public Button getBtnLogger() {
-	return btnLogger;
-    }
-
-    public Text getMethodPrefix() {
-	return methodPrefix;
-    }
-
-//    public Text getTxtTestProject() {
-//	return txtTestProject;
-//    }
-
-    /*
-     * public Button getBtnPrioHigh() { return btnPrioHigh; }
-     * 
-     * public Button getBtnPrioStandard() { return btnPrioStandard; }
-     * 
-     * public Button getBtnPrioLow() { return btnPrioLow; }
-     */
-
-    public Button getBtnFailassertion() {
-	return btnFailassertion;
-    }
-
-    public Button getBtnSetupbeforeclass() {
-	return btnSetupbeforeclass;
-    }
-
-    public Button getBtnTeardown() {
-	return btnTeardown;
-    }
-
-    public Button getBtnTeardownafterclass() {
-	return btnTeardownafterclass;
-    }
-
-    public Button getBtnToggleStandardMethods() {
-	return btnToggleStandardMethods;
-    }
-
-    public Button getBtnToggleOther() {
-	return btnToggleOther;
-    }
-
-    public Button getBtnTestUtils() {
-	return btnTestUtils;
-    }
-
-    public Button getBtnShowThisDialog() {
-	return btnShowThisDialog;
-    }
-
-    public Button getBtnSetup() {
-	return btnSetup;
-    }
-
-    public GroupMethodSelectionView getMethodSelectionGroup() {
-	return methodSelectionGroup;
-    }
-
     private final Button btnLogger;
-
     private final Text methodPrefix;
-
-//    private final Text txtTestProject;
-
-    /*
-     * private final Button btnPrioHigh;
-     * 
-     * private final Button btnPrioStandard;
-     * 
-     * private final Button btnPrioLow;
-     */
-
     private final Button btnFailassertion;
-
     private final Button btnSetupbeforeclass;
-
     private final Button btnTeardown;
-
     private final Button btnTeardownafterclass;
-
     private final Button btnToggleStandardMethods;
-
     private final Button btnToggleOther;
-
     private final Button btnTestUtils;
-
+    private final Button btnThrowsDeclaration;
     private final Button btnSetup;
-
     private final Button btnShowThisDialog;
-
     private final GroupMethodSelectionView methodSelectionGroup;
 
     public GeneratorMainView(Composite parent, int style) {
@@ -260,6 +180,9 @@ public class GeneratorMainView extends Composite {
 	btnTestUtils = new Button(composite_7, SWT.CHECK);
 	btnTestUtils.setText(Messages.GeneratorWizardMainPage_TestUtils);
 
+	btnThrowsDeclaration = new Button(composite_7, SWT.CHECK);
+	btnThrowsDeclaration.setText(Messages.GeneratorWizardMainPage_ThrowsDeclaration);
+
 	btnFailassertion = new Button(composite_7, SWT.CHECK);
 	btnFailassertion
 		.setText(Messages.GeneratorWizardMainPage_fail_assertions);
@@ -288,6 +211,58 @@ public class GeneratorMainView extends Composite {
 
     public CheckboxTreeViewer getCheckboxTreeViewer() {
 	return methodSelectionGroup.getCheckboxTreeViewer();
+    }
+
+    public Button getBtnLogger() {
+	return btnLogger;
+    }
+
+    public Text getMethodPrefix() {
+	return methodPrefix;
+    }
+
+    public Button getBtnFailassertion() {
+	return btnFailassertion;
+    }
+
+    public Button getBtnSetupbeforeclass() {
+	return btnSetupbeforeclass;
+    }
+
+    public Button getBtnTeardown() {
+	return btnTeardown;
+    }
+
+    public Button getBtnTeardownafterclass() {
+	return btnTeardownafterclass;
+    }
+
+    public Button getBtnToggleStandardMethods() {
+	return btnToggleStandardMethods;
+    }
+
+    public Button getBtnToggleOther() {
+	return btnToggleOther;
+    }
+
+    public Button getBtnTestUtils() {
+	return btnTestUtils;
+    }
+
+    public Button getBtnThrowsDeclaration() {
+	return btnThrowsDeclaration;
+    }
+
+    public Button getBtnShowThisDialog() {
+	return btnShowThisDialog;
+    }
+
+    public Button getBtnSetup() {
+	return btnSetup;
+    }
+
+    public GroupMethodSelectionView getMethodSelectionGroup() {
+	return methodSelectionGroup;
     }
 
 }

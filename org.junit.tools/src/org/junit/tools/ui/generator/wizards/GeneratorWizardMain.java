@@ -248,6 +248,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	settings.setTearDownAfterClass(JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", false));
 	settings.setLogger(JUTPreferences.getPreferenceBoolean("LoggerSelection", false));
 	settings.setTestUtils(JUTPreferences.getPreferenceBoolean("TestUtilsSelection", true));
+	settings.setThrowsDeclaration(JUTPreferences.getPreferenceBoolean("ThrowsDeclaration", true));
 
 	// standard methods
 	page.getView().getBtnSetup().setSelection(settings.isSetUp());
@@ -258,6 +259,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	// other
 	page.getView().getBtnLogger().setSelection(settings.isLogger());
 	page.getView().getBtnTestUtils().setSelection(settings.isTestUtils());
+	page.getView().getBtnThrowsDeclaration().setSelection(settings.isThrowsDeclaration());
 
 	page.getView().getBtnShowThisDialog().setSelection(true);
 
@@ -315,6 +317,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    settings.setTearDownAfterClass(JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", false));
 	    settings.setLogger(JUTPreferences.getPreferenceBoolean("LoggerSelection", false));
 	    settings.setTestUtils(JUTPreferences.getPreferenceBoolean("TestUtilsSelection", true));
+	    settings.setThrowsDeclaration(JUTPreferences.getPreferenceBoolean("ThrowsDeclaration", true));
 	} else {
 	    settings.setSetUp(page.getView().getBtnSetup().getSelection());
 	    settings.setSetUpBeforeClass(page.getView().getBtnSetupbeforeclass()
@@ -325,6 +328,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    // other
 	    settings.setLogger(page.getView().getBtnLogger().getSelection());
 	    settings.setTestUtils(page.getView().getBtnTestUtils().getSelection());
+	    settings.setThrowsDeclaration(page.getView().getBtnThrowsDeclaration().getSelection());
 
 	    // save selections as defaults for next execution
 	    JUTPreferences.setPreferenceBoolean("SetupSelection", settings.isSetUp());
@@ -333,6 +337,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    JUTPreferences.setPreferenceBoolean("TeardownafterclassSelection", settings.isTearDownAfterClass());
 	    JUTPreferences.setPreferenceBoolean("LoggerSelection", settings.isLogger());
 	    JUTPreferences.setPreferenceBoolean("TestUtilsSelection", settings.isTestUtils());
+	    JUTPreferences.setPreferenceBoolean("ThrowsDeclaration", settings.isThrowsDeclaration());
 
 	    JUTPreferences.setShowSettingsBeforeGenerate(page.getView().getBtnShowThisDialog().getSelection());
 	}

@@ -183,7 +183,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	if (tmlSettings.isTearDownAfterClass()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded() + MOD_STATIC_WITH_BLANK, TYPE_VOID, STANDARD_METHOD_AFTER_CLASS,
-		    "Exception", null, "", false,
+		    EXCEPTION, null, "", false,
 		    isUsingJunit4() ? ANNO_JUNIT_AFTER_CLASS : "@AfterAll");
 	}
     }
@@ -440,9 +440,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    Method tmlMethod = methodMap.get(methodToCreate);
 	    String httpMethod = mvcTest ? GeneratorUtils.determineHttpMethod(methodToCreate) : null;
 	    if (httpMethod != null) {
-		createMvcTestMethod(type, tmlMethod, methodToCreate, httpMethod, basePath);
+		createMvcTestMethod(tmlSettings, type, tmlMethod, methodToCreate, httpMethod, basePath);
 	    } else {
-		createTestMethod(type, tmlMethod, baseClassName);
+		createTestMethod(tmlSettings, type, tmlMethod, baseClassName);
 	    }
 
 	    if (i++ == increment) {
@@ -457,7 +457,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return false;
     }
 
-    private void createMvcTestMethod(IType type, Method tmlMethod, IMethod testedMethod, String httpMethod, String basePath)
+    private void createMvcTestMethod(Settings settings, IType type, Method tmlMethod, IMethod testedMethod, String httpMethod, String basePath)
 	    throws JavaModelException {
 
 	// create test-method-name
@@ -474,12 +474,13 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create test-method-body
 	String testMethodBody = createMvcTestMethodBody(tmlMethod, httpMethod, basePath + GeneratorUtils.determineRequestPath(testedMethod));
 
-	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, "Exception", null, testMethodBody, false,
+	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, settings.isThrowsDeclaration() ? EXCEPTION : null, null,
+		testMethodBody, false,
 		// annoMethodRef,
 		ANNO_JUNIT_TEST);
     }
 
-    private void createTestMethod(IType type, Method tmlMethod, String baseClassName)
+    private void createTestMethod(Settings settings, IType type, Method tmlMethod, String baseClassName)
 	    throws JavaModelException {
 
 	// create test-method-name
@@ -496,7 +497,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create test-method-body
 	String testMethodBody = createTestMethodBody(type, tmlMethod, testMethodName, baseClassName);
 
-	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, "Exception", null, testMethodBody, false,
+	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, settings.isThrowsDeclaration() ? EXCEPTION : null, null,
+		testMethodBody, false,
 		// annoMethodRef,
 		ANNO_JUNIT_TEST);
     }

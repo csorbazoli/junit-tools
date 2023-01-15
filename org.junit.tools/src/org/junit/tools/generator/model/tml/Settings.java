@@ -54,6 +54,7 @@ public class Settings {
     protected boolean tearDownAfterClass;
     protected boolean logger;
     protected boolean testUtils = true;
+    protected boolean throwsDeclaration = true;
 
     /**
      * Gets the value of the setUp property.
@@ -141,6 +142,14 @@ public class Settings {
      */
     public void setLogger(boolean value) {
 	this.logger = value;
+    }
+
+    public boolean isThrowsDeclaration() {
+	return throwsDeclaration;
+    }
+
+    public void setThrowsDeclaration(boolean throwsDeclaration) {
+	this.throwsDeclaration = throwsDeclaration;
     }
 
 }
