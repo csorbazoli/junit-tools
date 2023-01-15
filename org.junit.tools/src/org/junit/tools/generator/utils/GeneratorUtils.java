@@ -410,7 +410,7 @@ public class GeneratorUtils implements IGeneratorConstants {
     public static List<IMethod> getMethodsToCreate(HashMap<MethodRef, IMethod> existingMethods, Vector<IMethod> checkedMethods) throws JavaModelException {
 	List<IMethod> methodsToCreate = new ArrayList<IMethod>();
 
-	if (existingMethods == null || existingMethods.size() == 0) {
+	if (JUTPreferences.isRepeatingTestMethodsEnabled() || existingMethods == null || existingMethods.size() == 0) {
 	    return checkedMethods;
 	}
 

@@ -31,6 +31,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String testClassSuperType = null;
     private static String springTestClassPostfix = null;
     private static Boolean gherkinStyleEnabled = true;
+    private static Boolean repeatingTestMethodsEnabled = true;
     private static Boolean showSettingsBeforeGenerate = null;
     private static String mockFramework = null;
     private static int junitVersion = 5;
@@ -302,6 +303,13 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return gherkinStyleEnabled;
     }
 
+    public static Boolean isRepeatingTestMethodsEnabled() {
+	if (repeatingTestMethodsEnabled == null) {
+	    repeatingTestMethodsEnabled = getPreferenceBoolean(REPEATING_TEST_METHODS_ENABLED, true);
+	}
+	return repeatingTestMethodsEnabled;
+    }
+
     public static Boolean isShowSettingsBeforeGenerate() {
 	if (showSettingsBeforeGenerate == null) {
 	    showSettingsBeforeGenerate = getPreferenceBoolean(SHOW_SETTINGS_BEFORE_GENERATE, true);
@@ -319,6 +327,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setGherkinStyleEnabled(Boolean gherkinStyleEnabled) {
 	JUTPreferences.gherkinStyleEnabled = gherkinStyleEnabled;
+    }
+
+    public static void setRepeatingTestMethodsEnabled(Boolean enabled) {
+	JUTPreferences.repeatingTestMethodsEnabled = enabled;
     }
 
     public static void setShowSettingsBeforeGenerate(Boolean enabled) {
@@ -427,6 +439,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    return;
 			} else if (event.getProperty() == GHERKIN_STYLE_ENABLED) {
 			    setGherkinStyleEnabled((Boolean) event.getNewValue());
+			    return;
+			} else if (event.getProperty() == REPEATING_TEST_METHODS_ENABLED) {
+			    setRepeatingTestMethodsEnabled((Boolean) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == SHOW_SETTINGS_BEFORE_GENERATE) {
 			    setShowSettingsBeforeGenerate((Boolean) event.getNewValue());

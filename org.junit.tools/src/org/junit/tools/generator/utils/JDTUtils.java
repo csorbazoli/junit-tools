@@ -696,7 +696,7 @@ public class JDTUtils implements IGeneratorConstants {
 	    String params, String body, boolean increment,
 	    String... annotations) throws JavaModelException {
 	return createMethod(type, modifier, returnType, methodName,
-		throwsClause, params, body, false, false, annotations);
+		throwsClause, params, body, increment, false, annotations);
     }
 
     /**

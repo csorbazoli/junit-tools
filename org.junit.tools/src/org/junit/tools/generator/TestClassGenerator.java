@@ -47,14 +47,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     private static final Pattern PATH_VARIABLE_PATTERN = Pattern.compile("\\{(\\w+)\\}");
 
     protected String testmethodPrefix;
-
     protected String testmethodPostfix;
-
     protected String testmvcMethodPostfix;
-
     protected boolean defaultTestbaseMethodCreated = false;
-
     protected Boolean gherkinStyle = null;
+    protected Boolean repeatingTestMethods = null;
 
     @Override
     public ICompilationUnit generate(GeneratorModel model, List<ITestDataFactory> testDataFactories,
@@ -474,10 +471,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create test-method-body
 	String testMethodBody = createMvcTestMethodBody(tmlMethod, httpMethod, basePath + GeneratorUtils.determineRequestPath(testedMethod));
 
-	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, settings.isThrowsDeclaration() ? EXCEPTION : null, null,
-		testMethodBody, false,
-		// annoMethodRef,
-		ANNO_JUNIT_TEST);
+	// throws Exception declaration is always needed for MVC testing
+	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, EXCEPTION, null,
+		testMethodBody, isRepeatingTestMethods(), ANNO_JUNIT_TEST);
     }
 
     private void createTestMethod(Settings settings, IType type, Method tmlMethod, String baseClassName)
@@ -495,12 +491,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-method-body
-	String testMethodBody = createTestMethodBody(type, tmlMethod, testMethodName, baseClassName);
+	String testMethodBody = createTestMethodBody(type, tmlMethod, baseClassName);
 
 	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, settings.isThrowsDeclaration() ? EXCEPTION : null, null,
-		testMethodBody, false,
-		// annoMethodRef,
-		ANNO_JUNIT_TEST);
+		testMethodBody, isRepeatingTestMethods(), ANNO_JUNIT_TEST);
     }
 
     protected String createMvcTestMethodBody(Method tmlMethod, String httpMethod, String urlPath)
@@ -585,7 +579,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return ret.toString();
     }
 
-    protected String createTestMethodBody(IType type, Method tmlMethod, String methodName, String baseClassName) throws JavaModelException {
+    protected String createTestMethodBody(IType type, Method tmlMethod, String baseClassName) throws JavaModelException {
 	StringBuilder sbTestMethodBody = new StringBuilder();
 	List<Param> params = tmlMethod.getParam();
 	String testbaseMethodName = "";
@@ -793,6 +787,14 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	return gherkinStyle;
+    }
+
+    private boolean isRepeatingTestMethods() {
+	if (repeatingTestMethods == null) {
+	    repeatingTestMethods = JUTPreferences.isRepeatingTestMethodsEnabled();
+	}
+
+	return repeatingTestMethods;
     }
 
     protected String getTestmethodPrefix() {

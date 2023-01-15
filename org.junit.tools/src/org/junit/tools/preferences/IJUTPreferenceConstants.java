@@ -22,6 +22,10 @@ public interface IJUTPreferenceConstants {
     public static final String JUNIT_VERSION = "JUNIT_VERSION";
     public static final String SHOW_SETTINGS_BEFORE_GENERATE = "SHOW_SETTINGS_BEFORE_GENERATE";
     public static final String GHERKIN_STYLE_ENABLED = "GHERKIN_STYLE";
+    /**
+     * If enabled, then it creates a new test method if it already exists
+     */
+    public static final String REPEATING_TEST_METHODS_ENABLED = "MULTIPLE_TEST_METHODS";
     public static final String MOCK_FRAMEWORK = "MOCK_FRAMEWORK";
     public static final String TEST_CLASS_ANNOTATIONS = "TEST_CLASS_ANNOTATIONS";
     public static final String STATIC_BINDINGS = "STATIC_BINDINGS";

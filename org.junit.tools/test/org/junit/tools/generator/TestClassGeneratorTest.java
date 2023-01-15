@@ -413,7 +413,7 @@ public class TestClassGeneratorTest {
 	testCase.getParamAssignments().add(intParamAssignment);
 	tmlMethod.getTestCase().add(testCase);
 	// when
-	String actual = underTest.createTestMethodBody(type, tmlMethod, "someMethod", "SomeClass");
+	String actual = underTest.createTestMethodBody(type, tmlMethod, "SomeClass");
 	// then
 	assertEquals("// given\n"
 		+ "String testString = \"testValue\";\n"
