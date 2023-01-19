@@ -429,14 +429,11 @@ public class MainController implements IGeneratorConstants {
 	    CoreException {
 	boolean ret = false;
 	JUTElements jutElements = detectJUTElements(selection, null, false);
-	if (jutElements != null) { // if not found, then try finding Spring test
+	if (jutElements == null || jutElements.getConstructorsAndMethods() == null) { // if not found, then try finding Spring test
+	    jutElements = detectJUTElements(selection, null, true);
+	}
+	if (jutElements != null) {
 	    ret = switchClass(activeWorkbenchWindow, jutElements);
-	    if (!ret) {
-		jutElements = detectJUTElements(selection, null, true);
-		if (jutElements != null) {
-		    ret = switchClass(activeWorkbenchWindow, jutElements);
-		}
-	    }
 	}
 	if (!ret) {
 	    Shell shell = activeWorkbenchWindow.getShell();
@@ -463,14 +460,11 @@ public class MainController implements IGeneratorConstants {
 	    CoreException {
 	boolean ret = false;
 	JUTElements jutElements = detectJUTElements(null, fileEditorInput, false);
+	if (jutElements == null || jutElements.getConstructorsAndMethods() == null) {
+	    jutElements = detectJUTElements(null, fileEditorInput, true);
+	}
 	if (jutElements != null) {
 	    ret = switchClass(activeWorkbenchWindow, jutElements);
-	    if (!ret) {
-		jutElements = detectJUTElements(null, fileEditorInput, true);
-		if (jutElements != null) {
-		    ret = switchClass(activeWorkbenchWindow, jutElements);
-		}
-	    }
 	}
 	if (!ret) {
 	    Shell shell = activeWorkbenchWindow.getShell();

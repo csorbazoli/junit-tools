@@ -122,9 +122,9 @@ public class EclipseUIUtils {
 
     public static IWorkbenchWindow getActiveWorkbenchWindow() {
 	return PlatformUI.getWorkbench()
-	.getActiveWorkbenchWindow();
+		.getActiveWorkbenchWindow();
     }
-    
+
     /**
      * @return active editor
      */
@@ -138,10 +138,10 @@ public class EclipseUIUtils {
 	if (activeEditor != null) {
 	    return activeEditor.getEditorInput();
 	}
-	
+
 	return null;
     }
-    
+
     /**
      * @param selection
      * @return first element of the selection
@@ -226,34 +226,35 @@ public class EclipseUIUtils {
 
 			IEditorPart activeEditor = page.getActiveEditor();
 			if (activeEditor == null || !(activeEditor instanceof ITextEditor)) {
-				return;
+			    return;
 			}
-			
-			ITextEditor editor = (ITextEditor)activeEditor; 
+
+			ITextEditor editor = (ITextEditor) activeEditor;
 
 			ITypeRoot typeRoot = JavaUI
 				.getEditorInputTypeRoot(editor.getEditorInput());
-			ICompilationUnit icu = (ICompilationUnit) typeRoot
+			ICompilationUnit icu = typeRoot
 				.getAdapter(ICompilationUnit.class);
-			
+
 			IType type = icu.findPrimaryType();
 			IMethod method = null;
-			
+
 			try {
+			    // TODO make it work with prefix too!
 			    method = GeneratorUtils.findMethod(
 				    Arrays.asList(type.getMethods()), methodRef);
-			    
+
 			    if (method != null) {
-			    	// get the already selected method in the editor
-			    	// if it is the same method, select nothing
-			    	ISelection selection = editor.getSelectionProvider().getSelection();
-			    	if (selection != null && selection instanceof ITextSelection) {
-			    		ITextSelection txtSelection = (ITextSelection)selection;
-			    		IJavaElement selectedElement = typeRoot.getElementAt(txtSelection.getOffset());
-			    		if (selectedElement != null && selectedElement.equals(method)) {
-			    			return;
-			    		}
-			    	}
+				// get the already selected method in the editor
+				// if it is the same method, select nothing
+				ISelection selection = editor.getSelectionProvider().getSelection();
+				if (selection != null && selection instanceof ITextSelection) {
+				    ITextSelection txtSelection = (ITextSelection) selection;
+				    IJavaElement selectedElement = typeRoot.getElementAt(txtSelection.getOffset());
+				    if (selectedElement != null && selectedElement.equals(method)) {
+					return;
+				    }
+				}
 			    }
 			} catch (JavaModelException e1) {
 			    // not found
@@ -296,7 +297,7 @@ public class EclipseUIUtils {
 	    if (results.length > 0) {
 		for (Object result : results) {
 		    if (result instanceof IJavaProject) {
-			return ((IJavaProject) result);
+			return (IJavaProject) result;
 		    }
 		}
 	    }

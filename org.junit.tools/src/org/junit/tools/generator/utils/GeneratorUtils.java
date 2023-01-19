@@ -507,44 +507,40 @@ public class GeneratorUtils implements IGeneratorConstants {
     }
 
     public static IMethod findMethod(Collection<IMethod> methods, MethodRef methodRef) throws JavaModelException {
-	boolean nameMatched;
 	IMethod nameMatchedMethod = null;
-	int nameMatchedCounter = 0;
+	int prefixMatchLen = 0;
+	IMethod prefixMatchedMethod = null;
 
 	for (IMethod method : methods) {
-
-	    nameMatched = false;
 
 	    if (methodRef.getName().equals(method.getElementName())) {
 		if (methodRef.getSignature().equals(method.getSignature())) {
 		    return method;
-		} else {
-		    nameMatched = true;
+		} else if (nameMatchedMethod == null) {
+		    nameMatchedMethod = method;
 		}
+	    } else if (methodRef.getName().startsWith(method.getElementName()) && method.getElementName().length() > prefixMatchLen) {
+		prefixMatchLen = method.getElementName().length();
+		prefixMatchedMethod = method;
+	    } else if (method.getElementName().startsWith(methodRef.getName()) && methodRef.getName().length() > prefixMatchLen) {
+		prefixMatchLen = methodRef.getName().length();
+		prefixMatchedMethod = method;
 	    }
 
 	    MethodRef methodRefTarget = getMethodRef(method);
-	    String baseMethodName = createMethodNameFromTest(methodRef
-		    .getName());
+	    String baseMethodName = createMethodNameFromTest(methodRef.getName());
 	    if (methodRefTarget != null
 		    && methodRefTarget.getName().equals(baseMethodName)
 		    && methodRefTarget.getSignatureToCompare().equals(
 			    methodRef.getSignatureToCompare())) {
 		return method;
 	    }
-
-	    if (nameMatched) {
-		nameMatchedCounter++;
-		nameMatchedMethod = method;
-	    }
-
 	}
 
-	if (nameMatchedCounter == 1) {
+	if (nameMatchedMethod != null) {
 	    return nameMatchedMethod;
 	}
-
-	return null;
+	return prefixMatchedMethod;
     }
 
     public static IMethod findMethod(Collection<MethodRef> methodRefs, IMethod method) throws JavaModelException {
