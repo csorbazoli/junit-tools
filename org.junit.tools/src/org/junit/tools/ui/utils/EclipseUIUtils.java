@@ -268,10 +268,8 @@ public class EclipseUIUtils {
 
 		    @Override
 		    public void run() {
-			IWorkbenchPage page = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
-			ITextEditor editor = (ITextEditor) page
-				.getActiveEditor();
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			ITextEditor editor = (ITextEditor) page.getActiveEditor();
 			IJavaElement element = method;
 			JavaUI.revealInEditor(editor, element);
 		    }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -284,8 +285,7 @@ public class MainController implements IGeneratorConstants {
 	JUTElements jutElements = new JUTElements();
 
 	// get active editor if nothing selected
-	if ((selection == null || selection.isEmpty())
-		&& fileEditorInput == null) {
+	if ((selection == null || selection.isEmpty()) && fileEditorInput == null) {
 	    IEditorInput editorInput = EclipseUIUtils.getEditorInput();
 
 	    if (editorInput != null && editorInput instanceof IFileEditorInput) {
@@ -429,13 +429,16 @@ public class MainController implements IGeneratorConstants {
 	    CoreException {
 	boolean ret = false;
 	JUTElements jutElements = detectJUTElements(selection, null, false);
-	if (jutElements == null || jutElements.getConstructorsAndMethods() == null) { // if not found, then try finding Spring test
-	    jutElements = detectJUTElements(selection, null, true);
-	}
-	if (jutElements != null) {
+	if (jutElements != null && jutElements.getConstructorsAndMethods() != null) {
 	    ret = switchClass(activeWorkbenchWindow, jutElements);
 	}
 	if (!ret) {
+	    jutElements = detectJUTElements(selection, null, true);
+	    if (jutElements != null && jutElements.getConstructorsAndMethods() != null) {
+		ret = switchClass(activeWorkbenchWindow, jutElements);
+	    }
+	}
+	if (!ret && jutElements == null) {
 	    Shell shell = activeWorkbenchWindow.getShell();
 	    if (MessageDialog
 		    .openConfirm(
@@ -460,13 +463,16 @@ public class MainController implements IGeneratorConstants {
 	    CoreException {
 	boolean ret = false;
 	JUTElements jutElements = detectJUTElements(null, fileEditorInput, false);
-	if (jutElements == null || jutElements.getConstructorsAndMethods() == null) {
-	    jutElements = detectJUTElements(null, fileEditorInput, true);
-	}
-	if (jutElements != null) {
+	if (jutElements != null && jutElements.getConstructorsAndMethods() != null) {
 	    ret = switchClass(activeWorkbenchWindow, jutElements);
 	}
 	if (!ret) {
+	    jutElements = detectJUTElements(null, fileEditorInput, true);
+	    if (jutElements != null && jutElements.getConstructorsAndMethods() != null) {
+		ret = switchClass(activeWorkbenchWindow, jutElements);
+	    }
+	}
+	if (!ret && jutElements == null) {
 	    Shell shell = activeWorkbenchWindow.getShell();
 	    if (MessageDialog
 		    .openConfirm(
@@ -480,9 +486,8 @@ public class MainController implements IGeneratorConstants {
 	return ret;
     }
 
-    private boolean switchClass(IWorkbenchWindow activeWorkbenchWindow,
-	    JUTElements jutElements) throws JUTException, JUTWarning,
-	    JavaModelException {
+    private boolean switchClass(IWorkbenchWindow activeWorkbenchWindow, JUTElements jutElements)
+	    throws JUTException, JUTWarning, JavaModelException {
 	JUTConstructorsAndMethods constructorsAndMethods = jutElements.getConstructorsAndMethods();
 	if (constructorsAndMethods == null) {
 	    throw new JUTWarning(
@@ -517,7 +522,11 @@ public class MainController implements IGeneratorConstants {
 	    EclipseUIUtils.openInEditor(shell, (IFile) classToOpen.getResource());
 
 	    if (selectedMethod != null) {
-		EclipseUIUtils.selectMethodInEditor(mr);
+		IMethod existingMethod = GeneratorUtils.findMethod(Arrays.asList(classToOpen.findPrimaryType().getMethods()), mr);
+		if (existingMethod == null) {
+		    return false;
+		}
+		EclipseUIUtils.selectMethodInEditor(existingMethod);
 	    }
 
 	} else {
