@@ -368,7 +368,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    ICompilationUnit baseClass = utmElements.getClassesAndPackages().getBaseClass();
 	    ICompilationUnit testClass = utmElements.getClassesAndPackages().getTestClass();
 
-	    existingMethods = GeneratorUtils.getExistingTestMethods(baseClass, testClass, true);
+	    existingMethods = GeneratorUtils.getExistingTestMethods(baseClass, testClass);
 
 	    // add selected base method
 	    if (utmElements.getProjects().isBaseProjectSelected()) {

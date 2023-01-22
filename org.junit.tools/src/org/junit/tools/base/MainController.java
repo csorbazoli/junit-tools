@@ -497,18 +497,19 @@ public class MainController implements IGeneratorConstants {
 	Shell shell = activeWorkbenchWindow.getShell();
 
 	MethodRef mr = null;
-	if (projects.isBaseProjectSelected()) {
+	if (projects.isBaseProjectSelected()) { // source --> test
 	    classToOpen = classesAndPackages.getTestClass();
 
 	    if (selectedMethod != null) {
 		mr = new MethodRef(GeneratorUtils.createTestMethodName(selectedMethod.getElementName()),
 			selectedMethod.getSignature());
 	    }
-	} else {
+	} else { // test --> source
 	    classToOpen = classesAndPackages.getBaseClass();
 
 	    if (selectedMethod != null) {
-		mr = GeneratorUtils.getMethodRef(selectedMethod);
+		mr = new MethodRef(GeneratorUtils.createMethodNameFromTest(selectedMethod.getElementName()),
+			selectedMethod.getSignature()); // this signature doesn't help much here
 	    }
 	}
 

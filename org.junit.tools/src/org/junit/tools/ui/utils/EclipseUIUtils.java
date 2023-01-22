@@ -168,8 +168,7 @@ public class EclipseUIUtils {
      * Organize the imports of a compilation unit.
      * 
      */
-    public static void organizeImports(IWorkbenchPartSite site,
-	    ICompilationUnit cu) {
+    public static void organizeImports(IWorkbenchPartSite site, ICompilationUnit cu) {
 	if (cu == null) {
 	    return;
 	}
@@ -221,8 +220,7 @@ public class EclipseUIUtils {
 			    return;
 			}
 
-			IWorkbenchPage page = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
 			IEditorPart activeEditor = page.getActiveEditor();
 			if (activeEditor == null || !(activeEditor instanceof ITextEditor)) {
@@ -231,18 +229,14 @@ public class EclipseUIUtils {
 
 			ITextEditor editor = (ITextEditor) activeEditor;
 
-			ITypeRoot typeRoot = JavaUI
-				.getEditorInputTypeRoot(editor.getEditorInput());
-			ICompilationUnit icu = typeRoot
-				.getAdapter(ICompilationUnit.class);
+			ITypeRoot typeRoot = JavaUI.getEditorInputTypeRoot(editor.getEditorInput());
+			ICompilationUnit icu = typeRoot.getAdapter(ICompilationUnit.class);
 
 			IType type = icu.findPrimaryType();
 			IMethod method = null;
 
 			try {
-			    // TODO make it work with prefix too!
-			    method = GeneratorUtils.findMethod(
-				    Arrays.asList(type.getMethods()), methodRef);
+			    method = GeneratorUtils.findMethod(Arrays.asList(type.getMethods()), methodRef);
 
 			    if (method != null) {
 				// get the already selected method in the editor

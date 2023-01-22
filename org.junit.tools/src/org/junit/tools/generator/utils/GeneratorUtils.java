@@ -70,8 +70,7 @@ public class GeneratorUtils implements IGeneratorConstants {
      *                     otherwise it will be replaced
      * @return method-name with or without prefix
      */
-    public static String createMethodName(String methodName,
-	    String methodPrefix, boolean concat) {
+    public static String createMethodName(String methodName, String methodPrefix, boolean concat) {
 	if (concat) {
 	    if (methodName.length() == 0) {
 		return methodPrefix;
@@ -79,15 +78,13 @@ public class GeneratorUtils implements IGeneratorConstants {
 		return methodName;
 	    }
 
-	    String firstLetter = String.valueOf(methodName.charAt(0))
-		    .toUpperCase();
+	    String firstLetter = String.valueOf(methodName.charAt(0)).toUpperCase();
 	    String restMethodName = methodName.substring(1);
 
 	    methodName = methodPrefix + firstLetter + restMethodName;
 	} else {
 	    methodName = methodName.replaceFirst(methodPrefix, "");
-	    String firstLetter = String.valueOf(methodName.charAt(0))
-		    .toLowerCase();
+	    String firstLetter = String.valueOf(methodName.charAt(0)).toLowerCase();
 	    String restMethodName = methodName.substring(1);
 
 	    methodName = firstLetter + restMethodName;
@@ -248,15 +245,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return ANNO_RULE + RETURN;
     }
 
-    public static HashMap<MethodRef, IMethod> getExistingTestMethods(ICompilationUnit cuBase, ICompilationUnit cu) throws JavaModelException {
-	return getExistingTestMethods(cuBase, cu, false);
-    }
-
-    public static HashMap<MethodRef, IMethod> getExistingTestMethods(ICompilationUnit cu) throws JavaModelException {
-	return getExistingTestMethods(null, cu, false);
-    }
-
-    public static HashMap<MethodRef, IMethod> getExistingTestMethods(ICompilationUnit cuBase, ICompilationUnit cuWithRef, boolean withByName)
+    public static HashMap<MethodRef, IMethod> getExistingTestMethods(ICompilationUnit cuBase, ICompilationUnit cuWithRef)
 	    throws JavaModelException {
 	HashMap<MethodRef, IMethod> existingMethods = new HashMap<MethodRef, IMethod>();
 
@@ -273,32 +262,25 @@ public class GeneratorUtils implements IGeneratorConstants {
 	IMethod[] methods = primaryType.getMethods();
 
 	for (IMethod method : methods) {
-	    MethodRef mr = getMethodRef(method);
+	    if (method.getElementName().startsWith(JUTPreferences.getTestMethodPrefix())) {
+		// find base method
+		String baseMethodName = createMethodNameFromTest(method
+			.getElementName());
+		List<IMethod> baseMethods = JDTUtils.getMethods(cuBase,
+			false, baseMethodName);
 
-	    if (mr != null) {
-		existingMethods.put(mr, method);
-	    } else if (withByName) {
-		if (method.getElementName().startsWith(
-			JUTPreferences.getTestMethodPrefix())) {
-		    // find base method
-		    String baseMethodName = createMethodNameFromTest(method
-			    .getElementName());
-		    List<IMethod> baseMethods = JDTUtils.getMethods(cuBase,
-			    false, baseMethodName);
-
-		    if (baseMethods.size() == 1) {
-			IMethod baseMethod = baseMethods.get(0);
-			mr = new MethodRef(baseMethod.getElementName(),
-				baseMethod.getSignature());
-			mr.setSignatureNew(baseMethod.getSignature());
-			existingMethods.put(mr, method);
-		    } else {
-			mr = new MethodRef(baseMethodName, "");
-			mr.setUnresolvedConflict(true);
-			existingMethods.put(mr, method);
-		    }
-
+		if (baseMethods.size() == 1) {
+		    IMethod baseMethod = baseMethods.get(0);
+		    MethodRef mr = new MethodRef(baseMethod.getElementName(),
+			    baseMethod.getSignature());
+		    mr.setSignatureNew(baseMethod.getSignature());
+		    existingMethods.put(mr, method);
+		} else {
+		    MethodRef mr = new MethodRef(baseMethodName, "");
+		    mr.setUnresolvedConflict(true);
+		    existingMethods.put(mr, method);
 		}
+
 	    }
 	}
 
@@ -506,35 +488,30 @@ public class GeneratorUtils implements IGeneratorConstants {
 
     }
 
-    public static IMethod findMethod(Collection<IMethod> methods, MethodRef methodRef) throws JavaModelException {
+    public static IMethod findMethod(Collection<IMethod> methods, MethodRef searchMethodRef) throws JavaModelException {
 	IMethod nameMatchedMethod = null;
 	int prefixMatchLen = 0;
 	IMethod prefixMatchedMethod = null;
+	String searchMethodName = searchMethodRef.getName();
+	String searchSignature = searchMethodRef.getSignature();
 
 	for (IMethod method : methods) {
 
-	    if (methodRef.getName().equals(method.getElementName())) {
-		if (methodRef.getSignature().equals(method.getSignature())) {
+	    String methodName = method.getElementName();
+	    if (searchMethodName.equals(methodName)) {
+		if (searchSignature.equals(method.getSignature())) {
 		    return method;
 		} else if (nameMatchedMethod == null) {
 		    nameMatchedMethod = method;
 		}
-	    } else if (methodRef.getName().startsWith(method.getElementName()) && method.getElementName().length() > prefixMatchLen) {
-		prefixMatchLen = method.getElementName().length();
+	    } else if (searchMethodName.startsWith(methodName) && methodName.length() > prefixMatchLen) {
+		prefixMatchLen = methodName.length();
 		prefixMatchedMethod = method;
-	    } else if (method.getElementName().startsWith(methodRef.getName()) && methodRef.getName().length() > prefixMatchLen) {
-		prefixMatchLen = methodRef.getName().length();
+	    } else if (methodName.startsWith(searchMethodName) && searchMethodName.length() > prefixMatchLen) {
+		prefixMatchLen = searchMethodName.length();
 		prefixMatchedMethod = method;
 	    }
 
-	    MethodRef methodRefTarget = getMethodRef(method);
-	    String baseMethodName = createMethodNameFromTest(methodRef.getName());
-	    if (methodRefTarget != null
-		    && methodRefTarget.getName().equals(baseMethodName)
-		    && methodRefTarget.getSignatureToCompare().equals(
-			    methodRef.getSignatureToCompare())) {
-		return method;
-	    }
 	}
 
 	if (nameMatchedMethod != null) {

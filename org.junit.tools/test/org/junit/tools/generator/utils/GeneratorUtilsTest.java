@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.jdt.core.IAnnotation;
@@ -13,10 +15,51 @@ import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.junit.Test;
+import org.junit.tools.base.MethodRef;
 import org.junit.tools.preferences.JUTPreferences;
 
 public class GeneratorUtilsTest {
+
+    @Test
+    public void testFindMethod_shouldFindExactMatch() throws Exception {
+	// given
+	IMethod method1 = createMockedMethod("myMethod", "");
+	IMethod method2 = createMockedMethod("otherMethod", "");
+	Collection<IMethod> methods = Arrays.asList(method1, method2);
+	MethodRef methodRef = new MethodRef("myMethod", "(QString;QDemoObject;)QString;");
+	// when
+	IMethod actual = GeneratorUtils.findMethod(methods, methodRef);
+	// then
+	assertThat(actual).isEqualTo(method1);
+    }
+
+    @Test
+    public void testFindMethod_shouldFindPrefixMatch() throws Exception {
+	// given
+	IMethod method1 = createMockedMethod("testMyMethod_shouldDoSomething", "");
+	IMethod method2 = createMockedMethod("testOtherMethod", "");
+	Collection<IMethod> methods = Arrays.asList(method1, method2);
+	MethodRef methodRef = new MethodRef("testMyMethod", "(QString;QDemoObject;)QString;");
+	// when
+	IMethod actual = GeneratorUtils.findMethod(methods, methodRef);
+	// then
+	assertThat(actual).isEqualTo(method1);
+    }
+
+    @Test
+    public void testFindMethod_shouldFindPrefixMatchReverse() throws Exception {
+	// given
+	IMethod method1 = createMockedMethod("myMethod", "(QString;QDemoObject;)QString;");
+	IMethod method2 = createMockedMethod("otherMethod", "(QString;QDemoObject;)QString;");
+	Collection<IMethod> methods = Arrays.asList(method1, method2);
+	MethodRef methodRef = new MethodRef("myMethod_shouldDoSomething", "");
+	// when
+	IMethod actual = GeneratorUtils.findMethod(methods, methodRef);
+	// then
+	assertThat(actual).isEqualTo(method1);
+    }
 
     @Test
     public void testFindField() throws Exception {
@@ -63,9 +106,8 @@ public class GeneratorUtilsTest {
 
 	when(primaryType.getFields()).thenReturn(new IField[] {});
 
-	IMethod constructor = mock(IMethod.class);
+	IMethod constructor = createMockedMethod("SomeClass", "");
 	when(primaryType.getMethods()).thenReturn(new IMethod[] { constructor });
-	when(constructor.getElementName()).thenReturn("SomeClass");
 
 	ILocalVariable param = mock(ILocalVariable.class);
 	when(param.getElementName()).thenReturn("someService");
@@ -113,7 +155,7 @@ public class GeneratorUtilsTest {
     @Test
     public void testDetermineHttpMethod_shouldReturnHttpMethodAccordingToXMappingAnnotation() throws Exception {
 	// given
-	IMethod method = mock(IMethod.class);
+	IMethod method = createMockedMethod("getSomething", "");
 	IAnnotation mappingAnnotation = mock(IAnnotation.class);
 	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
 	when(mappingAnnotation.getElementName()).thenReturn("GetMapping");
@@ -126,7 +168,7 @@ public class GeneratorUtilsTest {
     @Test
     public void testDetermineHttpMethod_shouldReturnHttpMethodAccordingToMappingAnnotationsMethodAttribute() throws Exception {
 	// given
-	IMethod method = mock(IMethod.class);
+	IMethod method = createMockedMethod("postSomething", "QString;");
 	IAnnotation mappingAnnotation = mock(IAnnotation.class);
 	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
 	when(mappingAnnotation.getElementName()).thenReturn("RequestMapping");
@@ -143,7 +185,7 @@ public class GeneratorUtilsTest {
     @Test
     public void testDetermineRequestPath_shouldReturnPathAttributeIfGiven() throws Exception {
 	// given
-	IMethod method = mock(IMethod.class);
+	IMethod method = createMockedMethod("getSomething", "QString;");
 	IAnnotation mappingAnnotation = mock(IAnnotation.class);
 	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
 	when(mappingAnnotation.getElementName()).thenReturn("GetMapping");
@@ -160,7 +202,7 @@ public class GeneratorUtilsTest {
     @Test
     public void testDetermineRequestPath_shouldReturnValueAttributeIfPathNotGiven() throws Exception {
 	// given
-	IMethod method = mock(IMethod.class);
+	IMethod method = createMockedMethod("getSomething", "QString;");
 	IAnnotation mappingAnnotation = mock(IAnnotation.class);
 	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
 	when(mappingAnnotation.getElementName()).thenReturn("GetMapping");
@@ -177,7 +219,7 @@ public class GeneratorUtilsTest {
     @Test
     public void testDetermineRequestPath_shouldReturnEmptyStringIfPathAttributeIsNotSpecified() throws Exception {
 	// given
-	IMethod method = mock(IMethod.class);
+	IMethod method = createMockedMethod("getSomething", "");
 	IAnnotation mappingAnnotation = mock(IAnnotation.class);
 	when(method.getAnnotations()).thenReturn(new IAnnotation[] { mappingAnnotation });
 	when(mappingAnnotation.getElementName()).thenReturn("GetMapping");
@@ -186,6 +228,14 @@ public class GeneratorUtilsTest {
 	String actual = GeneratorUtils.determineRequestPath(method);
 	// then
 	assertThat(actual).isEmpty();
+    }
+
+    // helper methods
+    private IMethod createMockedMethod(String name, String signature) throws JavaModelException {
+	IMethod ret = mock(IMethod.class);
+	when(ret.getElementName()).thenReturn(name);
+	when(ret.getSignature()).thenReturn(signature);
+	return ret;
     }
 
 }
