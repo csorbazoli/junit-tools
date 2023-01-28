@@ -50,7 +50,7 @@ public class TestCasesGeneratorTest {
 	// then
 	assertEquals(1, method.getTestCase().size());
 	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("String {result}#EQUALS_J5#\"TestExpected\"", firstTestCase.getAssertion().stream()
+	assertEquals("String {result}#EQUALS#\"TestExpected\"", firstTestCase.getAssertion().stream()
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 		.collect(Collectors.joining()));
 	assertEquals("String someParam = \"TestSomeParam\"", firstTestCase.getParamAssignments().stream()
@@ -63,6 +63,8 @@ public class TestCasesGeneratorTest {
 	// given
 	JUTElements elements = new JUTElements();
 	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
+	test.setTestBase("SomeClass");
+	test.setTestClass("SomeClassTest");
 	GeneratorModel model = new GeneratorModel(elements, test);
 	IMethod methodKey = Mockito.mock(IMethod.class);
 	model.setMethodsToCreate(Arrays.asList(methodKey));
@@ -86,7 +88,7 @@ public class TestCasesGeneratorTest {
 	// then
 	assertEquals(1, method.getTestCase().size());
 	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("TestBean TestUtils.objectToJson({result})#EQUALS_J5#TestUtils.readTestFile(\"someMethod/TestBean.json\")",
+	assertEquals("TestBean TestUtils.objectToJson({result})#EQUALS#TestUtils.readTestFile(\"SomeClass/TestBean.json\")",
 		firstTestCase.getAssertion().stream()
 			.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 			.collect(Collectors.joining()));
@@ -155,7 +157,73 @@ public class TestCasesGeneratorTest {
 	// then
 	assertEquals(1, method.getTestCase().size());
 	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("Boolean {result}#IS_TRUE_J5#", firstTestCase.getAssertion().stream()
+	assertEquals("Boolean {result}#IS_TRUE#", firstTestCase.getAssertion().stream()
+		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+		.collect(Collectors.joining()));
+    }
+
+    @Test
+    public void testGenerateTestCases_shouldAssertIsNotEmptyForOptionalResultType() throws Exception {
+	// given
+	JUTElements elements = new JUTElements();
+	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
+	GeneratorModel model = new GeneratorModel(elements, test);
+	IMethod methodKey = Mockito.mock(IMethod.class);
+	model.setMethodsToCreate(Arrays.asList(methodKey));
+	HashMap<IMethod, Method> methodMap = new HashMap<>();
+	Method method = new Method();
+	method.setModifier("public");
+	method.setStatic(false);
+	Result result = new Result();
+	result.setType("Optional<TestObject>");
+	method.setResult(result);
+	method.setName("someMethod");
+	Param param = new Param();
+	param.setName("someParam");
+	method.getParam().add(param);
+	param.setType("String");
+	methodMap.put(methodKey, method);
+	model.setMethodMap(methodMap);
+	TestHelper.initDefaultValueMapping();
+	// when
+	underTest.generateTestCases(model);
+	// then
+	assertEquals(1, method.getTestCase().size());
+	TestCase firstTestCase = method.getTestCase().get(0);
+	assertEquals("Optional<TestObject> {result}#IS_NOT_EMPTY#", firstTestCase.getAssertion().stream()
+		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+		.collect(Collectors.joining()));
+    }
+
+    @Test
+    public void testGenerateTestCases_shouldAssertIsNotEmptyForCollectionResultType() throws Exception {
+	// given
+	JUTElements elements = new JUTElements();
+	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
+	GeneratorModel model = new GeneratorModel(elements, test);
+	IMethod methodKey = Mockito.mock(IMethod.class);
+	model.setMethodsToCreate(Arrays.asList(methodKey));
+	HashMap<IMethod, Method> methodMap = new HashMap<>();
+	Method method = new Method();
+	method.setModifier("public");
+	method.setStatic(false);
+	Result result = new Result();
+	result.setType("Collection<TestObject>");
+	method.setResult(result);
+	method.setName("someMethod");
+	Param param = new Param();
+	param.setName("someParam");
+	method.getParam().add(param);
+	param.setType("String");
+	methodMap.put(methodKey, method);
+	model.setMethodMap(methodMap);
+	TestHelper.initDefaultValueMapping();
+	// when
+	underTest.generateTestCases(model);
+	// then
+	assertEquals(1, method.getTestCase().size());
+	TestCase firstTestCase = method.getTestCase().get(0);
+	assertEquals("Collection<TestObject> {result}#IS_NOT_EMPTY#", firstTestCase.getAssertion().stream()
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 		.collect(Collectors.joining()));
     }

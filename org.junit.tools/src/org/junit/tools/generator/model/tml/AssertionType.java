@@ -35,6 +35,7 @@ public enum AssertionType {
 
     EQUALS("isEqualTo"),
     IS_TRUE("isTrue"),
+    IS_NOT_EMPTY("isNotEmpty"),
     ;
 
     private final String method;

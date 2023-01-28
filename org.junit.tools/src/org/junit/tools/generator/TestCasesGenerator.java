@@ -1,7 +1,10 @@
 package org.junit.tools.generator;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
@@ -23,6 +26,10 @@ import org.junit.tools.preferences.JUTPreferences;
  */
 public class TestCasesGenerator {
 
+    private static final Set<String> COLLECTION_TYPES = new HashSet<>(Arrays.asList("Collection<",
+	    "List<",
+	    "Set<",
+	    "Map<"));
     private final ObjectFactory of = new ObjectFactory();
 
     public void generateTestCases(GeneratorModel utmModel)
@@ -36,7 +43,7 @@ public class TestCasesGenerator {
 	    testCase.setTestBase("");
 	    testCase.setName("default test");
 
-	    Assertion assertion = createAssertionForResult(tmlMethod);
+	    Assertion assertion = createAssertionForResult(tmlMethod, utmModel.getTmlTest().getTestBase());
 	    if (assertion != null) {
 		testCase.getAssertion().add(assertion);
 	    }
@@ -60,29 +67,38 @@ public class TestCasesGenerator {
 	return ret;
     }
 
-    private Assertion createAssertionForResult(Method tmlMethod) {
+    private Assertion createAssertionForResult(Method tmlMethod, String testClass) {
 	if (tmlMethod.getResult() == null) {
 	    return null;
 	}
 	Assertion defaultAssertion = new Assertion();
-	defaultAssertion.setBaseType(tmlMethod.getResult().getType());
-	if ("Boolean".equalsIgnoreCase(tmlMethod.getResult().getType())) {
+	String resultType = tmlMethod.getResult().getType();
+	defaultAssertion.setBaseType(resultType);
+	if ("Boolean".equalsIgnoreCase(resultType)) {
 	    defaultAssertion.setType(AssertionType.IS_TRUE);
+	    defaultAssertion.setBase("{result}");
+	    defaultAssertion.setValue("");
+	} else if (resultType.startsWith("Optional") || isCollection(resultType)) {
+	    defaultAssertion.setType(AssertionType.IS_NOT_EMPTY);
 	    defaultAssertion.setBase("{result}");
 	    defaultAssertion.setValue("");
 	} else {
 	    defaultAssertion.setType(AssertionType.EQUALS);
-	    String expected = JUTPreferences.getDefaultValuesByType().get(tmlMethod.getResult().getType());
+	    String expected = JUTPreferences.getDefaultValuesByType().get(resultType);
 	    if (expected == null) {
 		defaultAssertion.setBase("TestUtils.objectToJson({result})");
-		expected = "TestUtils.readTestFile(\"" + tmlMethod.getName() + "/" + tmlMethod.getResult().getType() + ".json\")";
+		expected = "TestUtils.readTestFile(\"" + testClass + "/" + resultType + ".json\")";
 	    } else {
 		defaultAssertion.setBase("{result}");
-		expected = JDTUtils.replaceValuePlaceholders(expected, "Expected", tmlMethod.getResult().getType());
+		expected = JDTUtils.replaceValuePlaceholders(expected, "Expected", resultType);
 	    }
 	    defaultAssertion.setValue(expected);
 	}
 	return defaultAssertion;
+    }
+
+    private boolean isCollection(String resultType) {
+	return COLLECTION_TYPES.stream().anyMatch(typeString -> resultType.contains(typeString));
     }
 
 }
