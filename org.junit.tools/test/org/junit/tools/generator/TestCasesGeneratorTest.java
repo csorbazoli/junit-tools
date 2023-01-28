@@ -24,10 +24,7 @@ public class TestCasesGeneratorTest {
 
     @Test
     public void testGenerateTestCases() throws Exception {
-	// given
-	JUTElements elements = new JUTElements();
-	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
-	GeneratorModel model = new GeneratorModel(elements, test);
+	GeneratorModel model = createModel();
 	IMethod methodKey = Mockito.mock(IMethod.class);
 	model.setMethodsToCreate(Arrays.asList(methodKey));
 	HashMap<IMethod, Method> methodMap = new HashMap<>();
@@ -48,24 +45,21 @@ public class TestCasesGeneratorTest {
 	// when
 	underTest.generateTestCases(model);
 	// then
-	assertEquals(1, method.getTestCase().size());
+	assertThat(method.getTestCase()).hasSize(1);
 	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("String {result}#EQUALS#\"TestExpected\"", firstTestCase.getAssertion().stream()
+	assertThat(firstTestCase.getAssertion().stream()
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining()));
-	assertEquals("String someParam = \"TestSomeParam\"", firstTestCase.getParamAssignments().stream()
+		.collect(Collectors.joining("\n")))
+		.isEqualTo("String {result}#EQUALS#\"TestExpected\"");
+	assertThat(firstTestCase.getParamAssignments().stream()
 		.map(ass -> ass.getParamType() + " " + ass.getParamName() + " = " + ass.getAssignment())
-		.collect(Collectors.joining()));
+		.collect(Collectors.joining("\n")))
+		.isEqualTo("String someParam = \"TestSomeParam\"");
     }
 
     @Test
     public void testGenerateTestCases_shouldCompareJsonForComplexReturnTypes() throws Exception {
-	// given
-	JUTElements elements = new JUTElements();
-	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
-	test.setTestBase("SomeClass");
-	test.setTestClass("SomeClassTest");
-	GeneratorModel model = new GeneratorModel(elements, test);
+	GeneratorModel model = createModel();
 	IMethod methodKey = Mockito.mock(IMethod.class);
 	model.setMethodsToCreate(Arrays.asList(methodKey));
 	HashMap<IMethod, Method> methodMap = new HashMap<>();
@@ -86,23 +80,20 @@ public class TestCasesGeneratorTest {
 	// when
 	underTest.generateTestCases(model);
 	// then
-	assertEquals(1, method.getTestCase().size());
+	assertThat(method.getTestCase()).hasSize(1);
 	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("TestBean TestUtils.objectToJson({result})#EQUALS#TestUtils.readTestFile(\"SomeClass/TestBean.json\")",
+	assertEquals("TestBean TestUtils.objectToJson({result})#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")",
 		firstTestCase.getAssertion().stream()
 			.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-			.collect(Collectors.joining()));
+			.collect(Collectors.joining("\n")));
 	assertEquals("TestBean someParam = TestValueFactory.fillFields(new TestBean())", firstTestCase.getParamAssignments().stream()
 		.map(ass -> ass.getParamType() + " " + ass.getParamName() + " = " + ass.getAssignment())
-		.collect(Collectors.joining()));
+		.collect(Collectors.joining("\n")));
     }
 
     @Test
     public void testGenerateTestCases_noAssertionForVoidMethods() throws Exception {
-	// given
-	JUTElements elements = new JUTElements();
-	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
-	GeneratorModel model = new GeneratorModel(elements, test);
+	GeneratorModel model = createModel();
 	IMethod methodKey = Mockito.mock(IMethod.class);
 	model.setMethodsToCreate(Arrays.asList(methodKey));
 	HashMap<IMethod, Method> methodMap = new HashMap<>();
@@ -121,20 +112,17 @@ public class TestCasesGeneratorTest {
 	// when
 	underTest.generateTestCases(model);
 	// then
-	assertEquals(1, method.getTestCase().size());
+	assertThat(method.getTestCase()).hasSize(1);
 	TestCase firstTestCase = method.getTestCase().get(0);
 	assertThat(firstTestCase.getAssertion()).isEmpty();
 	assertThat(firstTestCase.getParamAssignments().stream()
 		.map(ass -> ass.getParamType() + " " + ass.getParamName() + " = " + ass.getAssignment())
-		.collect(Collectors.joining())).isEqualTo("String someParam = \"TestSomeParam\"");
+		.collect(Collectors.joining("\n"))).isEqualTo("String someParam = \"TestSomeParam\"");
     }
 
     @Test
     public void testGenerateTestCases_shouldAssertIsTrueForBooleanResultType() throws Exception {
-	// given
-	JUTElements elements = new JUTElements();
-	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
-	GeneratorModel model = new GeneratorModel(elements, test);
+	GeneratorModel model = createModel();
 	IMethod methodKey = Mockito.mock(IMethod.class);
 	model.setMethodsToCreate(Arrays.asList(methodKey));
 	HashMap<IMethod, Method> methodMap = new HashMap<>();
@@ -155,19 +143,16 @@ public class TestCasesGeneratorTest {
 	// when
 	underTest.generateTestCases(model);
 	// then
-	assertEquals(1, method.getTestCase().size());
+	assertThat(method.getTestCase()).hasSize(1);
 	TestCase firstTestCase = method.getTestCase().get(0);
 	assertEquals("Boolean {result}#IS_TRUE#", firstTestCase.getAssertion().stream()
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining()));
+		.collect(Collectors.joining("\n")));
     }
 
     @Test
     public void testGenerateTestCases_shouldAssertIsNotEmptyForOptionalResultType() throws Exception {
-	// given
-	JUTElements elements = new JUTElements();
-	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
-	GeneratorModel model = new GeneratorModel(elements, test);
+	GeneratorModel model = createModel();
 	IMethod methodKey = Mockito.mock(IMethod.class);
 	model.setMethodsToCreate(Arrays.asList(methodKey));
 	HashMap<IMethod, Method> methodMap = new HashMap<>();
@@ -188,19 +173,19 @@ public class TestCasesGeneratorTest {
 	// when
 	underTest.generateTestCases(model);
 	// then
-	assertEquals(1, method.getTestCase().size());
+	assertThat(method.getTestCase()).hasSize(1);
 	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("Optional<TestObject> {result}#IS_NOT_EMPTY#", firstTestCase.getAssertion().stream()
+	assertThat(firstTestCase.getAssertion().stream()
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining()));
+		.collect(Collectors.joining("\n")))
+		.isEqualTo("Optional<TestObject> {result}#IS_NOT_EMPTY#\n"
+			+ "TestObject TestUtils.objectToJson({result})#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")");
     }
 
     @Test
     public void testGenerateTestCases_shouldAssertIsNotEmptyForCollectionResultType() throws Exception {
 	// given
-	JUTElements elements = new JUTElements();
-	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
-	GeneratorModel model = new GeneratorModel(elements, test);
+	GeneratorModel model = createModel();
 	IMethod methodKey = Mockito.mock(IMethod.class);
 	model.setMethodsToCreate(Arrays.asList(methodKey));
 	HashMap<IMethod, Method> methodMap = new HashMap<>();
@@ -221,11 +206,24 @@ public class TestCasesGeneratorTest {
 	// when
 	underTest.generateTestCases(model);
 	// then
-	assertEquals(1, method.getTestCase().size());
+	assertThat(method.getTestCase()).hasSize(1);
 	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("Collection<TestObject> {result}#IS_NOT_EMPTY#", firstTestCase.getAssertion().stream()
+	assertThat(firstTestCase.getAssertion().stream()
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining()));
+		.collect(Collectors.joining("\n")))
+		.isEqualTo("Collection<TestObject> {result}#IS_NOT_EMPTY#\n"
+			+ "Collection<TestObject> TestUtils.objectToJson({result})#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")");
+    }
+
+    // helper methods
+    private GeneratorModel createModel() {
+	JUTElements elements = new JUTElements();
+	elements.initClassesAndPackages().setBaseClassName("SomeClass");
+	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
+	test.setTestBase("SomeClass");
+	test.setTestClass("SomeClassTest");
+	GeneratorModel model = new GeneratorModel(elements, test);
+	return model;
     }
 
 }

@@ -479,6 +479,11 @@ public class JUTElements {
 	return initProjects(project, null, springTest);
     }
 
+    public JUTClassesAndPackages initClassesAndPackages() {
+	setClassesAndPackages(new JUTClassesAndPackages());
+	return classesAndPackages;
+    }
+
     public JUTClassesAndPackages initClassesAndPackages(Vector<ICompilationUnit> cuList, boolean springTest)
 	    throws JUTWarning, CoreException {
 
