@@ -49,6 +49,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static Map<String, String> staticBindingsMapTest = null;
 
     private static Map<String, String> defaultValuesByTypeMap = null;
+    private static Map<String, String> defaultValuesGenericByTypeMap = null;
     private static String defaultValueForJavaBeans = null;
     private static String defaultValueFallback = null;
 
@@ -183,12 +184,28 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return defaultValuesByTypeMap;
     }
 
+    public static Map<String, String> getDefaultGenericValuesByType() {
+	if (defaultValuesGenericByTypeMap == null) {
+	    initDefaultValueGenericMapping();
+	}
+
+	return defaultValuesGenericByTypeMap;
+    }
+
     public static void setDefaultValuesByType(Map<String, String> value) {
 	defaultValuesByTypeMap = value;
     }
 
     private static void initDefaultValueMapping() {
 	defaultValuesByTypeMap = convertToMap(getPreference(DEFAULT_VALUE_MAPPING));
+    }
+
+    public static void setDefaultValuesGenericByType(Map<String, String> value) {
+	defaultValuesGenericByTypeMap = value;
+    }
+
+    private static void initDefaultValueGenericMapping() {
+	defaultValuesByTypeMap = convertToMap(getPreference(DEFAULT_VALUE_GENERIC_MAPPING));
     }
 
     public static String getDefaultValueForJavaBeans() {
@@ -463,6 +480,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    return;
 			} else if (event.getProperty() == DEFAULT_VALUE_MAPPING) {
 			    setDefaultValuesByType(convertToMap((String) event
+				    .getNewValue()));
+			    return;
+			} else if (event.getProperty() == DEFAULT_VALUE_GENERIC_MAPPING) {
+			    setDefaultValuesGenericByType(convertToMap((String) event
 				    .getNewValue()));
 			    return;
 			} else if (event.getProperty() == DEFAULT_VALUE_JAVA_BEANS) {

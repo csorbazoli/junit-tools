@@ -32,6 +32,7 @@ public interface IJUTPreferenceConstants {
     public static final String SPRING_ANNOTATIONS = "SPRING_ANNOTATIONS";
 
     public static final String DEFAULT_VALUE_MAPPING = "DEFAULT_VALUE_MAPPING";
+    public static final String DEFAULT_VALUE_GENERIC_MAPPING = "DEFAULT_VALUE_GENERIC_MAPPING";
     public static final String DEFAULT_VALUE_JAVA_BEANS = "DEFAULT_VALUE_JAVA_BEANS";
     public static final String DEFAULT_VALUE_FALLBACK = "DEFAULT_VALUE_FALLBACK";
 
