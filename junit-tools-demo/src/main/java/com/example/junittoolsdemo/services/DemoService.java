@@ -1,5 +1,7 @@
 package com.example.junittoolsdemo.services;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,10 @@ public class DemoService {
 
 	public Optional<DemoObject> deleteObjectByName(String name) {
 		return Optional.empty();
+	}
+
+	public List<DemoObject> findObjectsByName(String name) {
+		return Collections.emptyList();
 	}
 
 }
