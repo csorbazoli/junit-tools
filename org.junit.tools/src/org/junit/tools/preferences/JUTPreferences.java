@@ -52,6 +52,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static Map<String, String> defaultValuesGenericByTypeMap = null;
     private static String defaultValueForJavaBeans = null;
     private static String defaultValueFallback = null;
+    private static DefaultValueMapper defaultValueMapper = null;
 
     private static String[] springAnnotations = null;
 
@@ -176,6 +177,22 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return springAnnotations;
     }
 
+    public static DefaultValueMapper getDefaultValueMapper() {
+	if (defaultValueMapper == null) {
+	    initDefaultValueMapper();
+	}
+	return defaultValueMapper;
+    }
+
+    private static void initDefaultValueMapper() {
+	defaultValueMapper = DefaultValueMapper.builder()
+		.appendRules(getDefaultValuesByType())
+		.appendRules(getDefaultGenericValuesByType())
+		.appendRule(getDefaultValueForJavaBeans())
+		.appendRule(getDefaultValueFallback())
+		.build();
+    }
+
     public static Map<String, String> getDefaultValuesByType() {
 	if (defaultValuesByTypeMap == null) {
 	    initDefaultValueMapping();
@@ -194,6 +211,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setDefaultValuesByType(Map<String, String> value) {
 	defaultValuesByTypeMap = value;
+	if (defaultValueMapper != null) {
+	    initDefaultValueMapper();
+	}
     }
 
     private static void initDefaultValueMapping() {
@@ -202,6 +222,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setDefaultValuesGenericByType(Map<String, String> value) {
 	defaultValuesGenericByTypeMap = value;
+	if (defaultValueMapper != null) {
+	    initDefaultValueMapper();
+	}
     }
 
     private static void initDefaultValueGenericMapping() {
@@ -217,6 +240,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setDefaultValueForJavaBeans(String value) {
 	defaultValueForJavaBeans = value;
+	if (defaultValueMapper != null) {
+	    initDefaultValueMapper();
+	}
     }
 
     public static String getDefaultValueFallback() {
@@ -228,6 +254,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setDefaultValueFallback(String value) {
 	defaultValueFallback = value;
+	if (defaultValueMapper != null) {
+	    initDefaultValueMapper();
+	}
     }
 
     public static Map<String, String> getStaticBindingsMapBaseProject() {

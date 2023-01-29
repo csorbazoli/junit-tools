@@ -55,6 +55,36 @@ public class JDTUtilsTest {
     }
 
     @Test
+    public void testCreateInitValue_genericOptional() {
+	// given
+	JUTPreferences.setDefaultValuesByType(new HashMap<>());
+	Map<String, String> valueMap = new HashMap<>();
+	valueMap.put("Optional<T>", "Optional.of(${T})");
+	JUTPreferences.setDefaultValuesGenericByType(valueMap);
+	JUTPreferences.setDefaultValueForJavaBeans("TestValueFactory.fillFields(new ${Class}())");
+	// when
+	String actual = JDTUtils.createInitValue("Optional<TestObject>", "param", true);
+	// then
+	assertEquals("Optional.of(TestValueFactory.fillFields(new TestObject()))", actual);
+    }
+
+    @Test
+    public void testCreateInitValue_genericMap() {
+	// given
+	HashMap<String, String> simpleValueMap = new HashMap<>();
+	simpleValueMap.put("String", "\"Test${Name}\"");
+	JUTPreferences.setDefaultValuesByType(simpleValueMap);
+	Map<String, String> valueMap = simpleValueMap;
+	valueMap.put("Map<T,U>", "Collections.singletonMap(${T}, ${U})");
+	JUTPreferences.setDefaultValuesGenericByType(valueMap);
+	JUTPreferences.setDefaultValueForJavaBeans("TestValueFactory.fillFields(new ${Class}())");
+	// when
+	String actual = JDTUtils.createInitValue("Map<String, TestObject>", "param", true);
+	// then
+	assertEquals("Collections.singletonMap(\"TestParam\", TestValueFactory.fillFields(new TestObject()))", actual);
+    }
+
+    @Test
     public void testCreateInitValue_fallback() {
 	// given
 	Map<String, String> valueMap = new HashMap<>();
