@@ -34,15 +34,13 @@ public class ValueMapping {
 	return Pattern.compile(typeRefPattern);
     }
 
-    // TODO handle multiple type names, e.g. "<T, U>"
-    // TODO handle nested generic types e.g. <T, List<U>>
     private String replaceTypeReferenceWithWildcard(String typeRefList) {
 	StringBuilder ret = new StringBuilder("&{");
 	String sep = "";
 	for (String typeRef : typeRefList.split(",")) {
 	    ret.append(sep)
 		    .append("#{" + typeRef.trim() + "}#");
-	    sep = ", ";
+	    sep = ",\\s*";
 	}
 	ret.append("}&");
 	return ret.toString();

@@ -126,6 +126,20 @@ public class ValueMappingTest {
     }
 
     @Test
+    public void testGetValueForNamedVariable_genericType2_noSpace() {
+	// given
+	mapper = DefaultValueMapper.builder()
+		.appendRule("Integer", "123")
+		.appendRule("String", "\"Test${Name}\"")
+		.build();
+	ValueMapping underTest = new ValueMapping("Map<T, U>", "Collections.singletonMap(${T}, ${U})", mapper);
+	// when
+	String actual = underTest.getValueForNamedVariable("Map<String,Integer>", "usersAge");
+	// then
+	assertThat(actual).isEqualTo("Collections.singletonMap(\"TestUsersAge\", 123)");
+    }
+
+    @Test
     public void testGetValueForNamedVariable_genericTypeNested() {
 	// given
 	mapper = DefaultValueMapper.builder()
