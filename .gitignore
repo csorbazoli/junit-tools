@@ -6,3 +6,5 @@ org.junit.tools/.settings/
 junit-tools-demo/src/test/java/testutils/TestUtils.java
 
 junit-tools-demo/src/test/java/testutils/TestValueFactory.java
+
+junit-tools-demo/src/test/**/*Test.java
