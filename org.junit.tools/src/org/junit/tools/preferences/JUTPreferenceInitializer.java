@@ -50,7 +50,9 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 	store.setDefault(DEFAULT_VALUE_MAPPING, "String=\"Test${Name}\";boolean=true;Boolean=true;byte=63;Byte=63;char='c';Chararcter='c';"
 		+ "double=12.34;Double=12.34;float=15.79;Float=15.79;int=123;Integer=123;");
 	store.setDefault(DEFAULT_VALUE_GENERIC_MAPPING, "List<T>=Arrays.asList(${T});"
-		+ "Optional<T>=Optional.of(${T});Set<T>=Collections.singleton(${T});Map<T,U>=Collections.singletonMap(${T},${U})");
+		+ "Optional<T>=Optional.of(${T});"
+		+ "Set<T>=Collections.singleton(${T});"
+		+ "Map<T, U>=Collections.singletonMap(${T}, ${U})");
 	store.setDefault(DEFAULT_VALUE_JAVA_BEANS, "TestValueFactory.getValueForType(${Class}.class, \"${Name}\")");
 	store.setDefault(DEFAULT_VALUE_FALLBACK, "Mockito.mock(${Class}.class)");
 

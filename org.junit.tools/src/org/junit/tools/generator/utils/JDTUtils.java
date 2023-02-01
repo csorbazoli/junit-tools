@@ -2,7 +2,6 @@ package org.junit.tools.generator.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -1197,33 +1196,12 @@ public class JDTUtils implements IGeneratorConstants {
      * @param hasDefaultConstructor TODO
      */
     public static String createInitValue(String type, String name, boolean hasDefaultConstructor) {
-	Map<String, String> defaultValueMapping = JUTPreferences.getDefaultValuesByType();
-	String lookupType = type.replace("[]", "");
-	String value = null;
-	if (defaultValueMapping.containsKey(lookupType)) {
-	    value = defaultValueMapping.get(lookupType);
-	} else if (hasDefaultConstructor) {
-	    value = JUTPreferences.getDefaultValueForJavaBeans();
-	}
-	if (StringUtils.isBlank(value)) {
-	    value = JUTPreferences.getDefaultValueFallback();
-	}
+	String value = JUTPreferences.getDefaultValueMapper().getDefaultValueForParameter(type, name);
 	if (StringUtils.isBlank(value)) {
 	    value = "null";
-	} else {
-	    value = replaceValuePlaceholders(value, name, type);
 	}
 
 	return value;
-    }
-
-    public static String replaceValuePlaceholders(String expression, String name, String type) {
-	if (expression.contains("${")) {
-	    return expression.replace("${Name}", GeneratorUtils.firstCharToUpper(name))
-		    .replace("${name}", name)
-		    .replace("${Class}", type);
-	}
-	return expression;
     }
 
     public static String createParamList(IMethod method)

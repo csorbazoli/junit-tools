@@ -24,6 +24,8 @@ public class JDTUtilsTest {
 	Map<String, String> valueMap = new HashMap<>();
 	valueMap.put("String", "\"Test${Name}\"");
 	JUTPreferences.setDefaultValuesByType(valueMap);
+	JUTPreferences.setDefaultValuesGenericByType(new HashMap<>());
+	JUTPreferences.setDefaultValueFallback("null");
 	// when
 	String actual = JDTUtils.createInitValue("String", "param", true);
 	// then
@@ -36,6 +38,9 @@ public class JDTUtilsTest {
 	Map<String, String> valueMap = new HashMap<>();
 	valueMap.put("char", "'c'");
 	JUTPreferences.setDefaultValuesByType(valueMap);
+	JUTPreferences.setDefaultValuesGenericByType(new HashMap<>());
+	JUTPreferences.setDefaultValueForJavaBeans("mock(${Class}.class)");
+	JUTPreferences.setDefaultValueFallback("null");
 	// when
 	String actual = JDTUtils.createInitValue("char", "param", true);
 	// then
@@ -48,6 +53,8 @@ public class JDTUtilsTest {
 	Map<String, String> valueMap = new HashMap<>();
 	JUTPreferences.setDefaultValuesByType(valueMap);
 	JUTPreferences.setDefaultValueForJavaBeans("TestValueFactory.fillFields(new ${Class}())");
+	JUTPreferences.setDefaultValuesGenericByType(new HashMap<>());
+	JUTPreferences.setDefaultValueFallback("null");
 	// when
 	String actual = JDTUtils.createInitValue("TestObject", "param", true);
 	// then
@@ -62,6 +69,7 @@ public class JDTUtilsTest {
 	valueMap.put("Optional<T>", "Optional.of(${T})");
 	JUTPreferences.setDefaultValuesGenericByType(valueMap);
 	JUTPreferences.setDefaultValueForJavaBeans("TestValueFactory.fillFields(new ${Class}())");
+	JUTPreferences.setDefaultValueFallback("null");
 	// when
 	String actual = JDTUtils.createInitValue("Optional<TestObject>", "param", true);
 	// then
@@ -78,6 +86,7 @@ public class JDTUtilsTest {
 	valueMap.put("Map<T,U>", "Collections.singletonMap(${T}, ${U})");
 	JUTPreferences.setDefaultValuesGenericByType(valueMap);
 	JUTPreferences.setDefaultValueForJavaBeans("TestValueFactory.fillFields(new ${Class}())");
+	JUTPreferences.setDefaultValueFallback("null");
 	// when
 	String actual = JDTUtils.createInitValue("Map<String, TestObject>", "param", true);
 	// then

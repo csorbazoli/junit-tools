@@ -17,6 +17,7 @@ import org.junit.tools.generator.model.tml.ObjectFactory;
 import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.ParamAssignment;
 import org.junit.tools.generator.model.tml.TestCase;
+import org.junit.tools.generator.utils.GeneratorUtils;
 import org.junit.tools.generator.utils.JDTUtils;
 import org.junit.tools.preferences.JUTPreferences;
 
@@ -109,7 +110,7 @@ public class TestCasesGenerator {
 		expected = "TestUtils.readTestFile(\"" + testClass + "/" + methodName + ".json\")";
 	    } else {
 		defaultAssertion.setBase("{result}");
-		expected = JDTUtils.replaceValuePlaceholders(expected, "Expected", resultType);
+		expected = replaceValuePlaceholders(expected, "Expected", resultType);
 	    }
 	    defaultAssertion.setValue(expected);
 	}
@@ -118,6 +119,15 @@ public class TestCasesGenerator {
 
     private boolean isCollection(String resultType) {
 	return COLLECTION_TYPES.stream().anyMatch(typeString -> resultType.contains(typeString));
+    }
+
+    private static String replaceValuePlaceholders(String expression, String name, String type) {
+	if (expression.contains("${")) {
+	    return expression.replace("${Name}", GeneratorUtils.firstCharToUpper(name))
+		    .replace("${name}", name)
+		    .replace("${Class}", type);
+	}
+	return expression;
     }
 
 }

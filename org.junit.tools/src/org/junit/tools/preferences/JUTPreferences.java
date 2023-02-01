@@ -228,7 +228,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     }
 
     private static void initDefaultValueGenericMapping() {
-	defaultValuesByTypeMap = convertToMap(getPreference(DEFAULT_VALUE_GENERIC_MAPPING));
+	defaultValuesGenericByTypeMap = convertToMap(getPreference(DEFAULT_VALUE_GENERIC_MAPPING));
     }
 
     public static String getDefaultValueForJavaBeans() {
