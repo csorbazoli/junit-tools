@@ -2,6 +2,7 @@ package com.example.junittoolsdemo.services;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,22 @@ public class DemoService {
 		if (StringUtils.hasLength(value)) {
 			object.setDemoString(value);
 		}
+	}
+
+	public int countSpecialObjects(List<DemoObject> items) {
+		return (int) items.stream()
+				.filter(this::isSpecial)
+				.count();
+	}
+
+	public int countSpecialValues(Map<String, DemoObject> items) {
+		return (int) items.values().stream()
+				.filter(this::isSpecial)
+				.count();
+	}
+
+	private boolean isSpecial(DemoObject obj) {
+		return obj.getDemoString().contains("special");
 	}
 
 	public Optional<DemoObject> deleteObjectByName(String name) {
