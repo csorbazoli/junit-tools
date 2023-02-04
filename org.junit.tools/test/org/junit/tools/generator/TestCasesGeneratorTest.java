@@ -183,6 +183,38 @@ public class TestCasesGeneratorTest {
     }
 
     @Test
+    public void testGenerateTestCases_shouldAssertOonBodyForResponseEntityResultType() throws Exception {
+	GeneratorModel model = createModel();
+	IMethod methodKey = Mockito.mock(IMethod.class);
+	model.setMethodsToCreate(Arrays.asList(methodKey));
+	HashMap<IMethod, Method> methodMap = new HashMap<>();
+	Method method = new Method();
+	method.setModifier("public");
+	method.setStatic(false);
+	Result result = new Result();
+	result.setType("ResponseEntity<TestObject>");
+	method.setResult(result);
+	method.setName("someMethod");
+	Param param = new Param();
+	param.setName("someParam");
+	method.getParam().add(param);
+	param.setType("String");
+	methodMap.put(methodKey, method);
+	model.setMethodMap(methodMap);
+	TestHelper.initDefaultValueMapping();
+	// when
+	underTest.generateTestCases(model);
+	// then
+	assertThat(method.getTestCase()).hasSize(1);
+	TestCase firstTestCase = method.getTestCase().get(0);
+	assertThat(firstTestCase.getAssertion().stream()
+		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+		.collect(Collectors.joining("\n")))
+		.isEqualTo(
+			"ResponseEntity<TestObject> TestUtils.objectToJson({result}.getBody())#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")");
+    }
+
+    @Test
     public void testGenerateTestCases_shouldAssertIsNotEmptyForCollectionResultType() throws Exception {
 	// given
 	GeneratorModel model = createModel();

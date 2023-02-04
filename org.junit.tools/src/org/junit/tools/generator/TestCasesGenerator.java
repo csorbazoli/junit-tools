@@ -96,6 +96,10 @@ public class TestCasesGenerator {
 			return assertion;
 		    })
 		    .forEach(ret::add);
+	} else if (resultType.matches("^ResponseEntity<.*>$")) {
+	    defaultAssertion.setType(AssertionType.EQUALS);
+	    defaultAssertion.setBase("TestUtils.objectToJson({result}.getBody())");
+	    defaultAssertion.setValue("TestUtils.readTestFile(\"" + testClass + "/" + methodName + ".json\")");
 	} else if (isCollection(resultType)) {
 	    defaultAssertion.setType(AssertionType.IS_NOT_EMPTY);
 	    defaultAssertion.setBase("{result}");
