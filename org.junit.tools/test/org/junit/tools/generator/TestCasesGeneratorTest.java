@@ -179,7 +179,7 @@ public class TestCasesGeneratorTest {
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 		.collect(Collectors.joining("\n")))
 		.isEqualTo("Optional<TestObject> {result}#IS_NOT_EMPTY#\n"
-			+ "TestObject TestUtils.objectToJson({result})#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")");
+			+ "TestObject TestUtils.objectToJson({result}.get())#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")");
     }
 
     @Test

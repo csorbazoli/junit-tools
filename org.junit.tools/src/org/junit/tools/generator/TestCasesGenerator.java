@@ -90,7 +90,12 @@ public class TestCasesGenerator {
 	    defaultAssertion.setType(AssertionType.IS_NOT_EMPTY);
 	    defaultAssertion.setBase("{result}");
 	    defaultAssertion.setValue("");
-	    ret.addAll(createAssertionsForResultType(resultType.replaceFirst("^Optional<(.*)>$", "$1"), methodName, testClass));
+	    createAssertionsForResultType(resultType.replaceFirst("^Optional<(.*)>$", "$1"), methodName, testClass).stream()
+		    .map(assertion -> {
+			assertion.setBase(assertion.getBase().replace("{result}", "{result}.get()"));
+			return assertion;
+		    })
+		    .forEach(ret::add);
 	} else if (isCollection(resultType)) {
 	    defaultAssertion.setType(AssertionType.IS_NOT_EMPTY);
 	    defaultAssertion.setBase("{result}");
