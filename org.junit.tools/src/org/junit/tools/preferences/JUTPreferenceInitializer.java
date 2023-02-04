@@ -51,6 +51,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 		+ "double=12.34;Double=12.34;float=15.79;Float=15.79;int=123;Integer=123;");
 	store.setDefault(DEFAULT_VALUE_GENERIC_MAPPING, "List<T>=Arrays.asList(${T});"
 		+ "Optional<T>=Optional.of(${T});"
+		+ "ResponseEntity<T>=ResponseEntity.ok(${T});"
 		+ "Set<T>=Collections.singleton(${T});"
 		+ "Map<T,U>=Collections.singletonMap(${T}, ${U})");
 	store.setDefault(DEFAULT_VALUE_JAVA_BEANS, "TestValueFactory.getValueForType(${Class}.class, \"${Name}\")");
