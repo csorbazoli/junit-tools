@@ -1,7 +1,12 @@
 package org.junit.tools.ui.preferences;
 
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -17,8 +22,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.junit.tools.Activator;
 import org.junit.tools.messages.Messages;
+import org.junit.tools.preferences.DefaultValueMapper;
+import org.junit.tools.preferences.DefaultValueMapper.DefaultValueMapperBuilder;
 import org.junit.tools.preferences.IJUTPreferenceConstants;
 import org.junit.tools.preferences.JUTPreferences;
+import org.junit.tools.preferences.ValueMapping;
 
 /**
  * The page for the default value preferences.
@@ -35,9 +43,8 @@ import org.junit.tools.preferences.JUTPreferences;
  */
 public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	IWorkbenchPreferencePage, IJUTPreferenceConstants {
-    public JUTPreferenceDefaultValuesPage() {
-	// default constructor
-    }
+
+    private final Logger logger = Logger.getLogger(JUTPreferenceDefaultValuesPage.class.getName());
 
     private List listSimpleTypes;
     private Text newSimpleTypeReference;
@@ -50,11 +57,17 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
     private Text defaultValueForJavaBeans;
     private Text defaultValueFallback;
 
+    private DefaultValueMapper modifiedMapper;
+
     // TODO possibility to re-order items (move up/down)
 
     // TODO add a test button as well with a popup dialog showing
     // test cases (list of types that are dynamically mapped using the current
     // settings)
+
+    public JUTPreferenceDefaultValuesPage() {
+	// default constructor
+    }
 
     /**
      * @see PreferencePage#createContents(Composite)
@@ -87,65 +100,80 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	cmpSimpleTypesSettings.setLayoutData(data);
 	cmpSimpleTypesSettings.setLayout(new GridLayout());
 
-	listSimpleTypes = new List(cmpSimpleTypesSettings, SWT.BORDER);
-	listSimpleTypes.setItems(getSimpleTypeSettings());
+	createSimpleTypeList(cmpSimpleTypesSettings);
 
-	data = new GridData(GridData.FILL_BOTH);
-	listSimpleTypes.setLayoutData(data);
-
-	listSimpleTypes.addSelectionListener(new SelectionAdapter() {
-	    @Override
-	    public void widgetSelected(SelectionEvent e) {
-		if (listSimpleTypes.getSelectionIndex() >= 0) {
-		    String selected = listSimpleTypes.getItem(listSimpleTypes.getSelectionIndex());
-		    int split = selected.indexOf(IJUTPreferenceConstants.VALUE_DELIMITER);
-		    newSimpleTypeReference.setText(selected.substring(0, split));
-		    newSimpleValueExpression.setText(selected.substring(split + 1));
-		}
-	    }
-	});
-
-	Composite buttonCompositeSimpleType = new Composite(cmpSimpleTypesSettings, SWT.NULL);
-
-	GridLayout buttonLayout = new GridLayout();
-	buttonLayout.numColumns = 2;
-	buttonCompositeSimpleType.setLayout(buttonLayout);
+	Composite editorComposite = new Composite(cmpSimpleTypesSettings, SWT.NULL);
+	GridLayout editorLayout = new GridLayout();
+	editorLayout.numColumns = 2;
+	editorComposite.setLayout(editorLayout);
 
 	GridData data_2 = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
 	data_2.verticalAlignment = SWT.CENTER;
 	data_2.grabExcessVerticalSpace = false;
-	buttonCompositeSimpleType.setLayoutData(data_2);
+	editorComposite.setLayoutData(data_2);
+
+	newSimpleTypeReference = new Text(editorComposite, SWT.BORDER);
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.grabExcessHorizontalSpace = true;
+	newSimpleTypeReference.setLayoutData(data);
+
+	newSimpleValueExpression = new Text(editorComposite, SWT.BORDER);
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.grabExcessHorizontalSpace = true;
+	newSimpleValueExpression.setLayoutData(data);
+
+	Label sampleValueLabel = new Label(editorComposite, SWT.NONE);
+	data = new GridData();
+	data.grabExcessHorizontalSpace = true;
+	data.horizontalAlignment = GridData.BEGINNING;
+	data.horizontalSpan = 2;
+	sampleValueLabel.setText("Sample: ...");
+	sampleValueLabel.setLayoutData(data);
+	ModifyListener modifyListener = new ModifyListener() {
+	    @Override
+	    public void modifyText(ModifyEvent event) {
+		sampleValueLabel.setText("Sample: " + determineDefaultValueFor(newSimpleTypeReference.getText(), newSimpleValueExpression.getText(), false));
+		sampleValueLabel.pack();
+	    }
+	};
+	newSimpleTypeReference.addModifyListener(modifyListener);
+	newSimpleValueExpression.addModifyListener(modifyListener);
+
+	Composite buttonCompositeSimpleType = new Composite(cmpSimpleTypesSettings, SWT.NULL);
+	GridLayout buttonLayout = new GridLayout();
+	buttonLayout.numColumns = 2;
+	buttonCompositeSimpleType.setLayout(buttonLayout);
+
+	GridData data_3 = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
+	data_3.verticalAlignment = SWT.CENTER;
+	data_3.grabExcessVerticalSpace = false;
+	buttonCompositeSimpleType.setLayoutData(data_3);
 
 	Button addButton = new Button(buttonCompositeSimpleType, SWT.PUSH | SWT.CENTER);
-
 	addButton.setText("Add to List"); //$NON-NLS-1$
 	addButton.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent event) {
 		// TODO validate syntax!
-		String newEntry = newSimpleTypeReference.getText() + IJUTPreferenceConstants.VALUE_DELIMITER;
+		modifiedMapper = null;
+		String newEntryPrefix = newSimpleTypeReference.getText() + IJUTPreferenceConstants.VALUE_DELIMITER;
+		String newEntry = newEntryPrefix + newSimpleValueExpression.getText();
 		int idx = 0;
 		for (String item : listSimpleTypes.getItems()) {
-		    if (item.startsWith(newEntry)) {
-			listSimpleTypes.setItem(idx, newEntry + newSimpleValueExpression.getText());
+		    if (item.startsWith(newEntryPrefix)) {
+			listSimpleTypes.setItem(idx, newEntry);
 			return;
 		    }
 		    idx++;
 		}
 
-		listSimpleTypes.add(newEntry + newSimpleValueExpression.getText(), listSimpleTypes.getItemCount());
+		listSimpleTypes.add(newEntry, listSimpleTypes.getItemCount());
 	    }
 	});
-
-	newSimpleTypeReference = new Text(buttonCompositeSimpleType, SWT.BORDER);
-	data = new GridData(GridData.FILL_HORIZONTAL);
+	data = new GridData();
 	data.grabExcessHorizontalSpace = true;
-	newSimpleTypeReference.setLayoutData(data);
-
-	newSimpleValueExpression = new Text(buttonCompositeSimpleType, SWT.BORDER);
-	data = new GridData(GridData.FILL_HORIZONTAL);
-	data.grabExcessHorizontalSpace = true;
-	newSimpleValueExpression.setLayoutData(data);
+	data.horizontalAlignment = GridData.END;
+	addButton.setLayoutData(data);
 
 	Button removeButton = new Button(buttonCompositeSimpleType, SWT.PUSH | SWT.CENTER);
 	removeButton.setText("Remove Selection"); //$NON-NLS-1$
@@ -156,10 +184,58 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 			.getSelectionIndex());
 	    }
 	});
+    }
 
-	data = new GridData();
-	data.horizontalSpan = 2;
-	removeButton.setLayoutData(data);
+    protected String determineDefaultValueFor(String typeRef, String expression, boolean updateMapping) {
+	DefaultValueMapper valueMapper = getModifiedValueMapper(updateMapping);
+	ValueMapping valueMapping = new ValueMapping(typeRef, expression, valueMapper);
+	return valueMapping.getValueForNamedVariable(typeRef, "param");
+    }
+
+    private DefaultValueMapper getModifiedValueMapper(boolean updateMapping) {
+	// re/init valuemapper with current settings
+	if (modifiedMapper == null || updateMapping) {
+	    try {
+		DefaultValueMapperBuilder builder = DefaultValueMapper.builder();
+		for (String mapping : listSimpleTypes.getItems()) {
+		    int pos = mapping.indexOf(IJUTPreferenceConstants.VALUE_DELIMITER);
+		    builder.appendRule(mapping.substring(0, pos), mapping.substring(pos + 1));
+		}
+		for (String mapping : listGenericTypes.getItems()) {
+		    int pos = mapping.indexOf(IJUTPreferenceConstants.VALUE_DELIMITER);
+		    builder.appendRule(mapping.substring(0, pos), mapping.substring(pos + 1));
+		}
+		builder.appendRule(defaultValueForJavaBeans.getText());
+		builder.appendRule(defaultValueFallback.getText());
+		modifiedMapper = builder.build();
+	    } catch (Exception e) {
+		logger.severe("Failed to initialize default value mapper: " + e.getMessage());
+		modifiedMapper = JUTPreferences.getDefaultValueMapper();
+	    }
+	}
+	return modifiedMapper;
+    }
+
+    private void createSimpleTypeList(Group cmpSimpleTypesSettings) {
+	GridData data;
+	listSimpleTypes = new List(cmpSimpleTypesSettings, SWT.BORDER | SWT.V_SCROLL);
+	listSimpleTypes.setItems(getSimpleTypeSettingsWithSamples());
+
+	data = new GridData(GridData.FILL_BOTH);
+	data.heightHint = 100;
+	listSimpleTypes.setLayoutData(data);
+
+	listSimpleTypes.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent e) {
+		if (listSimpleTypes.getSelectionIndex() >= 0) {
+		    String selected = listSimpleTypes.getItem(listSimpleTypes.getSelectionIndex());
+		    String[] split = selected.split(IJUTPreferenceConstants.VALUE_DELIMITER);
+		    newSimpleTypeReference.setText(split[0].trim());
+		    newSimpleValueExpression.setText(split[1].trim());
+		}
+	    }
+	});
     }
 
     private void createGenericTypeSection(Composite cmpMain) {
@@ -181,6 +257,7 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	listGenericTypes.setItems(getGenericTypeSettigns());
 
 	GridData data = new GridData(GridData.FILL_BOTH);
+	data.heightHint = 100;
 	listGenericTypes.setLayoutData(data);
 
 	listGenericTypes.addSelectionListener(new SelectionAdapter() {
@@ -195,6 +272,44 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	    }
 	});
 
+	Composite editorComposite = new Composite(cmpGenericTypeSettings, SWT.NULL);
+	GridLayout editorLayout = new GridLayout();
+	editorLayout.numColumns = 2;
+	editorComposite.setLayout(editorLayout);
+
+	GridData data_2 = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
+	data_2.verticalAlignment = SWT.CENTER;
+	data_2.grabExcessVerticalSpace = false;
+	editorComposite.setLayoutData(data_2);
+
+	newGenericTypeReference = new Text(editorComposite, SWT.BORDER);
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.grabExcessHorizontalSpace = true;
+	newGenericTypeReference.setLayoutData(data);
+
+	newGenericDefaultValueExpression = new Text(editorComposite, SWT.BORDER);
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.grabExcessHorizontalSpace = true;
+	newGenericDefaultValueExpression.setLayoutData(data);
+
+	Label sampleValueLabel = new Label(editorComposite, SWT.NONE);
+	data = new GridData();
+	data.grabExcessHorizontalSpace = true;
+	data.horizontalAlignment = GridData.BEGINNING;
+	data.horizontalSpan = 2;
+	sampleValueLabel.setText("Sample: ...");
+	sampleValueLabel.setLayoutData(data);
+	ModifyListener modifyListener = new ModifyListener() {
+	    @Override
+	    public void modifyText(ModifyEvent event) {
+		sampleValueLabel
+			.setText("Sample: " + determineDefaultValueFor(newGenericTypeReference.getText(), newGenericDefaultValueExpression.getText(), false));
+		sampleValueLabel.pack();
+	    }
+	};
+	newGenericTypeReference.addModifyListener(modifyListener);
+	newGenericDefaultValueExpression.addModifyListener(modifyListener);
+
 	Composite buttonComposite = new Composite(cmpGenericTypeSettings, SWT.NULL);
 	GridLayout buttonLayout = new GridLayout();
 	buttonLayout.numColumns = 2;
@@ -204,36 +319,31 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	data_3.verticalAlignment = SWT.CENTER;
 	data_3.grabExcessVerticalSpace = false;
 	buttonComposite.setLayoutData(data_3);
-
 	Button addButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
 	addButton.setText("Add to List"); //$NON-NLS-1$
 	addButton.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent event) {
 		// TODO validate syntax!
-		String newEntry = newGenericTypeReference.getText() + IJUTPreferenceConstants.VALUE_DELIMITER;
+		modifiedMapper = null;
+		String newEntryPrefix = newGenericTypeReference.getText() + IJUTPreferenceConstants.VALUE_DELIMITER;
+		String newEntry = newEntryPrefix + newGenericDefaultValueExpression.getText();
 		int idx = 0;
 		for (String item : listGenericTypes.getItems()) {
-		    if (item.startsWith(newEntry)) {
-			listGenericTypes.setItem(idx, newEntry + newGenericDefaultValueExpression.getText());
+		    if (item.startsWith(newEntryPrefix)) {
+			listGenericTypes.setItem(idx, newEntry);
 			return;
 		    }
 		    idx++;
 		}
 
-		listGenericTypes.add(newEntry + newGenericDefaultValueExpression.getText(), listGenericTypes.getItemCount());
+		listGenericTypes.add(newEntry, listGenericTypes.getItemCount());
 	    }
 	});
-
-	newGenericTypeReference = new Text(buttonComposite, SWT.BORDER);
-	data = new GridData(GridData.FILL_HORIZONTAL);
+	data = new GridData();
 	data.grabExcessHorizontalSpace = true;
-	newGenericTypeReference.setLayoutData(data);
-
-	newGenericDefaultValueExpression = new Text(buttonComposite, SWT.BORDER);
-	data = new GridData(GridData.FILL_HORIZONTAL);
-	data.grabExcessHorizontalSpace = true;
-	newGenericDefaultValueExpression.setLayoutData(data);
+	data.horizontalAlignment = GridData.END;
+	addButton.setLayoutData(data);
 
 	Button removeButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
 	removeButton.setText("Remove Selection"); //$NON-NLS-1$
@@ -245,9 +355,6 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	    }
 	});
 
-	data = new GridData();
-	data.horizontalSpan = 2;
-	removeButton.setLayoutData(data);
     }
 
     private void createOtherTypeSection(Composite cmpMain) {
@@ -268,6 +375,13 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	defaultValueForJavaBeans = new Text(cmpOtherTypeSettings, SWT.BORDER);
 	defaultValueForJavaBeans.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 	defaultValueForJavaBeans.setText(JUTPreferences.getDefaultValueForJavaBeans());
+	defaultValueForJavaBeans.addModifyListener(new ModifyListener() {
+
+	    @Override
+	    public void modifyText(ModifyEvent event) {
+		modifiedMapper = null;
+	    }
+	});
 
 	Label lblFallback = new Label(cmpOtherTypeSettings, SWT.NONE);
 	lblFallback.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
@@ -276,6 +390,13 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	defaultValueFallback = new Text(cmpOtherTypeSettings, SWT.BORDER);
 	defaultValueFallback.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 	defaultValueFallback.setText(JUTPreferences.getDefaultValueFallback());
+	defaultValueFallback.addModifyListener(new ModifyListener() {
+
+	    @Override
+	    public void modifyText(ModifyEvent event) {
+		modifiedMapper = null;
+	    }
+	});
     }
 
     /**
@@ -316,6 +437,13 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 
     public String[] getSimpleTypeSettings() {
 	return JUTPreferences.convertToArray(getPreferenceStore().getString(DEFAULT_VALUE_MAPPING));
+    }
+
+    public String[] getSimpleTypeSettingsWithSamples() {
+	return JUTPreferences.getDefaultValuesByType().entrySet().stream()
+		.map(entry -> entry.getKey() + IJUTPreferenceConstants.VALUE_DELIMITER + entry.getValue())
+		.collect(Collectors.toList())
+		.toArray(new String[0]);
     }
 
     public String[] getGenericTypeSettigns() {

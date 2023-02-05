@@ -1,6 +1,7 @@
 package org.junit.tools.preferences;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
@@ -429,7 +430,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     }
 
     public static Map<String, String> convertToMap(String value) {
-	Map<String, String> ret = new HashMap<>();
+	Map<String, String> ret = new LinkedHashMap<>();
 	for (String item : StringUtils.split(value, LIST_DELIMITER)) {
 	    int pos = item.indexOf(VALUE_DELIMITER);
 	    if (pos > 0) {

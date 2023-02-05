@@ -54,7 +54,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 		+ "ResponseEntity<T>=ResponseEntity.ok(${T});"
 		+ "Set<T>=Collections.singleton(${T});"
 		+ "Map<T,U>=Collections.singletonMap(${T}, ${U})");
-	store.setDefault(DEFAULT_VALUE_JAVA_BEANS, "TestValueFactory.getValueForType(${Class}.class, \"${Name}\")");
+	store.setDefault(DEFAULT_VALUE_JAVA_BEANS, "TestValueFactory.getValueForType(${Class}.class, \"${name}\")");
 	store.setDefault(DEFAULT_VALUE_FALLBACK, "Mockito.mock(${Class}.class)");
 
 	// initialize JUT-preferences
