@@ -286,7 +286,7 @@
         category="org.junit.tools.ui.preferencepage"
         class="org.junit.tools.ui.preferences.JUTPreferenceDefaultValuesPage"
         id="org.junit.tools.ui.filter"
-        name="Filter">
+        name="Default values">
   	</page>
 	<page
         category="org.junit.tools.ui.preferencepage"

@@ -139,6 +139,7 @@ public class Messages extends NLS {
     public static String JUTPreferenceDefaultValuePage_description;
     public static String JUTPreferenceDefaultValuePage_simple_types;
     public static String JUTPreferenceDefaultValuePage_generic_types;
+    public static String JUTPreferenceDefaultValuePage_other_types;
     public static String JUTPreferenceDefaultValuePage_javabeans;
     public static String JUTPreferenceDefaultValuePage_fallback;
 
