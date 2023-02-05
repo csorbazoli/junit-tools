@@ -284,6 +284,12 @@
   	</page>
 	<page
         category="org.junit.tools.ui.preferencepage"
+        class="org.junit.tools.ui.preferences.JUTPreferenceDefaultValuesPage"
+        id="org.junit.tools.ui.filter"
+        name="Filter">
+  	</page>
+	<page
+        category="org.junit.tools.ui.preferencepage"
         class="org.junit.tools.ui.preferences.JUTPreferenceFilterPage"
         id="org.junit.tools.ui.filter"
         name="Filter">

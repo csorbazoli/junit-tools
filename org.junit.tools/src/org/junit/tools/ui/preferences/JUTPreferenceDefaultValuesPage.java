@@ -1,0 +1,298 @@
+package org.junit.tools.ui.preferences;
+
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.junit.tools.Activator;
+import org.junit.tools.messages.Messages;
+import org.junit.tools.preferences.IJUTPreferenceConstants;
+import org.junit.tools.preferences.JUTPreferences;
+
+/**
+ * The page for the default value preferences.
+ * 
+ * <ul>
+ * <li>Default values for simple types</li>
+ * <li>Default values for generic types</li>
+ * <li>Default value for Java beans</li>
+ * <li>Default value fallback</li>
+ * </ul>
+ * 
+ * @author csorbazoli
+ * 
+ */
+public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
+	IWorkbenchPreferencePage, IJUTPreferenceConstants {
+    public JUTPreferenceDefaultValuesPage() {
+	// default constructor
+    }
+
+    private List listMethodFilterName;
+    private Text newSimpleTypeReference;
+
+    private List listMethodFilterModifier;
+    private Text newGenericTypeReference;
+    private Text newGenericDefaultValueExpression; // TODO show it next to the type reference
+
+    private Text defaultValueForJavaBeans;
+    private Text defaultValueFallback;
+
+    // TODO add a test button as well with a popup dialog showing
+    // test cases (list of types that are dynamically mapped using the current
+    // settings)
+
+    /**
+     * @see PreferencePage#createContents(Composite)
+     * @param parent
+     */
+    @Override
+    protected Control createContents(Composite parent) {
+	Composite cmpMain = new Composite(parent, SWT.NONE);
+
+	GridData cmpMainLayoutData = new GridData(GridData.FILL_HORIZONTAL);
+	cmpMainLayoutData.grabExcessHorizontalSpace = true;
+	cmpMain.setLayoutData(cmpMainLayoutData);
+	cmpMain.setLayout(new GridLayout());
+
+	// test-method-filter name
+	Group cmpTestmethodFilterName = new Group(cmpMain, SWT.NONE);
+	cmpTestmethodFilterName
+		.setText(Messages.JUTPreferenceDefaultValuePage_simple_types);
+	GridData data = new GridData(GridData.FILL_HORIZONTAL);
+	data.verticalAlignment = SWT.FILL;
+	data.grabExcessVerticalSpace = true;
+	data.grabExcessHorizontalSpace = true;
+	cmpTestmethodFilterName.setLayoutData(data);
+	cmpTestmethodFilterName.setLayout(new GridLayout());
+
+	listMethodFilterName = new List(cmpTestmethodFilterName, SWT.BORDER);
+	listMethodFilterName.setItems(getMethodFilterNamePref());
+
+	// Create a data that takes up the extra space in the dialog and spans
+	// both columns.
+	data = new GridData(GridData.FILL_BOTH);
+	listMethodFilterName.setLayoutData(data);
+
+	Composite buttonCompositeFilterName = new Composite(
+		cmpTestmethodFilterName, SWT.NULL);
+
+	GridLayout buttonLayout = new GridLayout();
+	buttonLayout.numColumns = 2;
+	buttonCompositeFilterName.setLayout(buttonLayout);
+
+	// Create a data that takes up the extra space in the dialog and spans
+	// both columns.
+	GridData data_2 = new GridData(GridData.FILL_BOTH
+		| GridData.VERTICAL_ALIGN_BEGINNING);
+	data_2.verticalAlignment = SWT.CENTER;
+	data_2.grabExcessVerticalSpace = false;
+	buttonCompositeFilterName.setLayoutData(data_2);
+
+	Button addButton = new Button(buttonCompositeFilterName, SWT.PUSH
+		| SWT.CENTER);
+
+	addButton.setText("Add to List"); //$NON-NLS-1$
+	addButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		String newEntry = newSimpleTypeReference.getText();
+		for (String item : listMethodFilterName.getItems()) {
+		    if (newEntry.equals(item)) {
+			return;
+		    }
+		}
+
+		listMethodFilterName.add(newEntry,
+			listMethodFilterName.getItemCount());
+	    }
+	});
+
+	newSimpleTypeReference = new Text(buttonCompositeFilterName, SWT.BORDER);
+	// Create a data that takes up the extra space in the dialog .
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.grabExcessHorizontalSpace = true;
+	newSimpleTypeReference.setLayoutData(data);
+
+	Button removeButton = new Button(buttonCompositeFilterName, SWT.PUSH
+		| SWT.CENTER);
+
+	removeButton.setText("Remove Selection"); //$NON-NLS-1$
+	removeButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		listMethodFilterName.remove(listMethodFilterName
+			.getSelectionIndex());
+	    }
+	});
+
+	data = new GridData();
+	data.horizontalSpan = 2;
+	removeButton.setLayoutData(data);
+
+	// test-method-filter modifier
+	Group cmpTestmethodFilterModifier = new Group(cmpMain, SWT.NONE);
+	cmpTestmethodFilterModifier
+		.setText(Messages.JUTPreferenceDefaultValuePage_generic_types);
+
+	// Create a data that takes up the extra space in the dialog .
+	GridData data_1 = new GridData(GridData.FILL_HORIZONTAL);
+	data_1.verticalAlignment = SWT.FILL;
+	data_1.grabExcessVerticalSpace = true;
+	data_1.grabExcessHorizontalSpace = true;
+	cmpTestmethodFilterModifier.setLayoutData(data_1);
+
+	GridLayout layout = new GridLayout();
+	cmpTestmethodFilterModifier.setLayout(layout);
+
+	listMethodFilterModifier = new List(cmpTestmethodFilterModifier,
+		SWT.BORDER);
+	listMethodFilterModifier.setItems(getMethodFilterModifierPref());
+
+	// Create a data that takes up the extra space in the dialog and spans
+	// both columns.
+	data = new GridData(GridData.FILL_BOTH);
+	listMethodFilterModifier.setLayoutData(data);
+
+	Composite buttonComposite = new Composite(cmpTestmethodFilterModifier,
+		SWT.NULL);
+
+	buttonLayout = new GridLayout();
+	buttonLayout.numColumns = 2;
+	buttonComposite.setLayout(buttonLayout);
+
+	// Create a data that takes up the extra space in the dialog and spans
+	// both columns.
+	GridData data_3 = new GridData(GridData.FILL_BOTH
+		| GridData.VERTICAL_ALIGN_BEGINNING);
+	data_3.verticalAlignment = SWT.CENTER;
+	data_3.grabExcessVerticalSpace = false;
+	buttonComposite.setLayoutData(data_3);
+
+	addButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
+
+	addButton.setText("Add to List"); //$NON-NLS-1$
+	addButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		String newEntry = newGenericTypeReference.getText();
+		for (String item : listMethodFilterModifier.getItems()) {
+		    if (newEntry.equals(item)) {
+			return;
+		    }
+		}
+
+		listMethodFilterModifier.add(newEntry,
+			listMethodFilterModifier.getItemCount());
+	    }
+	});
+
+	newGenericTypeReference = new Text(buttonComposite, SWT.BORDER);
+	// Create a data that takes up the extra space in the dialog .
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.grabExcessHorizontalSpace = true;
+	newGenericTypeReference.setLayoutData(data);
+
+	removeButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
+
+	removeButton.setText("Remove Selection"); //$NON-NLS-1$
+	removeButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		listMethodFilterModifier.remove(listMethodFilterModifier
+			.getSelectionIndex());
+	    }
+	});
+
+	data = new GridData();
+	data.horizontalSpan = 2;
+	removeButton.setLayoutData(data);
+
+	return cmpMain;
+    }
+
+    /**
+     * @see IWorkbenchPreferencePage#init(IWorkbench)
+     */
+    @Override
+    public void init(IWorkbench workbench) {
+	// Initialize the preference store we wish to use
+	setPreferenceStore(Activator.getDefault().getPreferenceStore());
+	setDescription(Messages.JUTPreferenceDefaultValuePage_description);
+    }
+
+    @Override
+    protected void performDefaults() {
+	listMethodFilterName.setItems(getDefaultMethodFilterNamePref());
+	listMethodFilterModifier.setItems(getDefaultMethodFilterModifierPref());
+    }
+
+    @Override
+    public boolean performOk() {
+	setMethodFilterNamePref(listMethodFilterName.getItems());
+	setMethodFilterModifierPref(listMethodFilterModifier.getItems());
+	return super.performOk();
+    }
+
+    /**
+     * Sets the method filter name preferences
+     * 
+     * @param values
+     */
+    public void setMethodFilterNamePref(String[] values) {
+	getPreferenceStore().setValue(TEST_METHOD_FILTER_NAME,
+		JUTPreferences.convertFromArray(values));
+    }
+
+    /**
+     * @return default method filter name preferences
+     */
+    public String[] getDefaultMethodFilterNamePref() {
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
+		TEST_METHOD_FILTER_NAME));
+    }
+
+    /**
+     * @return method filter name preferences
+     */
+    public String[] getMethodFilterNamePref() {
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(
+		TEST_METHOD_FILTER_NAME));
+    }
+
+    /**
+     * Sets the method filter modifier preferences
+     * 
+     * @param values
+     */
+    public void setMethodFilterModifierPref(String[] values) {
+	getPreferenceStore().setValue(TEST_METHOD_FILTER_MODIFIER,
+		JUTPreferences.convertFromArray(values));
+    }
+
+    /**
+     * @return default method filter modifier preferences
+     */
+    public String[] getDefaultMethodFilterModifierPref() {
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
+		TEST_METHOD_FILTER_MODIFIER));
+    }
+
+    /**
+     * @return method filter modifier preferences
+     */
+    public String[] getMethodFilterModifierPref() {
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(
+		TEST_METHOD_FILTER_MODIFIER));
+    }
+}
