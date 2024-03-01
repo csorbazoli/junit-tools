@@ -318,7 +318,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    compilationUnit.createImport("org.junit.Test", null, null);
 	    compilationUnit.createImport("org.junit.runner.RunWith", null, null);
 	    if (GeneratorUtils.isUsingEasyMock()) {
-		compilationUnit.createImport("org.easynmock.*", null, null);
+		compilationUnit.createImport("org.easymock.*", null, null);
 		// prefer EasyMockRunner instead of Rule
 	    } else {
 		compilationUnit.createImport("org.mockito.junit.runner.MockitoJUnitRunner", null, null);
@@ -327,7 +327,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    compilationUnit.createImport("org.junit.jupiter.api.Test", null, null);
 	    compilationUnit.createImport("org.junit.jupiter.api.extension.ExtendWith", null, null);
 	    if (GeneratorUtils.isUsingEasyMock()) {
-		compilationUnit.createImport("org.easynmock.*", null, null);
+		compilationUnit.createImport("org.easymock.*", null, null);
 		// compilationUnit.createImport("org.easymock.EasyMockExtension", null, null)
 	    } else {
 		compilationUnit.createImport("org.mockito.junit.jupiter.MockitoExtension", null, null);
