@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IImportDeclaration;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
@@ -38,6 +40,7 @@ import org.junit.tools.generator.model.tml.Settings;
 import org.junit.tools.generator.model.tml.TestCase;
 import org.junit.tools.generator.utils.TestUtils;
 import org.junit.tools.preferences.JUTPreferences;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 public class TestClassGeneratorTest {
@@ -46,8 +49,8 @@ public class TestClassGeneratorTest {
 
     @Before
     public void setupTest() {
-	underTest.gherkinStyle = true;
 	JUTPreferences.setJUnitVersion(5);
+	JUTPreferences.setGherkinStyleEnabled(true);
     }
 
     @Test
@@ -641,6 +644,81 @@ public class TestClassGeneratorTest {
 	verify(type).createField("MockMvc mockMvc;", null, false, null);
     }
 
+    @Test
+    public void testCreateStandardClassFields_shouldNotCreateIfAlreadyExists() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	IField existingField = Mockito.mock(IField.class);
+	when(existingField.getElementName()).thenReturn("underTest");
+	when(type.getFields()).thenReturn(new IField[] { existingField });
+	// when
+	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
+	// then
+	verify(type, never()).createField(anyString(), any(), anyBoolean(), any());
+    }
+
+    @Test
+    public void testCreateStandardStaticImports_shouldUseAssertjAsDefault() throws Exception {
+	// given
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	ICompilationUnit baseClass = createSpringClassWithAutowiredField("Component", "QSomeService;", "someService");
+	IImportDeclaration importDeclaration1 = Mockito.mock(IImportDeclaration.class);
+	when(baseClass.getImports()).thenReturn(Arrays.asList(importDeclaration1).toArray(new IImportDeclaration[0]));
+	// when
+	underTest.createStandardStaticImports(baseClass, tmlTest);
+	// then
+	ArgumentCaptor<String> importCaptor = ArgumentCaptor.forClass(String.class);
+	ArgumentCaptor<Integer> flagCaptor = ArgumentCaptor.forClass(Integer.class);
+	ArgumentCaptor<IImportDeclaration> importAboveCaptor = ArgumentCaptor.forClass(IImportDeclaration.class);
+	verify(baseClass).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(), nullable(IProgressMonitor.class));
+	assertThat(importCaptor.getValue())
+		.isEqualTo("org.assertj.core.api.Assertions.assertThat");
+    }
+
+    @Test
+    public void testCreateStandardStaticImports_shouldUseAssertAllForJUnit4() throws Exception {
+	// given
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	ICompilationUnit baseClass = createSpringClassWithAutowiredField("Component", "QSomeService;", "someService");
+	IImportDeclaration importDeclaration1 = Mockito.mock(IImportDeclaration.class);
+	when(baseClass.getImports()).thenReturn(Arrays.asList(importDeclaration1).toArray(new IImportDeclaration[0]));
+	JUTPreferences.setJUnitVersion("4");
+	JUTPreferences.setAssertJEnabled(false);
+	// when
+	underTest.createStandardStaticImports(baseClass, tmlTest);
+	// then
+	ArgumentCaptor<String> importCaptor = ArgumentCaptor.forClass(String.class);
+	ArgumentCaptor<Integer> flagCaptor = ArgumentCaptor.forClass(Integer.class);
+	ArgumentCaptor<IImportDeclaration> importAboveCaptor = ArgumentCaptor.forClass(IImportDeclaration.class);
+	verify(baseClass).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(), nullable(IProgressMonitor.class));
+	assertThat(importCaptor.getValue())
+		.isEqualTo("org.junit.Assert.*");
+    }
+
+    @Test
+    public void testCreateStandardStaticImports_shouldAddImportsForSpringControllerIfNeeded() throws Exception {
+	// given
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	tmlTest.setSpring(true);
+	ICompilationUnit baseClass = createSpringClassWithAutowiredField("RestController", "QSomeService;", "someService");
+	IImportDeclaration importDeclaration1 = Mockito.mock(IImportDeclaration.class);
+	when(baseClass.getImports()).thenReturn(Arrays.asList(importDeclaration1).toArray(new IImportDeclaration[0]));
+	// when
+	underTest.createStandardStaticImports(baseClass, tmlTest);
+	// then
+	ArgumentCaptor<String> importCaptor = ArgumentCaptor.forClass(String.class);
+	ArgumentCaptor<Integer> flagCaptor = ArgumentCaptor.forClass(Integer.class);
+	ArgumentCaptor<IImportDeclaration> importAboveCaptor = ArgumentCaptor.forClass(IImportDeclaration.class);
+	verify(baseClass, atLeastOnce()).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(),
+		nullable(IProgressMonitor.class));
+	assertThat(importCaptor.getAllValues())
+		.hasSize(3)
+		.containsExactly("org.assertj.core.api.Assertions.assertThat",
+			"org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*",
+			"org.springframework.test.web.servlet.result.MockMvcResultMatchers.status");
+    }
+
     // helper methods
     private ICompilationUnit createSpringClassWithAutowiredField(String annotation, String fieldClass, String fieldName) throws JavaModelException {
 	ICompilationUnit baseClass = mock(ICompilationUnit.class);
@@ -664,21 +742,6 @@ public class TestClassGeneratorTest {
 	return baseClass;
     }
 
-    @Test
-    public void testCreateStandardClassFields_shouldNotCreateIfAlreadyExists() throws Exception {
-	// given
-	IType type = Mockito.mock(IType.class);
-	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
-	IField existingField = Mockito.mock(IField.class);
-	when(existingField.getElementName()).thenReturn("underTest");
-	when(type.getFields()).thenReturn(new IField[] { existingField });
-	// when
-	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
-	// then
-	verify(type, never()).createField(anyString(), any(), anyBoolean(), any());
-    }
-
-    // helper methods
     private Annotation createAnnotation(String name, Attribute... attributes) {
 	Annotation ret = new Annotation();
 	ret.setName(name);

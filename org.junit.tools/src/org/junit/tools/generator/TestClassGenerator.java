@@ -50,7 +50,6 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     protected String testmethodPostfix;
     protected String testmvcMethodPostfix;
     protected boolean defaultTestbaseMethodCreated = false;
-    protected Boolean gherkinStyle = null;
     protected Boolean repeatingTestMethods = null;
 
     @Override
@@ -367,18 +366,23 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return JUTPreferences.getJUnitVersion() == 4;
     }
 
-    private void createStandardStaticImports(ICompilationUnit compilationUnit, Test tmlTest) throws JavaModelException {
+    protected void createStandardStaticImports(ICompilationUnit compilationUnit, Test tmlTest) throws JavaModelException {
 	IJavaElement importAbove = null;
 	IImportDeclaration[] imports = compilationUnit.getImports();
 	if (imports.length > 0) {
 	    importAbove = imports[0];
-	    compilationUnit.createImport("org.assertj.core.api.Assertions.assertThat", importAbove, Flags.AccStatic, null);
-	    // compilationUnit.createImport("org.assertj.core.api.Assertions.assertThrows",
-	    // importAbove, Flags.AccStatic, null);
 	}
+	// use option for assertj Assertions vs Assert.*
+	if (!isAssertjEnabled()) {
+	    compilationUnit.createImport("org.junit.Assert.*", importAbove, Flags.AccStatic, null);
+	} else {
+	    compilationUnit.createImport("org.assertj.core.api.Assertions.assertThat", importAbove, Flags.AccStatic, null);
+	}
+	// compilationUnit.createImport("org.assertj.core.api.Assertions.assertThrows",
+	// importAbove, Flags.AccStatic, null);
 	if (tmlTest.isSpring() && GeneratorUtils.isSpringController(compilationUnit)) {
-	    compilationUnit.createImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*", null, Flags.AccStatic, null);
-	    compilationUnit.createImport("org.springframework.test.web.servlet.result.MockMvcResultMatchers.status", null, Flags.AccStatic, null);
+	    compilationUnit.createImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*", importAbove, Flags.AccStatic, null);
+	    compilationUnit.createImport("org.springframework.test.web.servlet.result.MockMvcResultMatchers.status", importAbove, Flags.AccStatic, null);
 	}
     }
 
@@ -782,11 +786,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     private boolean isGherkinStyle() {
-	if (gherkinStyle == null) {
-	    gherkinStyle = JUTPreferences.isGherkinStyleEnabled();
-	}
+	return JUTPreferences.isGherkinStyleEnabled();
+    }
 
-	return gherkinStyle;
+    private boolean isAssertjEnabled() {
+	return JUTPreferences.isAssertjEnabled();
     }
 
     private boolean isRepeatingTestMethods() {

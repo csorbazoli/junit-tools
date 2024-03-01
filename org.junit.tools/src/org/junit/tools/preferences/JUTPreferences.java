@@ -32,6 +32,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String testClassSuperType = null;
     private static String springTestClassPostfix = null;
     private static Boolean gherkinStyleEnabled = true;
+    private static Boolean assertjEnabled = true;
     private static Boolean repeatingTestMethodsEnabled = true;
     private static Boolean showSettingsBeforeGenerate = null;
     private static String mockFramework = null;
@@ -343,21 +344,28 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return springTestClassPostfix;
     }
 
-    public static Boolean isGherkinStyleEnabled() {
+    public static boolean isGherkinStyleEnabled() {
 	if (gherkinStyleEnabled == null) {
 	    gherkinStyleEnabled = getPreferenceBoolean(GHERKIN_STYLE_ENABLED, true);
 	}
 	return gherkinStyleEnabled;
     }
 
-    public static Boolean isRepeatingTestMethodsEnabled() {
+    public static boolean isAssertjEnabled() {
+	if (assertjEnabled == null) {
+	    gherkinStyleEnabled = getPreferenceBoolean(ASSERTJ_ENABLED, true);
+	}
+	return assertjEnabled;
+    }
+
+    public static boolean isRepeatingTestMethodsEnabled() {
 	if (repeatingTestMethodsEnabled == null) {
 	    repeatingTestMethodsEnabled = getPreferenceBoolean(REPEATING_TEST_METHODS_ENABLED, true);
 	}
 	return repeatingTestMethodsEnabled;
     }
 
-    public static Boolean isShowSettingsBeforeGenerate() {
+    public static boolean isShowSettingsBeforeGenerate() {
 	if (showSettingsBeforeGenerate == null) {
 	    showSettingsBeforeGenerate = getPreferenceBoolean(SHOW_SETTINGS_BEFORE_GENERATE, true);
 	}
@@ -374,6 +382,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setGherkinStyleEnabled(Boolean gherkinStyleEnabled) {
 	JUTPreferences.gherkinStyleEnabled = gherkinStyleEnabled;
+    }
+
+    public static void setAssertJEnabled(Boolean enabled) {
+	JUTPreferences.assertjEnabled = enabled;
     }
 
     public static void setRepeatingTestMethodsEnabled(Boolean enabled) {
@@ -486,6 +498,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 			    return;
 			} else if (event.getProperty() == GHERKIN_STYLE_ENABLED) {
 			    setGherkinStyleEnabled((Boolean) event.getNewValue());
+			    return;
+			} else if (event.getProperty() == ASSERTJ_ENABLED) {
+			    setAssertJEnabled((Boolean) event.getNewValue());
 			    return;
 			} else if (event.getProperty() == REPEATING_TEST_METHODS_ENABLED) {
 			    setRepeatingTestMethodsEnabled((Boolean) event.getNewValue());
