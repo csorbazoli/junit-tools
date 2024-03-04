@@ -39,6 +39,7 @@ import org.junit.tools.generator.model.tml.Result;
 import org.junit.tools.generator.model.tml.Settings;
 import org.junit.tools.generator.model.tml.TestCase;
 import org.junit.tools.generator.utils.TestUtils;
+import org.junit.tools.preferences.IJUTPreferenceConstants;
 import org.junit.tools.preferences.JUTPreferences;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -105,12 +106,31 @@ public class TestClassGeneratorTest {
 	TestCase testCase = new TestCase();
 	testCase.setName("testedMethod");
 	testCase.setTestBase("testBaseProperty");
+	JUTPreferences.setMockFramework(IJUTPreferenceConstants.MOCKFW_MOCKITO);
 	// when
 	underTest.createAssertionsMethodBody(sbTestMethodBody, "actual", "String", "actual", testCase);
 	// then
 	assertThat(sbTestMethodBody).startsWith("\n"
 		+ "// then\n" +
-		"// TODO");
+		"// TODO")
+		.contains("verify(mock).methodcall();");
+    }
+
+    @Test
+    public void testCreateAssertionsMethodBody_noAssertionsForVoidMethod_EasyMock() {
+	// given
+	StringBuilder sbTestMethodBody = new StringBuilder();
+	TestCase testCase = new TestCase();
+	testCase.setName("testedMethod");
+	testCase.setTestBase("testBaseProperty");
+	JUTPreferences.setMockFramework(IJUTPreferenceConstants.MOCKFW_EASYMOCK);
+	// when
+	underTest.createAssertionsMethodBody(sbTestMethodBody, "actual", "String", "actual", testCase);
+	// then
+	assertThat(sbTestMethodBody).startsWith("\n"
+		+ "// then\n" +
+		"// TODO")
+		.contains("verify(mock);");
     }
 
     @Test

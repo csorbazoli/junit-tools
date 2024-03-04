@@ -71,7 +71,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	String baseClassName = utmClassesAndPackages.getBaseClassName();
 	ICompilationUnit baseClass = utmClassesAndPackages.getBaseClass();
 	boolean springController = GeneratorUtils.isSpringController(baseClass);
-	tmlTest.setOnlyStaticMethods(JDTUtils.isStaticMethods(model.getMethodsToCreate()));
+	tmlTest.setOnlyStaticMethods(JDTUtils.isStaticMethodOrConstructors(model.getMethodsToCreate()));
 	IType testClassType;
 
 	// begin task
@@ -748,7 +748,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 	if (tmlTestCase.getAssertion().isEmpty()) {
 	    sbTestMethodBody.append(RETURN).append("// TODO check for expected side effect (i.e. service call, changed parameter or exception thrown)")
-		    .append(RETURN).append("// verify(mock).methodcall();")
+		    .append(RETURN).append(GeneratorUtils.isUsingEasyMock() ? "// verify(mock);" : "// verify(mock).methodcall();")
 		    .append(RETURN)
 		    .append("// assertThat(TestUtils.objectToJson(param)).isEqualTo(TestUtils.readTestFile(\"someMethod/ParamType_updated.json\"));")
 		    .append(RETURN).append("// assertThrows(SomeException.class, () -> underTest.someMethod());");
