@@ -2,7 +2,7 @@
 <feature
       id="junit_tools_spring"
       label="JUnit Tools for Spring Development"
-      version="1.2.7"
+      version="1.2.8"
       provider-name="csorbazoli">
 
    <description url="https://csorbazoli.github.io/junit-tools-updatesite/">
@@ -45,7 +45,7 @@ Spring support:
          id="junit.tools.spring"
          download-size="0"
          install-size="0"
-         version="1.2.7"
+         version="1.2.8"
          unpack="false"/>
 
 </feature>
