@@ -17,45 +17,49 @@ import com.example.junittoolsdemo.models.DemoObject;
 @Service
 public class DemoService {
 
-    @Autowired
-    private DemoComponent component;
+	@Autowired
+	private DemoComponent component;
 
-    public String doSomething(String name) {
-	return name + "#" + component.doCalculation(name.length());
-    }
-
-    public void updateObject(DemoObject object, String value) {
-	if (StringUtils.hasLength(value)) {
-	    object.setDemoString(value);
+	public String doSomething(String name) {
+		return name + "#" + component.doCalculation(name.length());
 	}
-    }
 
-    public int countSpecialObjects(List<DemoObject> items) {
-	return (int) items.stream()
-		.filter(this::isSpecial)
-		.count();
-    }
+	public void updateObject(DemoObject object, String value) {
+		if (StringUtils.hasLength(value)) {
+			object.setDemoString(value);
+		}
+	}
 
-    public int countSpecialValues(Map<String, DemoObject> items) {
-	return (int) items.values().stream()
-		.filter(this::isSpecial)
-		.count();
-    }
+	public int countSpecialObjects(List<DemoObject> items) {
+		return (int) items.stream()
+				.filter(this::isSpecial)
+				.count();
+	}
 
-    private boolean isSpecial(DemoObject obj) {
-	return obj.getDemoString().contains("special");
-    }
+	public int countSpecialValues(Map<String, DemoObject> items) {
+		return (int) items.values().stream()
+				.filter(this::isSpecial)
+				.count();
+	}
 
-    public Optional<DemoObject> deleteObjectByName(String name) {
-	return Optional.empty();
-    }
+	private boolean isSpecial(DemoObject obj) {
+		return obj.getDemoString().contains("special");
+	}
 
-    public List<DemoObject> findObjectsByName(String name) {
-	return Collections.emptyList();
-    }
+	public Optional<DemoObject> deleteObjectByName(String name) {
+		return Optional.empty();
+	}
 
-    public Optional<DemoObject> findObject(String externalId) {
-	return Optional.empty();
-    }
+	public List<DemoObject> findObjectsByName(String name) {
+		return Collections.emptyList();
+	}
+
+	public Optional<DemoObject> findObject(String externalId) {
+		return Optional.empty();
+	}
+
+	public static int countDigits(String input) {
+		return 0;
+	}
 
 }
