@@ -1024,7 +1024,15 @@ public class JDTUtils implements IGeneratorConstants {
     public static boolean isStaticMethods(List<IMethod> methodsToCreate) throws JavaModelException {
 	boolean ret = !methodsToCreate.isEmpty();
 	for (IMethod method : methodsToCreate) {
-	    ret &= Flags.isStatic(method.getFlags());
+	    ret &= Flags.isStatic(method.getFlags()) && !Flags.isPrivate(method.getFlags());
+	}
+	return ret;
+    }
+
+    public static boolean isStaticMethodOrConstructors(List<IMethod> methodsToCreate) throws JavaModelException {
+	boolean ret = !methodsToCreate.isEmpty();
+	for (IMethod method : methodsToCreate) {
+	    ret &= (method.isConstructor() || Flags.isStatic(method.getFlags())) && !Flags.isPrivate(method.getFlags());
 	}
 	return ret;
     }

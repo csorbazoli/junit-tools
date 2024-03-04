@@ -209,6 +209,9 @@ public class Test {
 	this.spring = spring;
     }
 
+    /**
+     * All methods to generate tests for are static (or constructors)
+     */
     public boolean isOnlyStaticMethods() {
 	return onlyStaticMethods;
     }

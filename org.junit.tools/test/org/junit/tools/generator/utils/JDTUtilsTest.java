@@ -133,12 +133,12 @@ public class JDTUtilsTest {
     }
 
     @Test
-    public void testIsStaticMethodsh_shouldReturnTrueIfAllMethodsHaveStaticModifier() throws Exception {
+    public void testIsStaticMethods_shouldReturnTrueIfAllMethodsHaveStaticModifier() throws Exception {
 	// given
 	IMethod method1 = mock(IMethod.class);
 	when(method1.getFlags()).thenReturn(Flags.AccStatic | Flags.AccPublic);
 	IMethod method2 = mock(IMethod.class);
-	when(method2.getFlags()).thenReturn(Flags.AccStatic | Flags.AccPublic);
+	when(method2.getFlags()).thenReturn(Flags.AccStatic | Flags.AccProtected);
 	List<IMethod> methods = Arrays.asList(method1, method2);
 	// when
 	boolean actual = JDTUtils.isStaticMethods(methods);
@@ -147,15 +147,66 @@ public class JDTUtilsTest {
     }
 
     @Test
-    public void testIsStaticMethodsh_shouldReturnFalseIfAnyMethodHasNoStaticModifier() throws Exception {
+    public void testIsStaticMethods_shouldReturnFalseIfAnyMethodHasNoStaticModifier() throws Exception {
 	// given
 	IMethod method1 = mock(IMethod.class);
 	when(method1.getFlags()).thenReturn(Flags.AccStatic | Flags.AccPublic);
 	IMethod method2 = mock(IMethod.class);
-	when(method2.getFlags()).thenReturn(Flags.AccPublic);
+	when(method2.getFlags()).thenReturn(Flags.AccProtected);
 	List<IMethod> methods = Arrays.asList(method1, method2);
 	// when
 	boolean actual = JDTUtils.isStaticMethods(methods);
+	// then
+	assertThat(actual).isFalse();
+    }
+
+    @Test
+    public void testIsStaticMethodsOrConstructors_shouldReturnTrueIfAllMethodsHaveStaticModifierOrAConstructor() throws Exception {
+	// given
+	IMethod method1 = mock(IMethod.class);
+	when(method1.getFlags()).thenReturn(Flags.AccStatic | Flags.AccPublic);
+	IMethod method2 = mock(IMethod.class);
+	when(method2.getFlags()).thenReturn(Flags.AccStatic | Flags.AccProtected);
+	IMethod method3 = mock(IMethod.class);
+	when(method3.getFlags()).thenReturn(Flags.AccPublic);
+	when(method3.isConstructor()).thenReturn(true);
+	List<IMethod> methods = Arrays.asList(method1, method2, method3);
+	// when
+	boolean actual = JDTUtils.isStaticMethodOrConstructors(methods);
+	// then
+	assertThat(actual).isTrue();
+    }
+
+    @Test
+    public void testIsStaticMethodsOrConstructors_shouldReturnTrueIfAnyMethodHasNoStaticModifierNorConstructor() throws Exception {
+	// given
+	IMethod method1 = mock(IMethod.class);
+	when(method1.getFlags()).thenReturn(Flags.AccStatic | Flags.AccPublic);
+	IMethod method2 = mock(IMethod.class);
+	when(method2.getFlags()).thenReturn(Flags.AccProtected);
+	IMethod method3 = mock(IMethod.class);
+	when(method3.getFlags()).thenReturn(Flags.AccPublic);
+	when(method3.isConstructor()).thenReturn(true);
+	List<IMethod> methods = Arrays.asList(method1, method2, method3);
+	// when
+	boolean actual = JDTUtils.isStaticMethodOrConstructors(methods);
+	// then
+	assertThat(actual).isFalse();
+    }
+
+    @Test
+    public void testIsStaticMethodsOrConstructors_shouldReturnTrueIfAnyMethodIsNotAConstructorNorStatic() throws Exception {
+	// given
+	IMethod method1 = mock(IMethod.class);
+	when(method1.getFlags()).thenReturn(Flags.AccStatic | Flags.AccPublic);
+	IMethod method2 = mock(IMethod.class);
+	when(method2.getFlags()).thenReturn(Flags.AccStatic | Flags.AccProtected);
+	IMethod method3 = mock(IMethod.class);
+	when(method3.getFlags()).thenReturn(Flags.AccPublic);
+	when(method3.isConstructor()).thenReturn(false);
+	List<IMethod> methods = Arrays.asList(method1, method2, method3);
+	// when
+	boolean actual = JDTUtils.isStaticMethodOrConstructors(methods);
 	// then
 	assertThat(actual).isFalse();
     }
