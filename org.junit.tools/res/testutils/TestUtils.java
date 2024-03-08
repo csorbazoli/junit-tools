@@ -63,6 +63,19 @@ public class TestUtils {
 	return toString.replaceAll("@[0-9a-f]+", "@HASH");
     }
 
+    public static boolean assertTestFileEquals(String relativePath, String actual) throws IOException {
+	File testFile = new File(SRC_TEST_RESOURCES + relativePath);
+	boolean ret = testFile.canRead();
+	if (ret) {
+	    String expected = readTestFile(relativePath);
+	    assertEquals(expected, actual);
+	} else {
+	    testFile.getParentFile().mkdirs();
+	    Files.write(testFile.toPath(), actual.getBytes(), StandardOpenOption.CREATE);
+	}
+	return ret;
+    }
+
     public static String readTestFile(String relativePath) {
 	try {
 	    File testFile = new File(SRC_TEST_RESOURCES + relativePath);

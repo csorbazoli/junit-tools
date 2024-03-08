@@ -3,9 +3,11 @@
  */
 package org.junit.tools.generator.utils;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
@@ -17,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.tools.generator.utils.TestUtils.BenchmarkResults;
@@ -71,6 +74,46 @@ public class TestUtilsTest {
 	List<DummyClass> actual = TestUtils.readObjectListFromJsonFile(relativePath, clazz);
 	// then
 	assertEquals("test", actual.get(0).getName());
+    }
+
+    @Test
+    public void testAssertTestFileEquals_existing_matching() throws Exception {
+	// given
+	String relativePath = "samples/sample_oneline.json";
+	String text = "{\"Name\":\"test\",\"Number\":1}";
+	// when
+	boolean actual = TestUtils.assertTestFileEquals(relativePath, text);
+	// then
+	assertThat(actual).isTrue();
+    }
+
+    @Test
+    public void testAssertTestFileEquals_existing_misMatching() throws Exception {
+	// given
+	String relativePath = "samples/sample_oneline.json";
+	String text = "{\"Name\":\"tester\",\"Number\":1}";
+	// when
+	ComparisonFailure actual = assertThrows(ComparisonFailure.class, () -> TestUtils.assertTestFileEquals(relativePath, text));
+	// then
+	assertEquals("expected:<{\"Name\":\"test[]\",\"Number\":1}> but was:<{\"Name\":\"test[er]\",\"Number\":1}>", actual.getMessage());
+    }
+
+    @Test
+    public void testAssertTestFileEquals_notExisting_shouldCreate() throws Exception {
+	// given
+	String relativePath = "samples/sample_missing.json";
+	String text = "{\"Name\":\"tester\",\"Number\":1}";
+	// when
+	boolean actual = TestUtils.assertTestFileEquals(relativePath, text);
+	// then
+	File testFile = new File("test-resources/" + relativePath);
+	try {
+	    assertThat(actual).isFalse();
+	    assertTrue(testFile.exists());
+	    assertEquals(text, TestUtils.readTestFile(relativePath));
+	} finally {
+	    testFile.delete();
+	}
     }
 
     @Test

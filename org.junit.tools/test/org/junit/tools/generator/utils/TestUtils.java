@@ -1,9 +1,12 @@
 package org.junit.tools.generator.utils;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +64,19 @@ public class TestUtils {
      */
     public static String replaceHashCodes(String toString) {
 	return toString.replaceAll("@[0-9a-f]+", "@HASH");
+    }
+
+    public static boolean assertTestFileEquals(String relativePath, String actual) throws IOException {
+	File testFile = new File(SRC_TEST_RESOURCES + relativePath);
+	boolean ret = testFile.canRead();
+	if (ret) {
+	    String expected = readTestFile(relativePath);
+	    assertEquals(expected, actual);
+	} else {
+	    testFile.getParentFile().mkdirs();
+	    Files.write(testFile.toPath(), actual.getBytes(), StandardOpenOption.CREATE);
+	}
+	return ret;
     }
 
     public static String readTestFile(String relativePath) {
