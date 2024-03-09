@@ -353,7 +353,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static boolean isAssertjEnabled() {
 	if (assertjEnabled == null) {
-	    gherkinStyleEnabled = getPreferenceBoolean(ASSERTJ_ENABLED, true);
+	    assertjEnabled = getPreferenceBoolean(ASSERTJ_ENABLED, true);
 	}
 	return assertjEnabled;
     }
