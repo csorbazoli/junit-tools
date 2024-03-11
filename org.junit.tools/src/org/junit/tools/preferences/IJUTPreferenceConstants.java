@@ -44,4 +44,19 @@ public interface IJUTPreferenceConstants {
     public static final String MOCKFW_MOCKITO = "mockito";
     public static final String MOCKFW_EASYMOCK = "easymock";
 
+    // options/flags
+    public static final String BEFORE_METHOD_ENABLED = "SetupSelection";
+    public static final String BEFORE_CLASS_METHOD_ENABLED = "SetupbeforeclassSelection";
+    public static final String AFTER_METHOD_ENABLED = "TeardownSelection";
+    public static final String AFTER_CLASS_METHOD_ENABLED = "TeardownafterclassSelection";
+    public static final String LOGGER_ENABLED = "LoggerSelection";
+    public static final String TESTUTILS_ENABLED = "TestUtilsSelection";
+    public static final String THROWS_DECLARATION_ENABLED = "ThrowsDeclaration";
+
+    // other settings
+    public static final String BEFORE_METHOD_BODY = "SetupBody";
+    public static final String BEFORE_CLASS_METHOD_BODY = "SetupbeforeclassBody";
+    public static final String AFTER_METHOD_BODY = "TeardownBody";
+    public static final String AFTER_CLASS_METHOD_BODY = "TeardownafterclassBody";
+
 }

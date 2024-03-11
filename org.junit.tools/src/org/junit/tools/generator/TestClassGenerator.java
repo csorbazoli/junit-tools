@@ -33,6 +33,7 @@ import org.junit.tools.generator.model.tml.Test;
 import org.junit.tools.generator.model.tml.TestCase;
 import org.junit.tools.generator.utils.GeneratorUtils;
 import org.junit.tools.generator.utils.JDTUtils;
+import org.junit.tools.preferences.IJUTPreferenceConstants;
 import org.junit.tools.preferences.JUTPreferences;
 
 /**
@@ -158,28 +159,31 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	if (tmlTest.isSpring() && springController) {
 	    // need to init mockMvc for rest endpoint testing
-	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION, null,
+	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION,
+		    JUTPreferences.getPreference(IJUTPreferenceConstants.BEFORE_METHOD_BODY),
 		    "mockMvc = MockMvcBuilders.standaloneSetup(underTest).build();", false,
 		    isUsingJunit4() ? ANNO_JUNIT_BEFORE : "@BeforeEach");
 	} else if (tmlSettings.isSetUp()) {
-	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION, null, "", false,
+	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION, null,
+		    JUTPreferences.getPreference(IJUTPreferenceConstants.BEFORE_METHOD_BODY), false,
 		    isUsingJunit4() ? ANNO_JUNIT_BEFORE : "@BeforeEach");
 	}
 
 	if (tmlSettings.isSetUpBeforeClass()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded() + MOD_STATIC_WITH_BLANK, TYPE_VOID, STANDARD_METHOD_BEFORE_ClASS,
-		    EXCEPTION, null, "", false,
+		    EXCEPTION, null, JUTPreferences.getPreference(IJUTPreferenceConstants.BEFORE_CLASS_METHOD_BODY), false,
 		    isUsingJunit4() ? ANNO_JUNIT_BEFORE_CLASS : "@BeforeAll");
 	}
 
 	if (tmlSettings.isTearDown()) {
-	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_AFTER, EXCEPTION, null, "", false,
+	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_AFTER, EXCEPTION, null,
+		    JUTPreferences.getPreference(IJUTPreferenceConstants.AFTER_METHOD_BODY), false,
 		    isUsingJunit4() ? ANNO_JUNIT_AFTER : "@AfterEach");
 	}
 
 	if (tmlSettings.isTearDownAfterClass()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded() + MOD_STATIC_WITH_BLANK, TYPE_VOID, STANDARD_METHOD_AFTER_CLASS,
-		    EXCEPTION, null, "", false,
+		    EXCEPTION, null, JUTPreferences.getPreference(IJUTPreferenceConstants.AFTER_CLASS_METHOD_BODY), false,
 		    isUsingJunit4() ? ANNO_JUNIT_AFTER_CLASS : "@AfterAll");
 	}
     }

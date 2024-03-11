@@ -29,6 +29,7 @@ import org.junit.tools.generator.model.tml.Settings;
 import org.junit.tools.generator.model.tml.Test;
 import org.junit.tools.generator.utils.GeneratorUtils;
 import org.junit.tools.generator.utils.JDTUtils;
+import org.junit.tools.preferences.IJUTPreferenceConstants;
 import org.junit.tools.preferences.JUTPreferences;
 import org.junit.tools.ui.generator.swt.control.GroupMethodSelectionCtrl;
 import org.junit.tools.ui.generator.wizards.pages.GeneratorWizardMainPage;
@@ -242,13 +243,13 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    settings = getObjectFactory().createSettings();
 	}
 
-	settings.setSetUp(JUTPreferences.getPreferenceBoolean("SetupSelection", false));
-	settings.setSetUpBeforeClass(JUTPreferences.getPreferenceBoolean("SetupbeforeclassSelection", false));
-	settings.setTearDown(JUTPreferences.getPreferenceBoolean("TeardownSelection", false));
-	settings.setTearDownAfterClass(JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", false));
-	settings.setLogger(JUTPreferences.getPreferenceBoolean("LoggerSelection", false));
-	settings.setTestUtils(JUTPreferences.getPreferenceBoolean("TestUtilsSelection", true));
-	settings.setThrowsDeclaration(JUTPreferences.getPreferenceBoolean("ThrowsDeclaration", true));
+	settings.setSetUp(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.BEFORE_METHOD_ENABLED, false));
+	settings.setSetUpBeforeClass(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.BEFORE_CLASS_METHOD_ENABLED, false));
+	settings.setTearDown(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.AFTER_METHOD_ENABLED, false));
+	settings.setTearDownAfterClass(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.AFTER_CLASS_METHOD_ENABLED, false));
+	settings.setLogger(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.LOGGER_ENABLED, false));
+	settings.setTestUtils(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.TESTUTILS_ENABLED, true));
+	settings.setThrowsDeclaration(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.THROWS_DECLARATION_ENABLED, true));
 
 	// standard methods
 	page.getView().getBtnSetup().setSelection(settings.isSetUp());
@@ -311,13 +312,13 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 
 	// standard methods
 	if (page.getView() == null) {
-	    settings.setSetUp(JUTPreferences.getPreferenceBoolean("SetupSelection", false));
-	    settings.setSetUpBeforeClass(JUTPreferences.getPreferenceBoolean("SetupbeforeclassSelection", false));
-	    settings.setTearDown(JUTPreferences.getPreferenceBoolean("TeardownSelection", false));
-	    settings.setTearDownAfterClass(JUTPreferences.getPreferenceBoolean("TeardownafterclassSelection", false));
-	    settings.setLogger(JUTPreferences.getPreferenceBoolean("LoggerSelection", false));
-	    settings.setTestUtils(JUTPreferences.getPreferenceBoolean("TestUtilsSelection", true));
-	    settings.setThrowsDeclaration(JUTPreferences.getPreferenceBoolean("ThrowsDeclaration", true));
+	    settings.setSetUp(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.BEFORE_METHOD_ENABLED, false));
+	    settings.setSetUpBeforeClass(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.BEFORE_CLASS_METHOD_ENABLED, false));
+	    settings.setTearDown(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.AFTER_METHOD_ENABLED, false));
+	    settings.setTearDownAfterClass(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.AFTER_CLASS_METHOD_ENABLED, false));
+	    settings.setLogger(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.LOGGER_ENABLED, false));
+	    settings.setTestUtils(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.TESTUTILS_ENABLED, true));
+	    settings.setThrowsDeclaration(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.THROWS_DECLARATION_ENABLED, true));
 	} else {
 	    settings.setSetUp(page.getView().getBtnSetup().getSelection());
 	    settings.setSetUpBeforeClass(page.getView().getBtnSetupbeforeclass()
@@ -331,13 +332,13 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    settings.setThrowsDeclaration(page.getView().getBtnThrowsDeclaration().getSelection());
 
 	    // save selections as defaults for next execution
-	    JUTPreferences.setPreferenceBoolean("SetupSelection", settings.isSetUp());
-	    JUTPreferences.setPreferenceBoolean("SetupbeforeclassSelection", settings.isSetUpBeforeClass());
-	    JUTPreferences.setPreferenceBoolean("TeardownSelection", settings.isTearDown());
-	    JUTPreferences.setPreferenceBoolean("TeardownafterclassSelection", settings.isTearDownAfterClass());
-	    JUTPreferences.setPreferenceBoolean("LoggerSelection", settings.isLogger());
-	    JUTPreferences.setPreferenceBoolean("TestUtilsSelection", settings.isTestUtils());
-	    JUTPreferences.setPreferenceBoolean("ThrowsDeclaration", settings.isThrowsDeclaration());
+	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.BEFORE_METHOD_ENABLED, settings.isSetUp());
+	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.BEFORE_CLASS_METHOD_ENABLED, settings.isSetUpBeforeClass());
+	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.AFTER_METHOD_ENABLED, settings.isTearDown());
+	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.AFTER_CLASS_METHOD_ENABLED, settings.isTearDownAfterClass());
+	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.LOGGER_ENABLED, settings.isLogger());
+	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.TESTUTILS_ENABLED, settings.isTestUtils());
+	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.THROWS_DECLARATION_ENABLED, settings.isThrowsDeclaration());
 
 	    JUTPreferences.setShowSettingsBeforeGenerate(page.getView().getBtnShowThisDialog().getSelection());
 	}
