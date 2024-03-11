@@ -449,6 +449,65 @@ public class TestClassGeneratorTest {
     }
 
     @Test
+    public void testCreateTestMethodBody_withoutGherkinCommentsButEmptyLinesOnly() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	Method tmlMethod = new Method();
+	tmlMethod.setName("someMethod");
+	tmlMethod.setModifier("public");
+	Result methodResult = new Result();
+	methodResult.setName("actual");
+	methodResult.setType("String");
+	methodResult.setValue("testValue");
+	tmlMethod.setResult(methodResult);
+	tmlMethod.setStatic(false);
+	Param stringParam = new Param();
+	stringParam.setName("testString");
+	stringParam.setPrimitive(true);
+	stringParam.setType("String");
+	Param intParam = new Param();
+	intParam.setName("testInt");
+	intParam.setPrimitive(true);
+	intParam.setType("int");
+	tmlMethod.getParam().add(stringParam);
+	tmlMethod.getParam().add(intParam);
+	TestCase testCase = new TestCase();
+	testCase.setName("TestCase1");
+	testCase.setTestBase("TestBase");
+	Assertion assertion = new Assertion();
+	assertion.setBase("{result}");
+	assertion.setType(AssertionType.EQUALS);
+	assertion.setValue("\"testValueForAssertion\"");
+	testCase.getAssertion().add(assertion);
+	Precondition precondition = new Precondition();
+	precondition.setComment("TestComment");
+	testCase.getPreconditions().add(precondition);
+	ParamAssignment stringParamAssignment = new ParamAssignment();
+	stringParamAssignment.setParamType("String");
+	stringParamAssignment.setParamName("testString");
+	stringParamAssignment.setAssignment("\"testValue\"");
+	ParamAssignment intParamAssignment = new ParamAssignment();
+	intParamAssignment.setParamType("int");
+	intParamAssignment.setParamName("testInt");
+	intParamAssignment.setAssignment("123");
+	testCase.getParamAssignments().add(stringParamAssignment);
+	testCase.getParamAssignments().add(intParamAssignment);
+	tmlMethod.getTestCase().add(testCase);
+
+	JUTPreferences.setGherkinStyleEnabled(false);
+	// when
+	String actual = underTest.createTestMethodBody(type, tmlMethod, "SomeClass");
+	// then
+	assertEquals("String testString = \"testValue\";\n"
+		+ "int testInt = 123;\n"
+		+ "\n"
+		+ "String actual=underTest.someMethod(testString, testInt);\n"
+		+ "\n"
+		+ "assertThat(actual).isEqualTo(\"testValueForAssertion\");",
+		actual);
+    }
+
+    @Test
     public void testCreateMvcTestMethodBody() throws Exception {
 	// given
 	IType type = Mockito.mock(IType.class);
@@ -525,6 +584,87 @@ public class TestClassGeneratorTest {
 	String actual = underTest.createMvcTestMethodBody(tmlMethod, "get", "/rest/v1/update/{objectId}");
 	// then
 	assertThat(actual).isEqualTo(TestUtils.readTestFile("generated/Method_mvc.txt"));
+    }
+
+    @Test
+    public void testCreateMvcTestMethodBody_withoutGherkinCommentsButEmptyLinesOnly() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	Method tmlMethod = new Method();
+	tmlMethod.setName("someMethod");
+	tmlMethod.setModifier("public");
+	Result methodResult = new Result();
+	methodResult.setName("actual");
+	methodResult.setType("TestBean");
+	tmlMethod.setResult(methodResult);
+	tmlMethod.setStatic(false);
+
+	Param intParam = new Param(); // RequestParam
+	intParam.setName("objectId");
+	intParam.setPrimitive(true);
+	intParam.setType("int");
+
+	Param nameParam = new Param(); // PathVariable
+	nameParam.setName("newName");
+	nameParam.setPrimitive(true);
+	nameParam.setType("String");
+	nameParam.getAnnotations().add(createAnnotation("PathVariable"));
+
+	Param headerParam = new Param(); // RequestHeader
+	headerParam.setName("trackingId");
+	headerParam.setPrimitive(true);
+	headerParam.setType("String");
+	headerParam.getAnnotations().add(createAnnotation("RequestHeader"));
+
+	Param beanParam = new Param(); // RequestBody
+	beanParam.setName("data");
+	beanParam.setPrimitive(false);
+	beanParam.setType("TestBean");
+	beanParam.getAnnotations().add(createAnnotation("RequestBody"));
+
+	tmlMethod.getParam().add(intParam);
+	tmlMethod.getParam().add(nameParam);
+	tmlMethod.getParam().add(headerParam);
+	tmlMethod.getParam().add(beanParam);
+	TestCase testCase = new TestCase();
+	testCase.setName("TestCase1");
+	testCase.setTestBase("TestBase");
+	Assertion assertion = new Assertion();
+	assertion.setBase("TestUtils.objectToJson({result})");
+	assertion.setType(AssertionType.EQUALS);
+	assertion.setValue("TestUtils.readTestFile(\"TestBean_someMethod.json\")");
+	testCase.getAssertion().add(assertion);
+	Precondition precondition = new Precondition();
+	precondition.setComment("TestComment");
+	testCase.getPreconditions().add(precondition);
+
+	ParamAssignment intParamAssignment = new ParamAssignment();
+	intParamAssignment.setParamType("int");
+	intParamAssignment.setParamName("objectId");
+	intParamAssignment.setAssignment("123");
+	ParamAssignment nameParamAssignment = new ParamAssignment();
+	nameParamAssignment.setParamType("String");
+	nameParamAssignment.setParamName("newName");
+	nameParamAssignment.setAssignment("\"TestName\"");
+	ParamAssignment headerParamAssignment = new ParamAssignment();
+	headerParamAssignment.setParamType("String");
+	headerParamAssignment.setParamName("trackingId");
+	headerParamAssignment.setAssignment("\"TestTrackingId\"");
+	ParamAssignment beanParamAssignment = new ParamAssignment();
+	beanParamAssignment.setParamType("TestBean");
+	beanParamAssignment.setParamName("data");
+	beanParamAssignment.setAssignment("TestValueFactory.fillField(new TestBean())");
+	testCase.getParamAssignments().add(intParamAssignment);
+	testCase.getParamAssignments().add(nameParamAssignment);
+	testCase.getParamAssignments().add(headerParamAssignment);
+	testCase.getParamAssignments().add(beanParamAssignment);
+	tmlMethod.getTestCase().add(testCase);
+
+	JUTPreferences.setGherkinStyleEnabled(false);
+	// when
+	String actual = underTest.createMvcTestMethodBody(tmlMethod, "get", "/rest/v1/update/{objectId}");
+	// then
+	TestUtils.assertTestFileEquals("generated/Method_mvc_noGherkin.txt", actual);
     }
 
     @Test

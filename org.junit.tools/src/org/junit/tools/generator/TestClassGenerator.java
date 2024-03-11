@@ -544,8 +544,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	// result
 	if (isGherkinStyle()) {
-	    sbTestMethodBody.append("// when").append(RETURN);
+	    sbTestMethodBody.append("// when");
 	}
+	sbTestMethodBody.append(RETURN); // or just an empty line
 
 	if (resultVariableName.length() > 0) {
 	    sbTestMethodBody.append(resultType).append(" ").append(resultVariableName).append(" = ");
@@ -635,8 +636,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	createParamAssignments(paramAssignments, sbTestMethodBody);
 
 	if (isGherkinStyle()) {
-	    sbTestMethodBody.append("// when").append(RETURN);
+	    sbTestMethodBody.append("// when");
 	}
+	sbTestMethodBody.append(RETURN); // or just an empty line
 
 	if (resultVariableName.length() > 0) {
 	    sbTestMethodBody.append(resultType).append(" ").append(resultVariableName).append("=");
@@ -743,8 +745,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     protected void createAssertionsMethodBody(StringBuilder sbTestMethodBody, String resultVariableName,
 	    String resultType, String testBaseVariableName, TestCase tmlTestCase) {
 
+	sbTestMethodBody.append(RETURN);
 	if (isGherkinStyle()) {
-	    sbTestMethodBody.append(RETURN).append("// then");
+	    sbTestMethodBody.append("// then");
 	}
 	if (tmlTestCase.getAssertion().isEmpty()) {
 	    sbTestMethodBody.append(RETURN).append("// TODO check for expected side effect (i.e. service call, changed parameter or exception thrown)")

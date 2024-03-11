@@ -1,0 +1,15 @@
+int objectId = 123;
+String newName = "TestName";
+String trackingId = "TestTrackingId";
+TestBean data = TestValueFactory.fillField(new TestBean());
+
+String actual = mockMvc.perform(get("/rest/v1/update/"+objectId)
+.param("newName", newName)
+.header("trackingId", trackingId)
+.content(TestUtils.objectToJson(data))
+.accept("application/json"))
+.andExpect(status().isOk())
+.andReturn()
+.getResponse().getContentAsString();
+
+assertThat(actual).isEqualTo(TestUtils.readTestFile("TestBean_someMethod.json"));
