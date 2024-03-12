@@ -126,6 +126,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
     protected void handleToggleOther() {
 	toggleButton(getPage().getView().getBtnLogger());
 	toggleButton(getPage().getView().getBtnTestUtils());
+	toggleButton(getPage().getView().getBtnThrowsDeclaration());
     }
 
     /**
@@ -261,7 +262,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	page.getView().getBtnTestUtils().setSelection(settings.isTestUtils());
 	page.getView().getBtnThrowsDeclaration().setSelection(settings.isThrowsDeclaration());
 
-	page.getView().getBtnShowThisDialog().setSelection(true);
+	page.getView().getBtnShowThisDialog().setSelection(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.SHOW_SETTINGS_BEFORE_GENERATE, true));
 
     }
 
@@ -310,7 +311,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	}
 
 	// standard methods
-	if (page.getView() == null) {
+	if (page.getView() == null) { // if the dialog was not shown, then take values from the preference store
 	    settings.setSetUp(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.BEFORE_METHOD_ENABLED, false));
 	    settings.setSetUpBeforeClass(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.BEFORE_CLASS_METHOD_ENABLED, false));
 	    settings.setTearDown(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.AFTER_METHOD_ENABLED, false));
@@ -318,7 +319,8 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    settings.setLogger(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.LOGGER_ENABLED, false));
 	    settings.setTestUtils(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.TESTUTILS_ENABLED, true));
 	    settings.setThrowsDeclaration(JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.THROWS_DECLARATION_ENABLED, true));
-	} else {
+	} else { // if it was shown, then take current values and save them to the preference
+		 // store as well
 	    settings.setSetUp(page.getView().getBtnSetup().getSelection());
 	    settings.setSetUpBeforeClass(page.getView().getBtnSetupbeforeclass()
 		    .getSelection());

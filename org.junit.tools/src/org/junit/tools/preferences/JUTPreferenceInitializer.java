@@ -49,7 +49,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 
 	// default values
 	store.setDefault(DEFAULT_VALUE_MAPPING, "String=\"Test${Name}\";boolean=true;Boolean=true;byte=63;Byte=63;char='c';Chararcter='c';"
-		+ "double=12.34;Double=12.34;float=15.79;Float=15.79;int=123;Integer=123;");
+		+ "double=12.34;Double=12.34;float=15.79;Float=15.79;int=123;Integer=123;long=123456L;Long=123456L;");
 	store.setDefault(DEFAULT_VALUE_GENERIC_MAPPING, "List<T>=Arrays.asList(${T});"
 		+ "Optional<T>=Optional.of(${T});"
 		+ "ResponseEntity<T>=ResponseEntity.ok(${T});"
