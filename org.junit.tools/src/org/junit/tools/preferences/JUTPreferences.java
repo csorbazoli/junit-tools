@@ -102,6 +102,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setTestClassAnnotations(String[] testClassAnnotations) {
 	JUTPreferences.testClassAnnotations = testClassAnnotations;
+	getPreferenceStore().setValue(TEST_CLASS_ANNOTATIONS, convertFromArray(testClassAnnotations));
     }
 
     public static String[] getTestClassAnnotations() {
@@ -114,19 +115,23 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     protected static void setStaticBindings(String[] staticBindings) {
 	JUTPreferences.staticBindings = staticBindings;
 	initStaticBindingsMaps();
+	getPreferenceStore().setValue(STATIC_BINDINGS, convertFromArray(staticBindings));
     }
 
     public static void setRelevantSpringAnnotations(String[] values) {
 	JUTPreferences.springAnnotations = values;
+	getPreferenceStore().setValue(SPRING_ANNOTATIONS, convertFromArray(values));
     }
 
     protected static void setTestMethodFilterName(String[] testMethodFilterName) {
 	JUTPreferences.testMethodFilterName = testMethodFilterName;
+	getPreferenceStore().setValue(TEST_METHOD_FILTER_NAME, convertFromArray(testMethodFilterName));
     }
 
     protected static void setTestMethodFilterModifier(
 	    String[] testmethodFilterModifier) {
 	JUTPreferences.testMethodFilterModifier = testmethodFilterModifier;
+	getPreferenceStore().setValue(TEST_METHOD_FILTER_MODIFIER, convertFromArray(testmethodFilterModifier));
     }
 
     public static String[] getTestMethodFilterName() {
@@ -216,6 +221,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	if (defaultValueMapper != null) {
 	    initDefaultValueMapper();
 	}
+	getPreferenceStore().setValue(DEFAULT_VALUE_MAPPING, convertFromMap(value));
     }
 
     private static void initDefaultValueMapping() {
@@ -227,6 +233,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	if (defaultValueMapper != null) {
 	    initDefaultValueMapper();
 	}
+	getPreferenceStore().setValue(DEFAULT_VALUE_GENERIC_MAPPING, convertFromMap(value));
     }
 
     private static void initDefaultValueGenericMapping() {
@@ -245,6 +252,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	if (defaultValueMapper != null) {
 	    initDefaultValueMapper();
 	}
+	getPreferenceStore().setValue(DEFAULT_VALUE_JAVA_BEANS, value);
     }
 
     public static String getDefaultValueFallback() {
@@ -259,6 +267,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	if (defaultValueMapper != null) {
 	    initDefaultValueMapper();
 	}
+	getPreferenceStore().setValue(DEFAULT_VALUE_FALLBACK, value);
     }
 
     public static Map<String, String> getStaticBindingsMapBaseProject() {
@@ -380,32 +389,39 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return junitVersion;
     }
 
-    public static void setGherkinStyleEnabled(Boolean gherkinStyleEnabled) {
-	JUTPreferences.gherkinStyleEnabled = gherkinStyleEnabled;
+    public static void setGherkinStyleEnabled(Boolean enabled) {
+	JUTPreferences.gherkinStyleEnabled = enabled;
+	setPreferenceBoolean(GHERKIN_STYLE_ENABLED, enabled);
     }
 
     public static void setAssertJEnabled(Boolean enabled) {
 	JUTPreferences.assertjEnabled = enabled;
+	setPreferenceBoolean(ASSERTJ_ENABLED, enabled);
     }
 
     public static void setRepeatingTestMethodsEnabled(Boolean enabled) {
 	JUTPreferences.repeatingTestMethodsEnabled = enabled;
+	setPreferenceBoolean(REPEATING_TEST_METHODS_ENABLED, enabled);
     }
 
     public static void setShowSettingsBeforeGenerate(Boolean enabled) {
 	JUTPreferences.showSettingsBeforeGenerate = enabled;
+	setPreferenceBoolean(SHOW_SETTINGS_BEFORE_GENERATE, enabled);
     }
 
     public static void setMockFramework(String mockFramework) {
 	JUTPreferences.mockFramework = mockFramework;
+	getPreferenceStore().setValue(MOCK_FRAMEWORK, mockFramework);
     }
 
     public static void setJUnitVersion(int junitVersion) {
 	JUTPreferences.junitVersion = junitVersion;
+	getPreferenceStore().setValue(JUNIT_VERSION, junitVersion);
     }
 
     public static void setJUnitVersion(String junitVersion) {
 	JUTPreferences.junitVersion = Integer.parseInt(junitVersion);
+	getPreferenceStore().setValue(JUNIT_VERSION, junitVersion);
     }
 
     /**
