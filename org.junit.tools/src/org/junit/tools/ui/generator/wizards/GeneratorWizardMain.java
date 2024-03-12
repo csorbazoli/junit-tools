@@ -341,7 +341,7 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
 	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.TESTUTILS_ENABLED, settings.isTestUtils());
 	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.THROWS_DECLARATION_ENABLED, settings.isThrowsDeclaration());
 
-	    JUTPreferences.setShowSettingsBeforeGenerate(page.getView().getBtnShowThisDialog().getSelection());
+	    JUTPreferences.setPreferenceBoolean(IJUTPreferenceConstants.SHOW_SETTINGS_BEFORE_GENERATE, page.getView().getBtnShowThisDialog().getSelection());
 	}
     }
 

@@ -422,8 +422,8 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	// TODO validate syntax!
 	saveSimpleTypeSettings(listSimpleTypes.getItems());
 	saveGenericTypeSettings(listGenericTypes.getItems());
-	JUTPreferences.setDefaultValueForJavaBeans(defaultValueForJavaBeans.getText());
-	JUTPreferences.setDefaultValueFallback(defaultValueFallback.getText());
+	JUTPreferences.setPreference(DEFAULT_VALUE_JAVA_BEANS, defaultValueForJavaBeans.getText());
+	JUTPreferences.setPreference(DEFAULT_VALUE_FALLBACK, defaultValueFallback.getText());
 	return super.performOk();
     }
 
