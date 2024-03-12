@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -475,84 +476,49 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     }
 
     public static void initialize() {
+	Map<String, Consumer<Boolean>> booleanPropertyHandlers = new HashMap<>();
+	booleanPropertyHandlers.put(ASSERTJ_ENABLED, JUTPreferences::setAssertJEnabled);
+	booleanPropertyHandlers.put(GHERKIN_STYLE_ENABLED, JUTPreferences::setGherkinStyleEnabled);
+	booleanPropertyHandlers.put(REPEATING_TEST_METHODS_ENABLED, JUTPreferences::setRepeatingTestMethodsEnabled);
+	booleanPropertyHandlers.put(SHOW_SETTINGS_BEFORE_GENERATE, JUTPreferences::setShowSettingsBeforeGenerate);
+
+	Map<String, Consumer<String>> stringPropertyHandlers = new HashMap<>();
+	stringPropertyHandlers.put(DEFAULT_VALUE_JAVA_BEANS, JUTPreferences::setDefaultValueForJavaBeans);
+	stringPropertyHandlers.put(DEFAULT_VALUE_FALLBACK, JUTPreferences::setDefaultValueFallback);
+	stringPropertyHandlers.put(JUNIT_VERSION, JUTPreferences::setJUnitVersion);
+	stringPropertyHandlers.put(MOCK_FRAMEWORK, JUTPreferences::setMockFramework);
+	stringPropertyHandlers.put(SPRING_TEST_CLASS_POSTFIX, JUTPreferences::setSpringTestClassPostfix);
+	stringPropertyHandlers.put(TEST_SOURCE_FOLDER_NAME, JUTPreferences::setTestSourceFolderName);
+	stringPropertyHandlers.put(TEST_METHOD_PREFIX, JUTPreferences::setTestMethodPrefix);
+	stringPropertyHandlers.put(TEST_METHOD_POSTFIX, JUTPreferences::setTestMethodPostfix);
+	stringPropertyHandlers.put(TEST_MVC_METHOD_POSTFIX, JUTPreferences::setTestMvcMethodPostfix);
+	stringPropertyHandlers.put(TEST_CLASS_PREFIX, JUTPreferences::setTestClassPrefix);
+	stringPropertyHandlers.put(TEST_CLASS_POSTFIX, JUTPreferences::setTestClassPostfix);
+	stringPropertyHandlers.put(TEST_CLASS_SUPER_TYPE, JUTPreferences::setTestClassSuperType);
+
+	Map<String, Consumer<String[]>> arrayPropertyHandlers = new HashMap<>();
+	arrayPropertyHandlers.put(SPRING_ANNOTATIONS, JUTPreferences::setRelevantSpringAnnotations);
+	arrayPropertyHandlers.put(STATIC_BINDINGS, JUTPreferences::setStaticBindings);
+	arrayPropertyHandlers.put(TEST_CLASS_ANNOTATIONS, JUTPreferences::setTestClassAnnotations);
+	arrayPropertyHandlers.put(TEST_METHOD_FILTER_MODIFIER, JUTPreferences::setTestMethodFilterModifier);
+
+	Map<String, Consumer<Map<String, String>>> mapPropertyHandlers = new HashMap<>();
+	mapPropertyHandlers.put(DEFAULT_VALUE_GENERIC_MAPPING, JUTPreferences::setDefaultValuesGenericByType);
+	mapPropertyHandlers.put(DEFAULT_VALUE_MAPPING, JUTPreferences::setDefaultValuesByType);
+
 	getPreferenceStore().addPropertyChangeListener(
 		new IPropertyChangeListener() {
 
 		    @Override
 		    public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty() == TEST_SOURCE_FOLDER_NAME) {
-			    setTestSourceFolderName((String) event
-				    .getNewValue());
-			    return;
-			} else if (event.getProperty() == TEST_METHOD_PREFIX) {
-			    setTestMethodPrefix((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == TEST_METHOD_POSTFIX) {
-			    setTestMethodPostfix((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == TEST_MVC_METHOD_POSTFIX) {
-			    setTestMvcMethodPostfix((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == TEST_METHOD_FILTER_MODIFIER) {
-			    setTestMethodFilterModifier(convertToArray((String) event
-				    .getNewValue()));
-			    return;
-			} else if (event.getProperty() == TEST_CLASS_PREFIX) {
-			    setTestClassPrefix((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == TEST_CLASS_POSTFIX) {
-			    setTestClassPostfix((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == TEST_CLASS_SUPER_TYPE) {
-			    setTestClassSuperType((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == SPRING_TEST_CLASS_POSTFIX) {
-			    setSpringTestClassPostfix((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == JUNIT_VERSION) {
-			    setJUnitVersion((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == GHERKIN_STYLE_ENABLED) {
-			    setGherkinStyleEnabled((Boolean) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == ASSERTJ_ENABLED) {
-			    setAssertJEnabled((Boolean) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == REPEATING_TEST_METHODS_ENABLED) {
-			    setRepeatingTestMethodsEnabled((Boolean) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == SHOW_SETTINGS_BEFORE_GENERATE) {
-			    setShowSettingsBeforeGenerate((Boolean) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == MOCK_FRAMEWORK) {
-			    setMockFramework((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == TEST_CLASS_ANNOTATIONS) {
-			    setTestClassAnnotations(convertToArray((String) event
-				    .getNewValue()));
-			    return;
-			} else if (event.getProperty() == STATIC_BINDINGS) {
-			    setStaticBindings(convertToArray((String) event
-				    .getNewValue()));
-			    return;
-			} else if (event.getProperty() == SPRING_ANNOTATIONS) {
-			    setRelevantSpringAnnotations(convertToArray((String) event
-				    .getNewValue()));
-			    return;
-			} else if (event.getProperty() == DEFAULT_VALUE_MAPPING) {
-			    setDefaultValuesByType(convertToMap((String) event
-				    .getNewValue()));
-			    return;
-			} else if (event.getProperty() == DEFAULT_VALUE_GENERIC_MAPPING) {
-			    setDefaultValuesGenericByType(convertToMap((String) event
-				    .getNewValue()));
-			    return;
-			} else if (event.getProperty() == DEFAULT_VALUE_JAVA_BEANS) {
-			    setDefaultValueForJavaBeans((String) event.getNewValue());
-			    return;
-			} else if (event.getProperty() == DEFAULT_VALUE_FALLBACK) {
-			    setDefaultValueFallback((String) event.getNewValue());
-			    return;
+			if (stringPropertyHandlers.containsKey(event.getProperty())) {
+			    stringPropertyHandlers.get(event.getProperty()).accept((String) event.getNewValue());
+			} else if (booleanPropertyHandlers.containsKey(event.getProperty())) {
+			    booleanPropertyHandlers.get(event.getProperty()).accept((Boolean) event.getNewValue());
+			} else if (arrayPropertyHandlers.containsKey(event.getProperty())) {
+			    arrayPropertyHandlers.get(event.getProperty()).accept(convertToArray((String) event.getNewValue()));
+			} else if (mapPropertyHandlers.containsKey(event.getProperty())) {
+			    mapPropertyHandlers.get(event.getProperty()).accept(convertToMap((String) event.getNewValue()));
 			}
 		    }
 
