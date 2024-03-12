@@ -18,7 +18,6 @@ public class GeneratorMainView extends Composite {
 
     private final Button btnLogger;
     private final Text methodPrefix;
-    private final Button btnFailassertion;
     private final Button btnSetupbeforeclass;
     private final Button btnTeardown;
     private final Button btnTeardownafterclass;
@@ -183,10 +182,6 @@ public class GeneratorMainView extends Composite {
 	btnThrowsDeclaration = new Button(composite_7, SWT.CHECK);
 	btnThrowsDeclaration.setText(Messages.GeneratorWizardMainPage_ThrowsDeclaration);
 
-	btnFailassertion = new Button(composite_7, SWT.CHECK);
-	btnFailassertion
-		.setText(Messages.GeneratorWizardMainPage_fail_assertions);
-
 	btnToggleOther = new Button(composite_2, SWT.NONE);
 	btnToggleOther.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 		false, 1, 1));
@@ -219,10 +214,6 @@ public class GeneratorMainView extends Composite {
 
     public Text getMethodPrefix() {
 	return methodPrefix;
-    }
-
-    public Button getBtnFailassertion() {
-	return btnFailassertion;
     }
 
     public Button getBtnSetupbeforeclass() {

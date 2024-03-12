@@ -125,7 +125,6 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
      */
     protected void handleToggleOther() {
 	toggleButton(getPage().getView().getBtnLogger());
-	toggleButton(getPage().getView().getBtnFailassertion());
 	toggleButton(getPage().getView().getBtnTestUtils());
     }
 

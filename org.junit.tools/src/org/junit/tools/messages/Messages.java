@@ -52,8 +52,6 @@ public class Messages extends NLS {
 
     public static String GeneratorWizardMainPage_existing_methods;
 
-    public static String GeneratorWizardMainPage_fail_assertions;
-
     public static String GeneratorWizardMainPage_Filter;
 
     public static String GeneratorWizardMainPage_Generate;
