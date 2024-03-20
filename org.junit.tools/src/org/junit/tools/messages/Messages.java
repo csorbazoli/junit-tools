@@ -145,6 +145,16 @@ public class Messages extends NLS {
 
     public static String JUTPreferenceStaticBindingsPage_description;
 
+    public static String JUTPreferenceStandardMethodsPage_description;
+    public static String JUTPreferenceStandardMethodsPage_before_class_enabled;
+    public static String JUTPreferenceStandardMethodsPage_before_class_body;
+    public static String JUTPreferenceStandardMethodsPage_before_test_enabled;
+    public static String JUTPreferenceStandardMethodsPage_before_test_body;
+    public static String JUTPreferenceStandardMethodsPage_after_class_enabled;
+    public static String JUTPreferenceStandardMethodsPage_after_class_body;
+    public static String JUTPreferenceStandardMethodsPage_after_test_enabled;
+    public static String JUTPreferenceStandardMethodsPage_after_test_body;
+
     public static String JUTPreferenceMainPage_description_Main_settings;
     public static String JUTPreferenceMainPage_Test_class_prefix;
     public static String JUTPreferenceMainPage_Test_class_postfix;

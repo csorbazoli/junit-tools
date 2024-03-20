@@ -278,6 +278,12 @@
   	</page>
     <page
         category="org.junit.tools.ui.preferencepage"
+        class="org.junit.tools.ui.preferences.JUTPreferenceStandardMethodsPage"
+        id="org.junit.tools.ui.standardmethods"
+        name="Standard methods">
+  	</page>  	
+    <page
+        category="org.junit.tools.ui.preferencepage"
         class="org.junit.tools.ui.preferences.JUTPreferenceAnnotationsPage"
         id="org.junit.tools.ui.annotations"
         name="Annotations">
