@@ -33,15 +33,18 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum AssertionType {
 
-    EQUALS("isEqualTo"),
-    IS_TRUE("isTrue"),
-    IS_NOT_EMPTY("isNotEmpty"),
+    EQUALS("isEqualTo", "assertEquals"),
+    TESTFILEEQUALS("TestUtils.assertTestFileEquals", "TestUtils.assertTestFileEquals"),
+    IS_TRUE("isTrue", "assertTrue"),
+    IS_NOT_EMPTY("isNotEmpty", "assertFalse"),
     ;
 
     private final String method;
+    private final String legacyMethod;
 
-    AssertionType(String method) {
+    AssertionType(String method, String legacyMethod) {
 	this.method = method;
+	this.legacyMethod = legacyMethod;
     }
 
     public String value() {
@@ -50,6 +53,10 @@ public enum AssertionType {
 
     public String getMethod() {
 	return method;
+    }
+
+    public String getLegacyMethod() {
+	return legacyMethod;
     }
 
     public static AssertionType fromValue(String v) {

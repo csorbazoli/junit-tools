@@ -88,7 +88,11 @@ public class TestCasesGenerator {
 	    defaultAssertion.setValue("");
 	} else if (resultType.matches("^Optional<.*>$")) {
 	    defaultAssertion.setType(AssertionType.IS_NOT_EMPTY);
-	    defaultAssertion.setBase("{result}");
+	    if (JUTPreferences.isAssertjEnabled()) {
+		defaultAssertion.setBase("{result}");
+	    } else {
+		defaultAssertion.setBase("{result}.isEmpty()");
+	    }
 	    defaultAssertion.setValue("");
 	    createAssertionsForResultType(resultType.replaceFirst("^Optional<(.*)>$", "$1"), methodName, testClass).stream()
 		    .map(assertion -> {
@@ -97,27 +101,33 @@ public class TestCasesGenerator {
 		    })
 		    .forEach(ret::add);
 	} else if (resultType.matches("^ResponseEntity<.*>$")) {
-	    defaultAssertion.setType(AssertionType.EQUALS);
+	    defaultAssertion.setType(AssertionType.TESTFILEEQUALS);
+	    // TODO option to use full path instead of just the class name as folder
 	    defaultAssertion.setBase("TestUtils.objectToJson({result}.getBody())");
-	    defaultAssertion.setValue("TestUtils.readTestFile(\"" + testClass + "/" + methodName + ".json\")");
+	    defaultAssertion.setValue("\"" + testClass + "/" + methodName + ".json\"");
 	} else if (isCollection(resultType)) {
 	    defaultAssertion.setType(AssertionType.IS_NOT_EMPTY);
-	    defaultAssertion.setBase("{result}");
+	    if (JUTPreferences.isAssertjEnabled()) {
+		defaultAssertion.setBase("{result}");
+	    } else {
+		defaultAssertion.setBase("{result}.isEmpty()");
+	    }
 	    defaultAssertion.setValue("");
 
 	    Assertion extraAssertion = new Assertion();
-	    extraAssertion.setType(AssertionType.EQUALS);
+	    extraAssertion.setType(AssertionType.TESTFILEEQUALS);
 	    extraAssertion.setBaseType(resultType);
 	    extraAssertion.setBase("TestUtils.objectToJson({result})");
-	    extraAssertion.setValue("TestUtils.readTestFile(\"" + testClass + "/" + methodName + ".json\")");
+	    extraAssertion.setValue("\"" + testClass + "/" + methodName + ".json\"");
 	    ret.add(extraAssertion);
 	} else {
-	    defaultAssertion.setType(AssertionType.EQUALS);
 	    String expected = JUTPreferences.getDefaultValuesByType().get(resultType);
 	    if (expected == null) {
+		defaultAssertion.setType(AssertionType.TESTFILEEQUALS);
 		defaultAssertion.setBase("TestUtils.objectToJson({result})");
-		expected = "TestUtils.readTestFile(\"" + testClass + "/" + methodName + ".json\")";
+		expected = "\"" + testClass + "/" + methodName + ".json\"";
 	    } else {
+		defaultAssertion.setType(AssertionType.EQUALS);
 		defaultAssertion.setBase("{result}");
 		expected = replaceValuePlaceholders(expected, "Expected", resultType);
 	    }

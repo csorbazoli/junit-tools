@@ -377,10 +377,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    importAbove = imports[0];
 	}
 	// use option for assertj Assertions vs Assert.*
-	if (!isAssertjEnabled()) {
-	    compilationUnit.createImport("org.junit.Assert.*", importAbove, Flags.AccStatic, null);
-	} else {
+	if (isAssertjEnabled()) {
 	    compilationUnit.createImport("org.assertj.core.api.Assertions.assertThat", importAbove, Flags.AccStatic, null);
+	} else {
+	    compilationUnit.createImport("org.junit.Assert.*", importAbove, Flags.AccStatic, null);
 	}
 	// compilationUnit.createImport("org.assertj.core.api.Assertions.assertThrows",
 	// importAbove, Flags.AccStatic, null);
@@ -754,11 +754,14 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    sbTestMethodBody.append("// then");
 	}
 	if (tmlTestCase.getAssertion().isEmpty()) {
-	    sbTestMethodBody.append(RETURN).append("// TODO check for expected side effect (i.e. service call, changed parameter or exception thrown)")
-		    .append(RETURN).append(GeneratorUtils.isUsingEasyMock() ? "// verify(mock);" : "// verify(mock).methodcall();")
+	    sbTestMethodBody.append(RETURN)
+		    .append("// TODO check for expected side effect (i.e. service call, changed parameter or exception thrown)")
 		    .append(RETURN)
-		    .append("// assertThat(TestUtils.objectToJson(param)).isEqualTo(TestUtils.readTestFile(\"someMethod/ParamType_updated.json\"));")
-		    .append(RETURN).append("// assertThrows(SomeException.class, () -> underTest.someMethod());");
+		    .append(GeneratorUtils.isUsingEasyMock() ? "// verify(mock);" : "// verify(mock).methodcall();")
+		    .append(RETURN)
+		    .append("// TestUtils.assertTestFileEquals(\"someMethod/ParamType_updated.json\", TestUtils.objectToJson(param));")
+		    .append(RETURN)
+		    .append("// assertThrows(SomeException.class, () -> underTest.someMethod());");
 	    return;
 	}
 	for (Assertion tmlAssertion : tmlTestCase.getAssertion()) {
@@ -776,18 +779,38 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	    // assertion-type
 	    AssertionType type = tmlAssertion.getType();
-	    String assertionType = type.getMethod();
 
 	    // Assertion
-	    sbTestMethodBody.append(RETURN + "assertThat(" + base + ").");
-	    if (tmlAssertion.getMessage() != null && tmlAssertion.getMessage().length() > 0) {
-		String message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
-		sbTestMethodBody.append("withFailMessage(").append(QUOTES).append(message).append(QUOTES).append(").");
-	    }
-	    sbTestMethodBody.append(assertionType).append("(")
-		    .append(tmlAssertion.getValue());
+	    if (AssertionType.TESTFILEEQUALS.equals(type)) {
+		sbTestMethodBody.append(RETURN + type.getMethod() + "(")
+			.append(tmlAssertion.getValue())
+			.append(", ")
+			.append(base);
 
-	    sbTestMethodBody.append(");");
+		sbTestMethodBody.append(");");
+	    } else if (JUTPreferences.isAssertjEnabled()) {
+		String assertionType = type.getMethod();
+		sbTestMethodBody.append(RETURN + "assertThat(" + base + ").");
+		if (tmlAssertion.getMessage() != null && tmlAssertion.getMessage().length() > 0) {
+		    String message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
+		    sbTestMethodBody.append("withFailMessage(").append(QUOTES).append(message).append(QUOTES).append(").");
+		}
+		sbTestMethodBody.append(assertionType).append("(")
+			.append(tmlAssertion.getValue());
+
+		sbTestMethodBody.append(");");
+	    } else {
+		sbTestMethodBody.append(RETURN + type.getLegacyMethod() + "(");
+		if (tmlAssertion.getMessage() != null && tmlAssertion.getMessage().length() > 0) {
+		    String message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
+		    sbTestMethodBody.append(QUOTES).append(message).append(QUOTES).append(", ");
+		}
+		sbTestMethodBody.append(tmlAssertion.getValue())
+			.append(", ")
+			.append(base);
+
+		sbTestMethodBody.append(");");
+	    }
 	}
 
     }

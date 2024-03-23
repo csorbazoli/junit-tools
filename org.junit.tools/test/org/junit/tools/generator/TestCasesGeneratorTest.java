@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.IMethod;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.tools.TestHelper;
 import org.junit.tools.generator.model.GeneratorModel;
@@ -16,11 +17,19 @@ import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.Result;
 import org.junit.tools.generator.model.tml.TestCase;
+import org.junit.tools.preferences.JUTPreferences;
 import org.mockito.Mockito;
 
 public class TestCasesGeneratorTest {
 
     private TestCasesGenerator underTest = new TestCasesGenerator();
+
+    @Before
+    public void setupTest() {
+	JUTPreferences.setJUnitVersion(5);
+	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
+	JUTPreferences.setAssertJEnabled(true);
+    }
 
     @Test
     public void testGenerateTestCases() throws Exception {
@@ -82,7 +91,7 @@ public class TestCasesGeneratorTest {
 	// then
 	assertThat(method.getTestCase()).hasSize(1);
 	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("TestBean TestUtils.objectToJson({result})#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")",
+	assertEquals("TestBean TestUtils.objectToJson({result})#TESTFILEEQUALS#\"SomeClass/someMethod.json\"",
 		firstTestCase.getAssertion().stream()
 			.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 			.collect(Collectors.joining("\n")));
@@ -179,7 +188,40 @@ public class TestCasesGeneratorTest {
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 		.collect(Collectors.joining("\n")))
 		.isEqualTo("Optional<TestObject> {result}#IS_NOT_EMPTY#\n"
-			+ "TestObject TestUtils.objectToJson({result}.get())#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")");
+			+ "TestObject TestUtils.objectToJson({result}.get())#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
+    }
+
+    @Test
+    public void testGenerateTestCases_shouldAssertIsNotEmptyForOptionalResultType_noAssertJ() throws Exception {
+	GeneratorModel model = createModel();
+	IMethod methodKey = Mockito.mock(IMethod.class);
+	model.setMethodsToCreate(Arrays.asList(methodKey));
+	HashMap<IMethod, Method> methodMap = new HashMap<>();
+	Method method = new Method();
+	method.setModifier("public");
+	method.setStatic(false);
+	Result result = new Result();
+	result.setType("Optional<TestObject>");
+	method.setResult(result);
+	method.setName("someMethod");
+	Param param = new Param();
+	param.setName("someParam");
+	method.getParam().add(param);
+	param.setType("String");
+	methodMap.put(methodKey, method);
+	model.setMethodMap(methodMap);
+	TestHelper.initDefaultValueMapping();
+	JUTPreferences.setAssertJEnabled(false);
+	// when
+	underTest.generateTestCases(model);
+	// then
+	assertThat(method.getTestCase()).hasSize(1);
+	TestCase firstTestCase = method.getTestCase().get(0);
+	assertThat(firstTestCase.getAssertion().stream()
+		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+		.collect(Collectors.joining("\n")))
+		.isEqualTo("Optional<TestObject> {result}.isEmpty()#IS_NOT_EMPTY#\n"
+			+ "TestObject TestUtils.objectToJson({result}.get())#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
     }
 
     @Test
@@ -211,7 +253,7 @@ public class TestCasesGeneratorTest {
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 		.collect(Collectors.joining("\n")))
 		.isEqualTo(
-			"ResponseEntity<TestObject> TestUtils.objectToJson({result}.getBody())#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")");
+			"ResponseEntity<TestObject> TestUtils.objectToJson({result}.getBody())#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
     }
 
     @Test
@@ -244,7 +286,42 @@ public class TestCasesGeneratorTest {
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 		.collect(Collectors.joining("\n")))
 		.isEqualTo("Collection<TestObject> {result}#IS_NOT_EMPTY#\n"
-			+ "Collection<TestObject> TestUtils.objectToJson({result})#EQUALS#TestUtils.readTestFile(\"SomeClass/someMethod.json\")");
+			+ "Collection<TestObject> TestUtils.objectToJson({result})#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
+    }
+
+    @Test
+    public void testGenerateTestCases_shouldAssertIsNotEmptyForCollectionResultType_noAssertJ() throws Exception {
+	// given
+	GeneratorModel model = createModel();
+	IMethod methodKey = Mockito.mock(IMethod.class);
+	model.setMethodsToCreate(Arrays.asList(methodKey));
+	HashMap<IMethod, Method> methodMap = new HashMap<>();
+	Method method = new Method();
+	method.setModifier("public");
+	method.setStatic(false);
+	Result result = new Result();
+	result.setType("Collection<TestObject>");
+	method.setResult(result);
+	method.setName("someMethod");
+	Param param = new Param();
+	param.setName("someParam");
+	method.getParam().add(param);
+	param.setType("String");
+	methodMap.put(methodKey, method);
+	model.setMethodMap(methodMap);
+	TestHelper.initDefaultValueMapping();
+
+	JUTPreferences.setAssertJEnabled(false);
+	// when
+	underTest.generateTestCases(model);
+	// then
+	assertThat(method.getTestCase()).hasSize(1);
+	TestCase firstTestCase = method.getTestCase().get(0);
+	assertThat(firstTestCase.getAssertion().stream()
+		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+		.collect(Collectors.joining("\n")))
+		.isEqualTo("Collection<TestObject> {result}.isEmpty()#IS_NOT_EMPTY#\n"
+			+ "Collection<TestObject> TestUtils.objectToJson({result})#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
     }
 
     // helper methods

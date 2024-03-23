@@ -53,6 +53,7 @@ public class TestClassGeneratorTest {
 	JUTPreferences.setJUnitVersion(5);
 	JUTPreferences.setGherkinStyleEnabled(true);
 	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
+	JUTPreferences.setAssertJEnabled(true);
     }
 
     @Test
@@ -96,6 +97,31 @@ public class TestClassGeneratorTest {
 	assertEquals("\n"
 		+ "// then\n" +
 		"assertThat(actual).withFailMessage(\"testedMethod: test message\").isEqualTo(\"test value\");",
+		sbTestMethodBody.toString());
+	// + "Assert.assertThat(\"testedMethod: test message\", baseVar.testBase());"
+    }
+
+    @Test
+    public void testCreateAssertionsMethodBody_simpleExpectedValue_noAssertJ() {
+	// given
+	StringBuilder sbTestMethodBody = new StringBuilder();
+	TestCase testCase = new TestCase();
+	testCase.setName("testedMethod");
+	testCase.setTestBase("testBaseProperty");
+	Assertion assertion = new Assertion();
+	assertion.setBase("{result}");
+	assertion.setBaseType("String");
+	assertion.setMessage("test message");
+	assertion.setType(AssertionType.EQUALS);
+	assertion.setValue("\"test value\"");
+	testCase.getAssertion().add(assertion);
+	JUTPreferences.setAssertJEnabled(false);
+	// when
+	underTest.createAssertionsMethodBody(sbTestMethodBody, "actual", "String", "actual", testCase);
+	// then
+	assertEquals("\n"
+		+ "// then\n" +
+		"assertEquals(\"testedMethod: test message\", \"test value\", actual);",
 		sbTestMethodBody.toString());
 	// + "Assert.assertThat(\"testedMethod: test message\", baseVar.testBase());"
     }
@@ -154,6 +180,29 @@ public class TestClassGeneratorTest {
 	assertEquals("\n"
 		+ "// then\n" +
 		"assertThat(TestUtils.objectToJson(actual)).withFailMessage(\"testedMethod: test message\").isEqualTo(TestUtils.readTestFile(\"testedMethod/TestBean.json\"));",
+		sbTestMethodBody.toString());
+    }
+
+    @Test
+    public void testCreateAssertionsMethodBody_complexExpectedValue_assertTestFileEquals() {
+	// given
+	StringBuilder sbTestMethodBody = new StringBuilder();
+	TestCase testCase = new TestCase();
+	testCase.setName("testedMethod");
+	testCase.setTestBase("testBaseProperty");
+	Assertion assertion = new Assertion();
+	assertion.setBase("TestUtils.objectToJson({result})");
+	assertion.setBaseType("TestBean");
+	assertion.setMessage("test message");
+	assertion.setType(AssertionType.TESTFILEEQUALS);
+	assertion.setValue("\"testedMethod/TestBean.json\"");
+	testCase.getAssertion().add(assertion);
+	// when
+	underTest.createAssertionsMethodBody(sbTestMethodBody, "actual", "TestBean", "actual", testCase);
+	// then
+	assertEquals("\n"
+		+ "// then\n" +
+		"TestUtils.assertTestFileEquals(\"testedMethod/TestBean.json\", TestUtils.objectToJson(actual));",
 		sbTestMethodBody.toString());
     }
 
