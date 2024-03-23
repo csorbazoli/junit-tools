@@ -811,9 +811,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		    String message = tmlTestCase.getName() + ": " + tmlAssertion.getMessage();
 		    sbTestMethodBody.append(QUOTES).append(message).append(QUOTES).append(", ");
 		}
-		sbTestMethodBody.append(tmlAssertion.getValue())
-			.append(", ")
-			.append(base);
+		if (tmlAssertion.getValue() != null && !tmlAssertion.getValue().isEmpty()) {
+		    sbTestMethodBody.append(tmlAssertion.getValue())
+			    .append(", ");
+		}
+		sbTestMethodBody.append(base);
 
 		sbTestMethodBody.append(");");
 	    }
