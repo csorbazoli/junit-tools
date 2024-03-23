@@ -37,7 +37,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static Boolean repeatingTestMethodsEnabled = true;
     private static Boolean showSettingsBeforeGenerate = null;
     private static String mockFramework = null;
-    private static int junitVersion = 5;
+    private static int junitVersion = 0;
 
     // from annotations-page
     private static String[] testClassAnnotations = null;
@@ -379,10 +379,16 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     }
 
     public static String getMockFramework() {
+	if (mockFramework == null) {
+	    mockFramework = getPreference(MOCK_FRAMEWORK);
+	}
 	return mockFramework;
     }
 
     public static int getJUnitVersion() {
+	if (junitVersion == 0) {
+	    junitVersion = getPreferenceStore().getInt(JUNIT_VERSION);
+	}
 	return junitVersion;
     }
 

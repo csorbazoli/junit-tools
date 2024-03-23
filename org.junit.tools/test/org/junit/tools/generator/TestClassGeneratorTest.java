@@ -52,6 +52,7 @@ public class TestClassGeneratorTest {
     public void setupTest() {
 	JUTPreferences.setJUnitVersion(5);
 	JUTPreferences.setGherkinStyleEnabled(true);
+	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
     }
 
     @Test
