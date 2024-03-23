@@ -92,7 +92,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	monitor.beginTask("", 4 + methodSize);
 
 	// create or update test-class-frame
-	testClassType = createTestClassFrame(testClass, tmlTest, testClassName, baseClassName);
+	testClassType = testClass.getType(testClassName);
+	boolean newTest = createTestClassFrame(testClass, tmlTest, testClassName, baseClassName);
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -100,7 +101,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create standard-imports
-	createStandardImports(testClass, tmlTest);
+	if (newTest) {
+	    createStandardImports(testClass, tmlTest);
+	}
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -108,8 +111,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create standard-class-fields
-	createStandardClassFields(testClassType, baseClassName, tmlTest);
-	createMocksForDependencies(testClassType, baseClass, tmlTest.isSpring());
+	if (newTest) {
+	    createStandardClassFields(testClassType, baseClassName, tmlTest);
+	    createMocksForDependencies(testClassType, baseClass, tmlTest.isSpring());
+	}
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -117,7 +122,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create standard-methods (setup, teardown, ..., only if creation is enabled)
-	createStandardMethods(testClassType, tmlTest, springController);
+	if (newTest) {
+	    createStandardMethods(testClassType, tmlTest, springController);
+	}
 
 	// increment task
 	if (incrementTask(monitor)) {
@@ -129,7 +136,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		springController && tmlTest.isSpring(), monitor, increment);
 
 	// create static standard-imports
-	createStandardStaticImports(testClass, tmlTest);
+	if (newTest) {
+	    createStandardStaticImports(testClass, tmlTest);
+	}
 
 	// create the test-source-folder and -package
 	IPackageFragment testPackage = model.getJUTElements().getClassesAndPackages().getTestPackage();
@@ -209,21 +218,18 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     /**
      * Creates the test class frame.
      * 
-     * @param testCompilationUnit
-     * @param tmlTest
-     * @param testClassName
-     * @return the created test class frame
-     * @throws JavaModelException
+     * @return true if new class was created, false if it already existed
      */
-    private IType createTestClassFrame(ICompilationUnit testCompilationUnit, Test tmlTest, String testClassName, String baseClassName)
+    private boolean createTestClassFrame(ICompilationUnit testCompilationUnit, Test tmlTest, String testClassName, String baseClassName)
 	    throws JavaModelException {
 	IType type = testCompilationUnit.getType(testClassName);
+	boolean ret = !type.exists();
 
-	if (!type.exists()) {
-	    return createTestClassFrame(testCompilationUnit, tmlTest, testClassName, baseClassName, null);
+	if (ret) {
+	    createTestClassFrame(testCompilationUnit, tmlTest, testClassName, baseClassName, null);
 	}
 
-	return type;
+	return ret;
     }
 
     /**
