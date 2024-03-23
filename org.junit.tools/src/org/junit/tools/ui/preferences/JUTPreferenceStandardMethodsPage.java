@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -16,6 +15,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.junit.tools.Activator;
@@ -35,7 +35,7 @@ public class JUTPreferenceStandardMethodsPage extends PreferencePage implements
     private final Logger logger = Logger.getLogger(JUTPreferenceStandardMethodsPage.class.getName());
 
     private final Map<String, BooleanFieldEditor> checkBoxMap = new HashMap<>();
-    private final Map<String, StringFieldEditor> bodyEditorMap = new HashMap<>();
+    private final Map<String, Text> bodyEditorMap = new HashMap<>();
 
     public JUTPreferenceStandardMethodsPage() {
 	// default constructor
@@ -89,28 +89,32 @@ public class JUTPreferenceStandardMethodsPage extends PreferencePage implements
 	data.grabExcessVerticalSpace = true;
 	data.grabExcessHorizontalSpace = true;
 	checkBoxMap.put(checkBoxKey, toggleButton);
-	StringFieldEditor bodyEditor = new StringFieldEditor(textAreaKey, "", -1, 3, StringFieldEditor.VALIDATE_ON_FOCUS_LOST,
-		cmpCheckboxwithTextEditor);
-	bodyEditor.setStringValue(getPreferenceStore().getString(textAreaKey));
-	Object layoutData = bodyEditor.getTextControl(cmpCheckboxwithTextEditor).getLayoutData();
-	if (layoutData instanceof GridData) {
-	    GridData gd = (GridData) layoutData;
-	    gd.grabExcessVerticalSpace = true;
-	    gd.verticalAlignment = SWT.FILL;
-	}
+	// FIXME need to create a multiline Text editor manually as older versions of
+	// jface does not support the constructor with the hightInChars attribute
+	// new StringFieldEditor(textAreaKey, "", -1, 3,
+	// StringFieldEditor.VALIDATE_ON_FOCUS_LOST, cmpCheckboxwithTextEditor)
+	Text bodyEditor = new Text(cmpCheckboxwithTextEditor, SWT.BORDER | SWT.MULTI);
+	bodyEditor.setText(getPreferenceStore().getString(textAreaKey));
+	bodyEditor.setTextLimit(1000);
+	GridData gd = new GridData();
+	gd.grabExcessVerticalSpace = true;
+	gd.grabExcessHorizontalSpace = true;
+	gd.verticalAlignment = SWT.FILL;
+	gd.horizontalAlignment = SWT.FILL;
+	bodyEditor.setLayoutData(gd);
 	bodyEditorMap.put(textAreaKey, bodyEditor);
 
 	toggleButton.setPropertyChangeListener(new IPropertyChangeListener() {
 
 	    @Override
 	    public void propertyChange(PropertyChangeEvent event) {
-		bodyEditor.setEnabled(toggleButton.getBooleanValue(), cmpCheckboxwithTextEditor);
+		bodyEditor.setEnabled(toggleButton.getBooleanValue());
 	    }
 	});
 	toggleButton.load();
 	boolean enabled = getPreferenceStore().getBoolean(checkBoxKey);
 	((Button) toggleButton.getDescriptionControl(cmpCheckboxwithTextEditor)).setSelection(enabled);
-	bodyEditor.setEnabled(enabled, cmpCheckboxwithTextEditor);
+	bodyEditor.setEnabled(enabled);
 
     }
 
@@ -138,8 +142,8 @@ public class JUTPreferenceStandardMethodsPage extends PreferencePage implements
 	checkBox.setEnabled(getPreferenceStore().getBoolean(key), getShell());
     }
 
-    private void setDefaultValueFor(String key, StringFieldEditor bodyEditor) {
-	bodyEditor.setStringValue(getPreferenceStore().getString(key));
+    private void setDefaultValueFor(String key, Text bodyEditor) {
+	bodyEditor.setText(getPreferenceStore().getString(key));
     }
 
     @Override
@@ -147,7 +151,7 @@ public class JUTPreferenceStandardMethodsPage extends PreferencePage implements
 	checkBoxMap.entrySet()
 		.forEach(entry -> getPreferenceStore().setValue(entry.getKey(), entry.getValue().getBooleanValue()));
 	bodyEditorMap.entrySet()
-		.forEach(entry -> getPreferenceStore().setValue(entry.getKey(), entry.getValue().getStringValue()));
+		.forEach(entry -> getPreferenceStore().setValue(entry.getKey(), entry.getValue().getText()));
 	return super.performOk();
     }
 
