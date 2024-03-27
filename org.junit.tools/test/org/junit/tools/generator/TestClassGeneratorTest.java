@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -865,6 +866,7 @@ public class TestClassGeneratorTest {
 	ICompilationUnit baseClass = createClassWithField("QSomeService;", "someService");
 
 	JUTPreferences.setRelevantSpringAnnotations(new String[] { "Controller", "RestController", "Service", "Component" });
+	JUTPreferences.setInjectionTypeFilter(new String[] { "String" });
 	// when
 	underTest.createMocksForDependencies(type, baseClass, false);
 	// then
@@ -936,6 +938,28 @@ public class TestClassGeneratorTest {
 	verify(baseClass).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(), nullable(IProgressMonitor.class));
 	assertThat(importCaptor.getValue())
 		.isEqualTo("org.junit.Assert.*");
+    }
+
+    @Test
+    public void testCreateStandardStaticImports_shouldUseReplayVerifyForEasyMock() throws Exception {
+	// given
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	ICompilationUnit baseClass = createSpringClassWithAutowiredField("Component", "QSomeService;", "someService");
+	IImportDeclaration importDeclaration1 = Mockito.mock(IImportDeclaration.class);
+	when(baseClass.getImports()).thenReturn(Arrays.asList(importDeclaration1).toArray(new IImportDeclaration[0]));
+	JUTPreferences.setJUnitVersion("4");
+	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_EASYMOCK);
+	// when
+	underTest.createStandardStaticImports(baseClass, tmlTest);
+	// then
+	ArgumentCaptor<String> importCaptor = ArgumentCaptor.forClass(String.class);
+	ArgumentCaptor<Integer> flagCaptor = ArgumentCaptor.forClass(Integer.class);
+	ArgumentCaptor<IImportDeclaration> importAboveCaptor = ArgumentCaptor.forClass(IImportDeclaration.class);
+	verify(baseClass, times(3)).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(), nullable(IProgressMonitor.class));
+	assertThat(importCaptor.getAllValues())
+		.containsExactly("org.easymock.EasyMock.replay",
+			"org.easymock.EasyMock.verify",
+			"org.assertj.core.api.Assertions.assertThat");
     }
 
     @Test

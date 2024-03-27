@@ -348,7 +348,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	compilationUnit.createImport("java.util.*", null, null);
 	if (isUsingJunit4()) {
-	    compilationUnit.createImport("org.junit.Test", null, null);
+	    compilationUnit.createImport("org.junit.*", null, null);
 	    compilationUnit.createImport("org.junit.runner.RunWith", null, null);
 	    if (GeneratorUtils.isUsingEasyMock()) {
 		compilationUnit.createImport("org.easymock.*", null, null);
@@ -407,6 +407,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	IImportDeclaration[] imports = compilationUnit.getImports();
 	if (imports.length > 0) {
 	    importAbove = imports[0];
+	}
+	if (GeneratorUtils.isUsingEasyMock()) {
+	    compilationUnit.createImport("org.easymock.EasyMock.replay", importAbove, Flags.AccStatic, null);
+	    compilationUnit.createImport("org.easymock.EasyMock.verify", importAbove, Flags.AccStatic, null);
 	}
 	// use option for assertj Assertions vs Assert.*
 	if (isAssertjEnabled()) {
