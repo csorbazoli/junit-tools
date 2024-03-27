@@ -34,6 +34,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String springTestClassPostfix = null;
     private static Boolean gherkinStyleEnabled = true;
     private static Boolean assertjEnabled = true;
+    private static Boolean replayAllVerifyAllEnabled = false;
     private static Boolean repeatingTestMethodsEnabled = true;
     private static Boolean showSettingsBeforeGenerate = null;
     private static String mockFramework = null;
@@ -364,6 +365,13 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return assertjEnabled;
     }
 
+    public static boolean isReplayAllVerifyAllEnabled() {
+	if (replayAllVerifyAllEnabled == null) {
+	    replayAllVerifyAllEnabled = getPreferenceBoolean(REPLAYALL_VERIFYALL_ENABLED, false);
+	}
+	return replayAllVerifyAllEnabled;
+    }
+
     public static boolean isRepeatingTestMethodsEnabled() {
 	if (repeatingTestMethodsEnabled == null) {
 	    repeatingTestMethodsEnabled = getPreferenceBoolean(REPEATING_TEST_METHODS_ENABLED, true);
@@ -398,6 +406,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setAssertJEnabled(Boolean enabled) {
 	JUTPreferences.assertjEnabled = enabled;
+    }
+
+    public static void setReplayAllVerifyAllEnabled(Boolean enabled) {
+	JUTPreferences.replayAllVerifyAllEnabled = enabled;
     }
 
     public static void setRepeatingTestMethodsEnabled(Boolean enabled) {
@@ -476,6 +488,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	booleanPropertyHandlers.put(GHERKIN_STYLE_ENABLED, JUTPreferences::setGherkinStyleEnabled);
 	booleanPropertyHandlers.put(REPEATING_TEST_METHODS_ENABLED, JUTPreferences::setRepeatingTestMethodsEnabled);
 	booleanPropertyHandlers.put(SHOW_SETTINGS_BEFORE_GENERATE, JUTPreferences::setShowSettingsBeforeGenerate);
+	booleanPropertyHandlers.put(REPLAYALL_VERIFYALL_ENABLED, JUTPreferences::setReplayAllVerifyAllEnabled);
 
 	Map<String, Consumer<Integer>> intPropertyHandlers = new HashMap<>();
 	// intPropertyHandlers.put(JUNIT_VERSION, JUTPreferences::setJUnitVersion);

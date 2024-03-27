@@ -52,6 +52,7 @@ public interface IJUTPreferenceConstants {
     public static final String LOGGER_ENABLED = "LoggerSelection";
     public static final String TESTUTILS_ENABLED = "TestUtilsSelection";
     public static final String THROWS_DECLARATION_ENABLED = "ThrowsDeclaration";
+    public static final String REPLAYALL_VERIFYALL_ENABLED = "ReplayAllVerifyAll";
 
     // other settings
     public static final String BEFORE_METHOD_BODY = "SetupBody";
