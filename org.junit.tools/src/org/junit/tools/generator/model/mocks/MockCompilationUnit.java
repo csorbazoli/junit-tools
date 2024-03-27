@@ -1,5 +1,7 @@
 package org.junit.tools.generator.model.mocks;
 
+import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTED;
+
 import org.assertj.core.util.Arrays;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -39,7 +41,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MockCompilationUnit implements ICompilationUnit {
 
-    private static final String NOT_IMPLEMENTED = "NOT IMPLEMENTED";
     private String elementName;
     private IJavaProject javaProject;
     private boolean readOnly;

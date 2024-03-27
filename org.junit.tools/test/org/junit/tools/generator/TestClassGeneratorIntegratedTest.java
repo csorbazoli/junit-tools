@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.junit.Before;
@@ -25,6 +27,9 @@ import org.junit.tools.generator.model.JUTElements.JUTClassesAndPackages;
 import org.junit.tools.generator.model.JUTElements.JUTConstructorsAndMethods;
 import org.junit.tools.generator.model.mocks.MockCompilationUnit;
 import org.junit.tools.generator.model.mocks.MockJavaProject;
+import org.junit.tools.generator.model.mocks.MockPackageFragment;
+import org.junit.tools.generator.model.mocks.MockPackageFragmentRoot;
+import org.junit.tools.generator.model.mocks.MockProject;
 import org.junit.tools.generator.model.tml.Annotation;
 import org.junit.tools.generator.model.tml.Attribute;
 import org.junit.tools.generator.utils.TestUtils;
@@ -105,12 +110,24 @@ public class TestClassGeneratorIntegratedTest {
     }
 
     private IJavaProject initJavaProject() {
-	return MockJavaProject.builder()
+	MockJavaProject ret = MockJavaProject.builder()
 		.elementName("TestProject")
+		.project(MockProject.builder()
+			.build())
 		.build();
+	ret.setPackageFragmentRoot(MockPackageFragmentRoot.builder()
+		.javaProject(ret)
+		.path(Path.fromOSString("testProject"))
+		.build());
+	return ret;
     }
 
     private JUTClassesAndPackages initClassesAndPackages(JUTClassesAndPackages classesPackages) {
+	IPackageFragment basePackage = MockPackageFragment.builder()
+		.parent(MockCompilationUnit.builder()
+			.build())
+		.build();
+	classesPackages.setBasePackages(Arrays.asList(basePackage));
 	return classesPackages;
     }
 

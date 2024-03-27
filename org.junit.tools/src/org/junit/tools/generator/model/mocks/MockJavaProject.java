@@ -1,5 +1,7 @@
 package org.junit.tools.generator.model.mocks;
 
+import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTED;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -35,8 +37,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MockJavaProject implements IJavaProject {
 
-    private static final String NOT_IMPLEMENTED = "NOT_IMPLEMENTED";
     private String elementName;
+    private IProject project;
+    private IPackageFragmentRoot packageFragmentRoot;
 
     @Override
     public IJavaElement[] getChildren() throws JavaModelException {
@@ -330,7 +333,7 @@ public class MockJavaProject implements IJavaProject {
 
     @Override
     public IPackageFragmentRoot getPackageFragmentRoot(IResource arg0) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return packageFragmentRoot;
     }
 
     @Override
@@ -349,13 +352,12 @@ public class MockJavaProject implements IJavaProject {
     }
 
     @Override
-    public IProject getProject() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
     public IClasspathEntry[] getRawClasspath() throws JavaModelException {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return new IClasspathEntry[] {
+		MockClasspathEntry.builder()
+			.path(this.packageFragmentRoot.getPath())
+			.build()
+	};
     }
 
     @Override
