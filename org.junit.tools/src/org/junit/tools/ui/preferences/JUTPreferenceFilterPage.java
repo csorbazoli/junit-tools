@@ -105,7 +105,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 	addButton.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent event) {
-		String newEntry = newMethodFilterModifier.getText();
+		String newEntry = newNonInjectedTypeFilter.getText();
 		for (String item : listNonInjectedTypeFilter.getItems()) {
 		    if (newEntry.equals(item)) {
 			return;
