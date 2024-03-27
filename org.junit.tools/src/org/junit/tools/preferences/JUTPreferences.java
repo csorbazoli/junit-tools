@@ -35,10 +35,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String testClassPostfix = null;
     private static String testClassSuperType = null;
     private static String springTestClassPostfix = null;
-    private static Boolean gherkinStyleEnabled = true;
-    private static Boolean assertjEnabled = true;
-    private static Boolean replayAllVerifyAllEnabled = false;
-    private static Boolean repeatingTestMethodsEnabled = true;
+    private static Boolean gherkinStyleEnabled = null;
+    private static Boolean assertjEnabled = null;
+    private static Boolean replayAllVerifyAllEnabled = null;
+    private static Boolean repeatingTestMethodsEnabled = null;
     private static Boolean showSettingsBeforeGenerate = null;
     private static String mockFramework = null;
     private static int junitVersion = 0;
