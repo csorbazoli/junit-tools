@@ -84,12 +84,12 @@ public class GeneratorUtilsTest {
 
 	when(primaryType.getMethods()).thenReturn(new IMethod[] {});
 
-	IField exitingField = mock(IField.class);
-	when(exitingField.getElementName()).thenReturn("someService");
-	when(exitingField.getTypeSignature()).thenReturn("QSomeSpringService;");
-	when(primaryType.getFields()).thenReturn(new IField[] { exitingField });
+	IField existingField = mock(IField.class);
+	when(existingField.getElementName()).thenReturn("someService");
+	when(existingField.getTypeSignature()).thenReturn("QSomeSpringService;");
+	when(primaryType.getFields()).thenReturn(new IField[] { existingField });
 	IAnnotation springAnnotation = mock(IAnnotation.class);
-	when(exitingField.getAnnotations()).thenReturn(new IAnnotation[] { springAnnotation });
+	when(existingField.getAnnotations()).thenReturn(new IAnnotation[] { springAnnotation });
 	when(springAnnotation.getElementName()).thenReturn("Autowired");
 	// when
 	Map<String, String> actual = GeneratorUtils.findInjectedFields(type);
@@ -118,6 +118,48 @@ public class GeneratorUtilsTest {
 	Map<String, String> actual = GeneratorUtils.findInjectedFields(type);
 	// then
 	assertThat(actual).containsEntry("someService", "SomeSpringService");
+    }
+
+    @Test
+    public void testFindNonPrimitiveFields_shouldFindFieldsWithComplexTypes() throws Exception {
+	// given
+	ICompilationUnit type = mock(ICompilationUnit.class);
+	IType primaryType = mock(IType.class);
+	when(type.findPrimaryType()).thenReturn(primaryType);
+
+	when(primaryType.getMethods()).thenReturn(new IMethod[] {});
+
+	IField existingField = mock(IField.class);
+	when(existingField.getElementName()).thenReturn("someService");
+	when(existingField.getTypeSignature()).thenReturn("QSomeSpringService;");
+	when(primaryType.getFields()).thenReturn(new IField[] { existingField });
+
+	JUTPreferences.setInjectionTypeFilter(new String[] { "String" });
+	// when
+	Map<String, String> actual = GeneratorUtils.findPotentialInjectedFields(type);
+	// then
+	assertThat(actual).containsEntry("someService", "SomeSpringService");
+    }
+
+    @Test
+    public void testFindNonPrimitiveFields_shouldIgnoreFieldsWithPrimitiveTypes() throws Exception {
+	// given
+	ICompilationUnit type = mock(ICompilationUnit.class);
+	IType primaryType = mock(IType.class);
+	when(type.findPrimaryType()).thenReturn(primaryType);
+
+	when(primaryType.getMethods()).thenReturn(new IMethod[] {});
+
+	IField existingField = mock(IField.class);
+	when(existingField.getElementName()).thenReturn("someValue");
+	when(existingField.getTypeSignature()).thenReturn("QString;");
+	when(primaryType.getFields()).thenReturn(new IField[] { existingField });
+
+	JUTPreferences.setInjectionTypeFilter(new String[] { "String" });
+	// when
+	Map<String, String> actual = GeneratorUtils.findPotentialInjectedFields(type);
+	// then
+	assertThat(actual).isEmpty();
     }
 
     @Test

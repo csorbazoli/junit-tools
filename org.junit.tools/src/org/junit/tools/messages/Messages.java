@@ -132,6 +132,7 @@ public class Messages extends NLS {
 
     public static String JUTPreferenceFilterPage_description_filters;
     public static String JUTPreferenceFilterPage_Modifier_filter;
+    public static String JUTPreferenceFilterPage_Injection_filter;
     public static String JUTPreferenceFilterPage_Name_filter;
 
     public static String JUTPreferenceDefaultValuePage_description;

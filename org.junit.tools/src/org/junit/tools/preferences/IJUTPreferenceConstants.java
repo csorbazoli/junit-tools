@@ -19,6 +19,7 @@ public interface IJUTPreferenceConstants {
     public static final String TEST_CLASS_SUPER_TYPE = "TEST_CLASS_SUPER_TYPE";
     public static final String TEST_METHOD_FILTER_NAME = "TEST_METHOD_FILTER_NAME";
     public static final String TEST_METHOD_FILTER_MODIFIER = "TEST_METHOD_FILTER_MODIFIER";
+    public static final String INJECTION_TYPE_FILTER = "INJECTION_TYPE_FILTER";
     public static final String JUNIT_VERSION = "JUNIT_VERSION";
     public static final String SHOW_SETTINGS_BEFORE_GENERATE = "SHOW_SETTINGS_BEFORE_GENERATE";
     public static final String GHERKIN_STYLE_ENABLED = "GHERKIN_STYLE";

@@ -15,6 +15,8 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 
     public static final String DEFAULT_METHOD_FILTER_NAME = "get*;set*;";
     public static final String DEFAULT_METHOD_FILTER_MODIFIER = "private;protected;package;";
+    public static final String DEFAULT_INJECTION_TYPE_FILTER = "char;Character;byte;Byte;double;Double;int;Integer;long;Long;float;Float;boolean;Boolean;String;"
+	    + "Calendar;Date;LocalDate;LocalTime;Timestamp";
 
     @Override
     public void initializeDefaultPreferences() {
@@ -36,6 +38,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 
 	store.setDefault(TEST_METHOD_FILTER_NAME, "");
 	store.setDefault(TEST_METHOD_FILTER_MODIFIER, DEFAULT_METHOD_FILTER_MODIFIER);
+	store.setDefault(INJECTION_TYPE_FILTER, DEFAULT_INJECTION_TYPE_FILTER);
 
 	// Important settings
 	store.setDefault(TEST_SOURCE_FOLDER_NAME, "src/test/java");

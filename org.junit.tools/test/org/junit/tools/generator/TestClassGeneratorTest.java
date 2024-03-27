@@ -54,6 +54,7 @@ public class TestClassGeneratorTest {
 	JUTPreferences.setGherkinStyleEnabled(true);
 	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
 	JUTPreferences.setAssertJEnabled(true);
+	JUTPreferences.setReplayAllVerifyAllEnabled(false);
     }
 
     @Test
@@ -209,6 +210,8 @@ public class TestClassGeneratorTest {
     @Test
     public void testCreateTestCaseBody_simpleExpectedValue() {
 	// given
+	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_EASYMOCK);
+	JUTPreferences.setReplayAllVerifyAllEnabled(true);
 	StringBuilder sbTestMethodBody = new StringBuilder();
 
 	Param stringParam = new Param();
@@ -240,6 +243,7 @@ public class TestClassGeneratorTest {
 		+ "underTest=initUnderTest();\n"
 		+ "String testString = \"testValue\";\n"
 		+ "int testInt = 123;\n"
+		+ "replayAll();\n"
 		+ "// when\n"
 		+ "String actual=underTest.someMethod(testString, testInt);",
 		sbTestMethodBody.toString());
@@ -814,6 +818,19 @@ public class TestClassGeneratorTest {
     }
 
     @Test
+    public void testCreateStandardClassFields_EasyMock() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_EASYMOCK);
+	// when
+	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
+	// then
+	verify(type).createField("@TestSubject\n"
+		+ "SomeClass underTest = new SomeClass();", null, false, null);
+    }
+
+    @Test
     public void testCreateStandardClassFields_shouldNotCreateUnderTestForStaticMethods() throws Exception {
 	// given
 	IType type = Mockito.mock(IType.class);
@@ -831,6 +848,21 @@ public class TestClassGeneratorTest {
 	IType type = Mockito.mock(IType.class);
 	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
 	ICompilationUnit baseClass = createSpringClassWithAutowiredField("Component", "QSomeService;", "someService");
+
+	JUTPreferences.setRelevantSpringAnnotations(new String[] { "Controller", "RestController", "Service", "Component" });
+	// when
+	underTest.createMocksForDependencies(type, baseClass, false);
+	// then
+	verify(type).createField("@Mock\n"
+		+ "SomeService someService;", null, false, null);
+    }
+
+    @Test
+    public void testMocksForDependencies_notSpring() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	ICompilationUnit baseClass = createClassWithField("QSomeService;", "someService");
 
 	JUTPreferences.setRelevantSpringAnnotations(new String[] { "Controller", "RestController", "Service", "Component" });
 	// when
@@ -930,6 +962,30 @@ public class TestClassGeneratorTest {
     }
 
     // helper methods
+    private ICompilationUnit createClassWithField(String... fieldClassesAndNames) throws JavaModelException {
+	ICompilationUnit baseClass = mock(ICompilationUnit.class);
+	IType testType = mock(IType.class);
+	when(baseClass.getTypes()).thenReturn(new IType[] { testType });
+	when(testType.getAnnotations()).thenReturn(new IAnnotation[] {});
+
+	IType primaryType = mock(IType.class);
+	when(baseClass.findPrimaryType()).thenReturn(primaryType);
+
+	int fieldCnt = fieldClassesAndNames.length / 2;
+	IField[] fields = new IField[fieldCnt];
+	for (int idx = 0; idx < fieldCnt; idx++) {
+	    IField existingField = mock(IField.class);
+	    when(existingField.getElementName()).thenReturn(fieldClassesAndNames[2 * idx + 1]);
+	    when(existingField.getTypeSignature()).thenReturn(fieldClassesAndNames[2 * idx]);
+	    fields[idx] = existingField;
+	}
+
+	when(primaryType.getFields()).thenReturn(fields);
+
+	when(primaryType.getMethods()).thenReturn(new IMethod[] {});
+	return baseClass;
+    }
+
     private ICompilationUnit createSpringClassWithAutowiredField(String annotation, String fieldClass, String fieldName) throws JavaModelException {
 	ICompilationUnit baseClass = mock(ICompilationUnit.class);
 	IType testType = mock(IType.class);
@@ -940,12 +996,12 @@ public class TestClassGeneratorTest {
 
 	IType primaryType = mock(IType.class);
 	when(baseClass.findPrimaryType()).thenReturn(primaryType);
-	IField exitingField = mock(IField.class);
-	when(exitingField.getElementName()).thenReturn(fieldName);
-	when(exitingField.getTypeSignature()).thenReturn(fieldClass);
-	when(primaryType.getFields()).thenReturn(new IField[] { exitingField });
+	IField existingField = mock(IField.class);
+	when(existingField.getElementName()).thenReturn(fieldName);
+	when(existingField.getTypeSignature()).thenReturn(fieldClass);
+	when(primaryType.getFields()).thenReturn(new IField[] { existingField });
 	IAnnotation fieldAnnotation = mock(IAnnotation.class);
-	when(exitingField.getAnnotations()).thenReturn(new IAnnotation[] { fieldAnnotation });
+	when(existingField.getAnnotations()).thenReturn(new IAnnotation[] { fieldAnnotation });
 	when(fieldAnnotation.getElementName()).thenReturn("Autowired");
 
 	when(primaryType.getMethods()).thenReturn(new IMethod[] {});

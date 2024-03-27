@@ -1,8 +1,11 @@
 package org.junit.tools.preferences;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -46,6 +49,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     // from filter-page
     private static String[] testMethodFilterName = null;
     private static String[] testMethodFilterModifier = null;
+    private static Set<String> injectionTypeFilter = null;
 
     // from static-bindings-page
     private static String[] staticBindings = null;
@@ -136,6 +140,11 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	JUTPreferences.testMethodFilterModifier = testmethodFilterModifier;
     }
 
+    public static void setInjectionTypeFilter(
+	    String[] injectionTypeFilter) {
+	JUTPreferences.injectionTypeFilter = new HashSet<>(Arrays.asList(injectionTypeFilter));
+    }
+
     public static String[] getTestMethodFilterName() {
 	if (testMethodFilterName == null) {
 	    testMethodFilterName = convertToArray(getPreference(TEST_METHOD_FILTER_NAME));
@@ -148,6 +157,13 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	    testMethodFilterModifier = convertToArray(getPreference(TEST_METHOD_FILTER_MODIFIER));
 	}
 	return testMethodFilterModifier;
+    }
+
+    public static Set<String> getInjectionTypeFilter() {
+	if (injectionTypeFilter == null) {
+	    injectionTypeFilter = new HashSet<>(Arrays.asList(convertToArray(getPreference(INJECTION_TYPE_FILTER))));
+	}
+	return injectionTypeFilter;
     }
 
     public static String[] getStaticBindings() {
@@ -513,6 +529,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	arrayPropertyHandlers.put(TEST_CLASS_ANNOTATIONS, JUTPreferences::setTestClassAnnotations);
 	arrayPropertyHandlers.put(TEST_METHOD_FILTER_MODIFIER, JUTPreferences::setTestMethodFilterModifier);
 	arrayPropertyHandlers.put(TEST_METHOD_FILTER_NAME, JUTPreferences::setTestMethodFilterName);
+	arrayPropertyHandlers.put(INJECTION_TYPE_FILTER, JUTPreferences::setInjectionTypeFilter);
 
 	Map<String, Consumer<Map<String, String>>> mapPropertyHandlers = new HashMap<>();
 	mapPropertyHandlers.put(DEFAULT_VALUE_GENERIC_MAPPING, JUTPreferences::setDefaultValuesGenericByType);

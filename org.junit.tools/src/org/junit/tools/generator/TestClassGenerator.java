@@ -113,7 +113,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create standard-class-fields
 	if (newTest) {
 	    createStandardClassFields(testClassType, baseClassName, tmlTest);
-	    createMocksForDependencies(testClassType, baseClass, tmlTest.isSpring());
+	    if (!tmlTest.isOnlyStaticMethods()) {
+		createMocksForDependencies(testClassType, baseClass, tmlTest.isSpring());
+	    }
 	}
 
 	// increment task
@@ -123,7 +125,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	// create standard-methods (setup, teardown, ..., only if creation is enabled)
 	if (newTest) {
-	    createStandardMethods(testClassType, tmlTest, springController);
+	    createStandardMethods(testClassType, baseClass, tmlTest, springController);
 	}
 
 	// increment task
@@ -159,8 +161,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
     /**
      * Creates the standard methods.
+     * 
+     * @param baseClass
      */
-    private void createStandardMethods(IType type, Test tmlTest, boolean springController) throws JavaModelException {
+    private void createStandardMethods(IType type, ICompilationUnit baseClass, Test tmlTest, boolean springController) throws JavaModelException {
 	Settings tmlSettings = tmlTest.getSettings();
 	if (tmlSettings == null) {
 	    return;
@@ -195,6 +199,26 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		    EXCEPTION, null, JUTPreferences.getPreference(IJUTPreferenceConstants.AFTER_CLASS_METHOD_BODY), false,
 		    isUsingJunit4() ? ANNO_JUNIT_AFTER_CLASS : "@AfterAll");
 	}
+
+	if (GeneratorUtils.isUsingEasyMock() && JUTPreferences.getPreferenceBoolean(IJUTPreferenceConstants.REPLAYALL_VERIFYALL_ENABLED)) {
+	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, "replayAll", EXCEPTION, null,
+		    createReplayAllInstruction(baseClass), false); // before annotation not needed
+	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, "verifyAll", EXCEPTION, null,
+		    createVerifyAllInstruction(baseClass), false,
+		    isUsingJunit4() ? ANNO_JUNIT_AFTER : "@AfterEach");
+	}
+    }
+
+    private String createReplayAllInstruction(ICompilationUnit baseClass) throws JavaModelException {
+	return GeneratorUtils.findPotentialInjectedFields(baseClass).keySet()
+		.stream()
+		.collect(Collectors.joining(", ", "replay(", ");"));
+    }
+
+    private String createVerifyAllInstruction(ICompilationUnit baseClass) throws JavaModelException {
+	return GeneratorUtils.findPotentialInjectedFields(baseClass).keySet()
+		.stream()
+		.collect(Collectors.joining(", ", "verify(", ");"));
     }
 
     /**
@@ -345,8 +369,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	if (GeneratorUtils.isUsingMockito()) {
 	    compilationUnit.createImport("org.mockito.InjectMocks", null, null);
 	    compilationUnit.createImport("org.mockito.Mock", null, null);
+	} else if (GeneratorUtils.isUsingEasyMock()) {
+	    compilationUnit.createImport("org.easymock.TestSubject", null, null);
+	    compilationUnit.createImport("org.easymock.Mock", null, null);
 	}
-	// for EasyMock we need TestSubject
 
 	if (tmlTest.isSpring()) {
 	    // SpringRunner/SpringExtension
@@ -403,8 +429,12 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      */
     protected void createStandardClassFields(IType type, String testClassName, Test tmlTest) throws JavaModelException {
 	if (!tmlTest.isOnlyStaticMethods() && GeneratorUtils.findField(type, UNDER_TEST) == null) {
+	    String initializer = "";
+	    if (GeneratorUtils.isUsingEasyMock()) {
+		initializer = " = new " + testClassName + "()";
+	    }
 	    type.createField(GeneratorUtils.createAnnoForUnderTest(tmlTest.isSpring()) + getPublicModifierIfNeeded() +
-		    testClassName + " " + UNDER_TEST + ";", null, false, null);
+		    testClassName + " " + UNDER_TEST + initializer + ";", null, false, null);
 	}
     }
 
@@ -418,6 +448,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     protected void createMocksForDependencies(IType testClassType, ICompilationUnit baseClass, boolean spring) throws JavaModelException {
 	if (GeneratorUtils.hasSpringAnnotation(baseClass)) {
 	    for (Map.Entry<String, String> fieldNameAndType : GeneratorUtils.findInjectedFields(baseClass).entrySet()) {
+		createMockField(testClassType, fieldNameAndType.getValue(), fieldNameAndType.getKey(), spring);
+	    }
+	} else {
+	    for (Map.Entry<String, String> fieldNameAndType : GeneratorUtils.findPotentialInjectedFields(baseClass).entrySet()) {
 		createMockField(testClassType, fieldNameAndType.getValue(), fieldNameAndType.getKey(), spring);
 	    }
 	}
@@ -552,6 +586,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create param assignments
 	createParamAssignments(paramAssignments, sbTestMethodBody);
 
+	if (isReplayAllVerifyAllEnabled() && GeneratorUtils.isUsingEasyMock()) {
+	    sbTestMethodBody.append("replayAll();").append(RETURN);
+	}
 	// result
 	if (isGherkinStyle()) {
 	    sbTestMethodBody.append("// when");
@@ -645,6 +682,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create param assignments
 	createParamAssignments(paramAssignments, sbTestMethodBody);
 
+	if (isReplayAllVerifyAllEnabled() && GeneratorUtils.isUsingEasyMock()) {
+	    sbTestMethodBody.append("replayAll();").append(RETURN);
+	}
 	if (isGherkinStyle()) {
 	    sbTestMethodBody.append("// when");
 	}
@@ -829,6 +869,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
     private boolean isAssertjEnabled() {
 	return JUTPreferences.isAssertjEnabled();
+    }
+
+    private boolean isReplayAllVerifyAllEnabled() {
+	return JUTPreferences.isReplayAllVerifyAllEnabled();
     }
 
     private boolean isRepeatingTestMethods() {

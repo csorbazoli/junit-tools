@@ -31,15 +31,13 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
     }
 
     private List listMethodFilterName;
-
     private Text newMethodFilterName;
 
     private List listMethodFilterModifier;
-
     private Text newMethodFilterModifier;
-    private GridData data_1;
-    private GridData data_2;
-    private GridData data_3;
+
+    private List listNonInjectedTypeFilter;
+    private Text newNonInjectedTypeFilter;
 
     /**
      * @see PreferencePage#createContents(Composite)
@@ -54,6 +52,174 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 	cmpMain.setLayoutData(cmpMainLayoutData);
 	cmpMain.setLayout(new GridLayout());
 
+	createMethodNameFilterSection(cmpMain);
+	createMethodAnnotationFilterSection(cmpMain);
+	createNonInjectTypeFilterSection(cmpMain);
+
+	return cmpMain;
+    }
+
+    private void createNonInjectTypeFilterSection(Composite cmpMain) {
+	// type list of not injected fields
+	Group cmpInjectionFilterModifier = new Group(cmpMain, SWT.NONE);
+	cmpInjectionFilterModifier
+		.setText(Messages.JUTPreferenceFilterPage_Injection_filter);
+
+	// Create a data that takes up the extra space in the dialog .
+	GridData data_1 = new GridData(GridData.FILL_HORIZONTAL);
+	data_1.verticalAlignment = SWT.FILL;
+	data_1.grabExcessVerticalSpace = true;
+	data_1.grabExcessHorizontalSpace = true;
+	cmpInjectionFilterModifier.setLayoutData(data_1);
+
+	GridLayout layout = new GridLayout();
+	cmpInjectionFilterModifier.setLayout(layout);
+
+	listNonInjectedTypeFilter = new List(cmpInjectionFilterModifier,
+		SWT.BORDER);
+	listNonInjectedTypeFilter.setItems(getInjectionTypeFilterPref());
+
+	// Create a data that takes up the extra space in the dialog and spans
+	// both columns.
+	GridData data = new GridData(GridData.FILL_BOTH);
+	listNonInjectedTypeFilter.setLayoutData(data);
+
+	Composite buttonComposite = new Composite(cmpInjectionFilterModifier,
+		SWT.NULL);
+
+	GridLayout buttonLayout = new GridLayout();
+	buttonLayout.numColumns = 2;
+	buttonComposite.setLayout(buttonLayout);
+
+	// Create a data that takes up the extra space in the dialog and spans
+	// both columns.
+	GridData data_3 = new GridData(GridData.FILL_BOTH
+		| GridData.VERTICAL_ALIGN_BEGINNING);
+	data_3.verticalAlignment = SWT.CENTER;
+	data_3.grabExcessVerticalSpace = false;
+	buttonComposite.setLayoutData(data_3);
+
+	Button addButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
+
+	addButton.setText("Add to List"); //$NON-NLS-1$
+	addButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		String newEntry = newMethodFilterModifier.getText();
+		for (String item : listNonInjectedTypeFilter.getItems()) {
+		    if (newEntry.equals(item)) {
+			return;
+		    }
+		}
+
+		listNonInjectedTypeFilter.add(newEntry,
+			listNonInjectedTypeFilter.getItemCount());
+	    }
+	});
+
+	newNonInjectedTypeFilter = new Text(buttonComposite, SWT.BORDER);
+	// Create a data that takes up the extra space in the dialog .
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.grabExcessHorizontalSpace = true;
+	newNonInjectedTypeFilter.setLayoutData(data);
+
+	Button removeButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
+
+	removeButton.setText("Remove Selection"); //$NON-NLS-1$
+	removeButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		listNonInjectedTypeFilter.remove(listNonInjectedTypeFilter
+			.getSelectionIndex());
+	    }
+	});
+
+	data = new GridData();
+	data.horizontalSpan = 2;
+	removeButton.setLayoutData(data);
+    }
+
+    private void createMethodAnnotationFilterSection(Composite cmpMain) {
+	// test-method-filter modifier
+	Group cmpTestmethodFilterModifier = new Group(cmpMain, SWT.NONE);
+	cmpTestmethodFilterModifier
+		.setText(Messages.JUTPreferenceFilterPage_Modifier_filter);
+
+	// Create a data that takes up the extra space in the dialog .
+	GridData data_1 = new GridData(GridData.FILL_HORIZONTAL);
+	data_1.verticalAlignment = SWT.FILL;
+	data_1.grabExcessVerticalSpace = true;
+	data_1.grabExcessHorizontalSpace = true;
+	cmpTestmethodFilterModifier.setLayoutData(data_1);
+
+	GridLayout layout = new GridLayout();
+	cmpTestmethodFilterModifier.setLayout(layout);
+
+	listMethodFilterModifier = new List(cmpTestmethodFilterModifier,
+		SWT.BORDER);
+	listMethodFilterModifier.setItems(getMethodFilterModifierPref());
+
+	// Create a data that takes up the extra space in the dialog and spans
+	// both columns.
+	GridData data = new GridData(GridData.FILL_BOTH);
+	listMethodFilterModifier.setLayoutData(data);
+
+	Composite buttonComposite = new Composite(cmpTestmethodFilterModifier,
+		SWT.NULL);
+
+	GridLayout buttonLayout = new GridLayout();
+	buttonLayout.numColumns = 2;
+	buttonComposite.setLayout(buttonLayout);
+
+	// Create a data that takes up the extra space in the dialog and spans
+	// both columns.
+	GridData data_3 = new GridData(GridData.FILL_BOTH
+		| GridData.VERTICAL_ALIGN_BEGINNING);
+	data_3.verticalAlignment = SWT.CENTER;
+	data_3.grabExcessVerticalSpace = false;
+	buttonComposite.setLayoutData(data_3);
+
+	Button addButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
+
+	addButton.setText("Add to List"); //$NON-NLS-1$
+	addButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		String newEntry = newMethodFilterModifier.getText();
+		for (String item : listMethodFilterModifier.getItems()) {
+		    if (newEntry.equals(item)) {
+			return;
+		    }
+		}
+
+		listMethodFilterModifier.add(newEntry,
+			listMethodFilterModifier.getItemCount());
+	    }
+	});
+
+	newMethodFilterModifier = new Text(buttonComposite, SWT.BORDER);
+	// Create a data that takes up the extra space in the dialog .
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.grabExcessHorizontalSpace = true;
+	newMethodFilterModifier.setLayoutData(data);
+
+	Button removeButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
+
+	removeButton.setText("Remove Selection"); //$NON-NLS-1$
+	removeButton.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		listMethodFilterModifier.remove(listMethodFilterModifier
+			.getSelectionIndex());
+	    }
+	});
+
+	data = new GridData();
+	data.horizontalSpan = 2;
+	removeButton.setLayoutData(data);
+    }
+
+    private void createMethodNameFilterSection(Composite cmpMain) {
 	// test-method-filter name
 	Group cmpTestmethodFilterName = new Group(cmpMain, SWT.NONE);
 	cmpTestmethodFilterName
@@ -82,7 +248,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 
 	// Create a data that takes up the extra space in the dialog and spans
 	// both columns.
-	data_2 = new GridData(GridData.FILL_BOTH
+	GridData data_2 = new GridData(GridData.FILL_BOTH
 		| GridData.VERTICAL_ALIGN_BEGINNING);
 	data_2.verticalAlignment = SWT.CENTER;
 	data_2.grabExcessVerticalSpace = false;
@@ -128,86 +294,6 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 	data = new GridData();
 	data.horizontalSpan = 2;
 	removeButton.setLayoutData(data);
-
-	// test-method-filter modifier
-	Group cmpTestmethodFilterModifier = new Group(cmpMain, SWT.NONE);
-	cmpTestmethodFilterModifier
-		.setText(Messages.JUTPreferenceFilterPage_Modifier_filter);
-
-	// Create a data that takes up the extra space in the dialog .
-	data_1 = new GridData(GridData.FILL_HORIZONTAL);
-	data_1.verticalAlignment = SWT.FILL;
-	data_1.grabExcessVerticalSpace = true;
-	data_1.grabExcessHorizontalSpace = true;
-	cmpTestmethodFilterModifier.setLayoutData(data_1);
-
-	GridLayout layout = new GridLayout();
-	cmpTestmethodFilterModifier.setLayout(layout);
-
-	listMethodFilterModifier = new List(cmpTestmethodFilterModifier,
-		SWT.BORDER);
-	listMethodFilterModifier.setItems(getMethodFilterModifierPref());
-
-	// Create a data that takes up the extra space in the dialog and spans
-	// both columns.
-	data = new GridData(GridData.FILL_BOTH);
-	listMethodFilterModifier.setLayoutData(data);
-
-	Composite buttonComposite = new Composite(cmpTestmethodFilterModifier,
-		SWT.NULL);
-
-	buttonLayout = new GridLayout();
-	buttonLayout.numColumns = 2;
-	buttonComposite.setLayout(buttonLayout);
-
-	// Create a data that takes up the extra space in the dialog and spans
-	// both columns.
-	data_3 = new GridData(GridData.FILL_BOTH
-		| GridData.VERTICAL_ALIGN_BEGINNING);
-	data_3.verticalAlignment = SWT.CENTER;
-	data_3.grabExcessVerticalSpace = false;
-	buttonComposite.setLayoutData(data_3);
-
-	addButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
-
-	addButton.setText("Add to List"); //$NON-NLS-1$
-	addButton.addSelectionListener(new SelectionAdapter() {
-	    @Override
-	    public void widgetSelected(SelectionEvent event) {
-		String newEntry = newMethodFilterModifier.getText();
-		for (String item : listMethodFilterModifier.getItems()) {
-		    if (newEntry.equals(item)) {
-			return;
-		    }
-		}
-
-		listMethodFilterModifier.add(newEntry,
-			listMethodFilterModifier.getItemCount());
-	    }
-	});
-
-	newMethodFilterModifier = new Text(buttonComposite, SWT.BORDER);
-	// Create a data that takes up the extra space in the dialog .
-	data = new GridData(GridData.FILL_HORIZONTAL);
-	data.grabExcessHorizontalSpace = true;
-	newMethodFilterModifier.setLayoutData(data);
-
-	removeButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
-
-	removeButton.setText("Remove Selection"); //$NON-NLS-1$
-	removeButton.addSelectionListener(new SelectionAdapter() {
-	    @Override
-	    public void widgetSelected(SelectionEvent event) {
-		listMethodFilterModifier.remove(listMethodFilterModifier
-			.getSelectionIndex());
-	    }
-	});
-
-	data = new GridData();
-	data.horizontalSpan = 2;
-	removeButton.setLayoutData(data);
-
-	return cmpMain;
     }
 
     /**
@@ -224,12 +310,14 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
     protected void performDefaults() {
 	listMethodFilterName.setItems(getDefaultMethodFilterNamePref());
 	listMethodFilterModifier.setItems(getDefaultMethodFilterModifierPref());
+	listNonInjectedTypeFilter.setItems(getDefaultInjectionTypeFilterPref());
     }
 
     @Override
     public boolean performOk() {
 	setMethodFilterNamePref(listMethodFilterName.getItems());
 	setMethodFilterModifierPref(listMethodFilterModifier.getItems());
+	setInjectionTypeFilterPref(listNonInjectedTypeFilter.getItems());
 	return super.performOk();
     }
 
@@ -269,6 +357,21 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 		JUTPreferences.convertFromArray(values));
     }
 
+    public void setInjectionTypeFilterPref(String[] values) {
+	getPreferenceStore().setValue(INJECTION_TYPE_FILTER,
+		JUTPreferences.convertFromArray(values));
+    }
+
+    public String[] getInjectionTypeFilterPref() {
+	return JUTPreferences.convertToArray(getPreferenceStore().getString(
+		INJECTION_TYPE_FILTER));
+    }
+
+    public String[] getDefaultInjectionTypeFilterPref() {
+	return JUTPreferences.convertToArray(getPreferenceStore().getDefaultString(
+		INJECTION_TYPE_FILTER));
+    }
+
     /**
      * @return default method filter modifier preferences
      */
@@ -284,4 +387,5 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 	return JUTPreferences.convertToArray(getPreferenceStore().getString(
 		TEST_METHOD_FILTER_MODIFIER));
     }
+
 }

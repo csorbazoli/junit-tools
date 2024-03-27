@@ -642,6 +642,27 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return ret;
     }
 
+    /**
+     * Find all fields that are potentially injected object (e.g. service, dao, etc)
+     */
+    public static Map<String, String> findPotentialInjectedFields(ICompilationUnit baseClass) throws JavaModelException {
+	Map<String, String> ret = new TreeMap<>();
+	IType primaryType = baseClass.findPrimaryType();
+	// Autowired fields
+	for (IField field : primaryType.getFields()) {
+	    if (isCandidateForInjection(field)) {
+		ret.put(field.getElementName(), Signature.getSignatureSimpleName(field.getTypeSignature()));
+	    }
+	}
+	return ret;
+    }
+
+    private static boolean isCandidateForInjection(IField field) throws JavaModelException {
+	String typeName = Signature.getSignatureSimpleName(field.getTypeSignature());
+	return !JUTPreferences.getInjectionTypeFilter().contains(typeName);
+	// !IGeneratorConstants.PRIMITIVE_TYPES.contains(typeName)
+    }
+
     private static boolean isAutowired(IField field) throws JavaModelException {
 	for (IAnnotation annotation : field.getAnnotations()) {
 	    if ("Autowired".equals(annotation.getElementName())) {
