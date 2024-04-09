@@ -601,6 +601,18 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return null;
     }
 
+    public static IMethod findMethod(IType type, String methodName) throws JavaModelException {
+	IMethod[] methods = type.getMethods();
+	if (methods != null && methods.length > 0) {
+	    for (IMethod method : methods) {
+		if (methodName.equals(method.getElementName())) {
+		    return method;
+		}
+	    }
+	}
+	return null;
+    }
+
     public static boolean isSpringController(ICompilationUnit baseClass) throws JavaModelException {
 	return hasAnyAnnotationOf(baseClass, Arrays.asList("RestController", "Controller"));
     }

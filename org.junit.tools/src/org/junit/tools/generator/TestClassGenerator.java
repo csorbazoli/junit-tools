@@ -521,7 +521,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-method-body
-	String testMethodBody = createMvcTestMethodBody(tmlMethod, httpMethod, basePath + GeneratorUtils.determineRequestPath(testedMethod));
+	String testMethodBody = createMvcTestMethodBody(type, tmlMethod, httpMethod, basePath + GeneratorUtils.determineRequestPath(testedMethod));
 
 	// throws Exception declaration is always needed for MVC testing
 	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, EXCEPTION, null,
@@ -549,7 +549,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		testMethodBody, isRepeatingTestMethods(), ANNO_JUNIT_TEST);
     }
 
-    protected String createMvcTestMethodBody(Method tmlMethod, String httpMethod, String urlPath)
+    protected String createMvcTestMethodBody(IType type, Method tmlMethod, String httpMethod, String urlPath)
 	    throws JavaModelException {
 	StringBuilder sbTestMethodBody = new StringBuilder();
 	List<Param> params = tmlMethod.getParam();
@@ -566,7 +566,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	List<TestCase> testCases = tmlMethod.getTestCase();
 
 	for (TestCase tmlTestcase : testCases) {
-	    createMvcTestCaseBody(sbTestMethodBody, resultVariableName, resultType, params,
+	    createMvcTestCaseBody(sbTestMethodBody, type, resultVariableName, resultType, params,
 		    tmlTestcase.getParamAssignments(), httpMethod, urlPath);
 
 	    // assertions
@@ -580,8 +580,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
     }
 
-    private void createMvcTestCaseBody(StringBuilder sbTestMethodBody, String resultVariableName, String resultType,
-	    List<Param> params, List<ParamAssignment> paramAssignments, String httpMethod, String urlPath) {
+    private void createMvcTestCaseBody(StringBuilder sbTestMethodBody, IType type, String resultVariableName, String resultType,
+	    List<Param> params, List<ParamAssignment> paramAssignments, String httpMethod, String urlPath) throws JavaModelException {
 
 	if (isGherkinStyle()) {
 	    sbTestMethodBody.append("// given").append(RETURN);
@@ -590,7 +590,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create param assignments
 	createParamAssignments(paramAssignments, sbTestMethodBody);
 
-	if (isReplayAllVerifyAllEnabled() && GeneratorUtils.isUsingEasyMock()) {
+	if (isReplayAllVerifyAllEnabled() && GeneratorUtils.isUsingEasyMock() && GeneratorUtils.findMethod(type, "replayAll") != null) {
 	    sbTestMethodBody.append("replayAll();").append(RETURN);
 	}
 	// result
@@ -654,7 +654,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
 	for (TestCase tmlTestcase : testCases) {
 
-	    createTestCaseBody(sbTestMethodBody, tmlMethod.getName(), baseClassName, testBaseVariableName,
+	    createTestCaseBody(sbTestMethodBody, type, tmlMethod.getName(), baseClassName, testBaseVariableName,
 		    testbaseMethodName, resultVariableName, resultType, params, tmlTestcase.getParamAssignments(),
 		    tmlMethod.isStatic());
 
@@ -666,9 +666,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return sbTestMethodBody.toString();
     }
 
-    protected void createTestCaseBody(StringBuilder sbTestMethodBody, String methodName, String baseClassName,
+    protected void createTestCaseBody(StringBuilder sbTestMethodBody, IType type, String methodName, String baseClassName,
 	    String testBaseVariableName, String testBaseMethodName, String resultVariableName, String resultType,
-	    List<Param> params, List<ParamAssignment> paramAssignments, boolean isStatic) {
+	    List<Param> params, List<ParamAssignment> paramAssignments, boolean isStatic) throws JavaModelException {
 
 	String baseName = testBaseVariableName;
 
@@ -686,7 +686,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create param assignments
 	createParamAssignments(paramAssignments, sbTestMethodBody);
 
-	if (isReplayAllVerifyAllEnabled() && GeneratorUtils.isUsingEasyMock()) {
+	if (isReplayAllVerifyAllEnabled() && GeneratorUtils.isUsingEasyMock() && GeneratorUtils.findMethod(type, "replayAll") != null) {
 	    sbTestMethodBody.append("replayAll();").append(RETURN);
 	}
 	if (isGherkinStyle()) {

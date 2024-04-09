@@ -209,8 +209,12 @@ public class TestClassGeneratorTest {
     }
 
     @Test
-    public void testCreateTestCaseBody_simpleExpectedValue() {
+    public void testCreateTestCaseBody_simpleExpectedValue() throws Exception {
 	// given
+	IType type = Mockito.mock(IType.class);
+	IMethod replayAllMethod = Mockito.mock(IMethod.class);
+	when(replayAllMethod.getElementName()).thenReturn("replayAll");
+	when(type.getMethods()).thenReturn(new IMethod[] { replayAllMethod });
 	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_EASYMOCK);
 	JUTPreferences.setReplayAllVerifyAllEnabled(true);
 	StringBuilder sbTestMethodBody = new StringBuilder();
@@ -236,7 +240,7 @@ public class TestClassGeneratorTest {
 	List<ParamAssignment> paramAssignments = Arrays.asList(stringParamAssignment, intParamAssignment);
 
 	// when
-	underTest.createTestCaseBody(sbTestMethodBody, "someMethod", "SomeClass",
+	underTest.createTestCaseBody(sbTestMethodBody, type, "someMethod", "SomeClass",
 		"underTest", "initUnderTest", "actual", "String",
 		params, paramAssignments, false);
 	// then
@@ -251,8 +255,9 @@ public class TestClassGeneratorTest {
     }
 
     @Test
-    public void testCreateTestCaseBody_voidMethod() {
+    public void testCreateTestCaseBody_voidMethod() throws Exception {
 	// given
+	IType type = Mockito.mock(IType.class);
 	StringBuilder sbTestMethodBody = new StringBuilder();
 
 	Param stringParam = new Param();
@@ -276,7 +281,7 @@ public class TestClassGeneratorTest {
 	List<ParamAssignment> paramAssignments = Arrays.asList(stringParamAssignment, intParamAssignment);
 
 	// when
-	underTest.createTestCaseBody(sbTestMethodBody, "someMethod", "SomeClass",
+	underTest.createTestCaseBody(sbTestMethodBody, type, "someMethod", "SomeClass",
 		"underTest", "initUnderTest", "", "void",
 		params, paramAssignments, false);
 	// then
@@ -290,8 +295,9 @@ public class TestClassGeneratorTest {
     }
 
     @Test
-    public void testCreateTestCaseBody_noInitMethod() {
+    public void testCreateTestCaseBody_noInitMethod() throws Exception {
 	// given
+	IType type = Mockito.mock(IType.class);
 	StringBuilder sbTestMethodBody = new StringBuilder();
 
 	Param stringParam = new Param();
@@ -315,7 +321,7 @@ public class TestClassGeneratorTest {
 	List<ParamAssignment> paramAssignments = Arrays.asList(stringParamAssignment, intParamAssignment);
 
 	// when
-	underTest.createTestCaseBody(sbTestMethodBody, "someMethod", "SomeClass",
+	underTest.createTestCaseBody(sbTestMethodBody, type, "someMethod", "SomeClass",
 		"underTest", null, "actual", "String",
 		params, paramAssignments, false);
 	// then
@@ -328,8 +334,9 @@ public class TestClassGeneratorTest {
     }
 
     @Test
-    public void testCreateTestCaseBody_staticMethod() {
+    public void testCreateTestCaseBody_staticMethod() throws Exception {
 	// given
+	IType type = Mockito.mock(IType.class);
 	StringBuilder sbTestMethodBody = new StringBuilder();
 
 	Param stringParam = new Param();
@@ -353,7 +360,7 @@ public class TestClassGeneratorTest {
 	List<ParamAssignment> paramAssignments = Arrays.asList(stringParamAssignment, intParamAssignment);
 
 	// when
-	underTest.createTestCaseBody(sbTestMethodBody, "someMethod", "SomeClass",
+	underTest.createTestCaseBody(sbTestMethodBody, type, "someMethod", "SomeClass",
 		"underTest", "initUnderTest", "actual", "String",
 		params, paramAssignments, true);
 	// then
@@ -636,7 +643,7 @@ public class TestClassGeneratorTest {
 	testCase.getParamAssignments().add(beanParamAssignment);
 	tmlMethod.getTestCase().add(testCase);
 	// when
-	String actual = underTest.createMvcTestMethodBody(tmlMethod, "get", "/rest/v1/update/{objectId}");
+	String actual = underTest.createMvcTestMethodBody(type, tmlMethod, "get", "/rest/v1/update/{objectId}");
 	// then
 	assertThat(actual).isEqualTo(TestUtils.readTestFile("generated/Method_mvc.txt"));
     }
@@ -717,7 +724,7 @@ public class TestClassGeneratorTest {
 
 	JUTPreferences.setGherkinStyleEnabled(false);
 	// when
-	String actual = underTest.createMvcTestMethodBody(tmlMethod, "get", "/rest/v1/update/{objectId}");
+	String actual = underTest.createMvcTestMethodBody(type, tmlMethod, "get", "/rest/v1/update/{objectId}");
 	// then
 	TestUtils.assertTestFileEquals("generated/Method_mvc_noGherkin.txt", actual);
     }
@@ -801,7 +808,7 @@ public class TestClassGeneratorTest {
 	testCase.getParamAssignments().add(beanParamAssignment);
 	tmlMethod.getTestCase().add(testCase);
 	// when
-	String actual = underTest.createMvcTestMethodBody(tmlMethod, "get", "/rest/v1/update/{objectId}");
+	String actual = underTest.createMvcTestMethodBody(type, tmlMethod, "get", "/rest/v1/update/{objectId}");
 	// then
 	assertThat(actual).isEqualTo(TestUtils.readTestFile("generated/Method_mvc_override_names.txt"));
     }

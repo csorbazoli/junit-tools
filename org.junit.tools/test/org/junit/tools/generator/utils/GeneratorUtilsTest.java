@@ -76,6 +76,20 @@ public class GeneratorUtilsTest {
     }
 
     @Test
+    public void testFindMethod() throws Exception {
+	// given
+	IType type = mock(IType.class);
+	String name = "underTest";
+	IMethod exitingMethod = mock(IMethod.class);
+	when(exitingMethod.getElementName()).thenReturn(name);
+	when(type.getMethods()).thenReturn(new IMethod[] { exitingMethod });
+	// when
+	IMethod actual = GeneratorUtils.findMethod(type, name);
+	// then
+	assertThat(actual).isEqualTo(exitingMethod);
+    }
+
+    @Test
     public void testFindInjectedFields_shouldFindAutowiredFields() throws Exception {
 	// given
 	ICompilationUnit type = mock(ICompilationUnit.class);
