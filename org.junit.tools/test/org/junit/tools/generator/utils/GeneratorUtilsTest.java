@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -153,6 +154,28 @@ public class GeneratorUtilsTest {
 	Map<String, String> actual = GeneratorUtils.findPotentialInjectedFields(type);
 	// then
 	assertThat(actual).containsEntry("someService", "SomeSpringService");
+    }
+
+    @Test
+    public void testFindNonPrimitiveFields_shouldIgnoreStaticFields() throws Exception {
+	// given
+	ICompilationUnit type = mock(ICompilationUnit.class);
+	IType primaryType = mock(IType.class);
+	when(type.findPrimaryType()).thenReturn(primaryType);
+
+	when(primaryType.getMethods()).thenReturn(new IMethod[] {});
+
+	IField existingField = mock(IField.class);
+	when(existingField.getFlags()).thenReturn(Flags.AccStatic);
+	when(existingField.getElementName()).thenReturn("someService");
+	when(existingField.getTypeSignature()).thenReturn("QSomeSpringService;");
+	when(primaryType.getFields()).thenReturn(new IField[] { existingField });
+
+	JUTPreferences.setInjectionTypeFilter(new String[] { "String" });
+	// when
+	Map<String, String> actual = GeneratorUtils.findPotentialInjectedFields(type);
+	// then
+	assertThat(actual).doesNotContainKey("someService");
     }
 
     @Test

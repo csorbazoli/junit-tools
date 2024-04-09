@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IAnnotatable;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -671,7 +672,9 @@ public class GeneratorUtils implements IGeneratorConstants {
 
     private static boolean isCandidateForInjection(IField field) throws JavaModelException {
 	String typeName = Signature.getSignatureSimpleName(field.getTypeSignature());
-	return !JUTPreferences.getInjectionTypeFilter().contains(typeName);
+	int flags = field.getFlags();
+	return !JUTPreferences.getInjectionTypeFilter().contains(typeName)
+		&& !Flags.isStatic(flags) && !Flags.isFinal(flags);
 	// !IGeneratorConstants.PRIMITIVE_TYPES.contains(typeName)
     }
 
