@@ -262,6 +262,9 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	addField(new BooleanFieldEditor(REPEATING_TEST_METHODS_ENABLED, Messages.JUTPreferenceMainPage_Repeating_Test_Methods_Enabled,
 		getFieldEditorParent()));
 
+	addField(new BooleanFieldEditor(TEST_RESOURCE_FULL_PATH_ENABLED, Messages.JUTPreferenceMainPage_TestResourceFullPath_Enabled,
+		getFieldEditorParent()));
+
 	adjustGridLayout();
     }
 

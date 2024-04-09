@@ -24,6 +24,7 @@ public interface IJUTPreferenceConstants {
     public static final String SHOW_SETTINGS_BEFORE_GENERATE = "SHOW_SETTINGS_BEFORE_GENERATE";
     public static final String GHERKIN_STYLE_ENABLED = "GHERKIN_STYLE";
     public static final String ASSERTJ_ENABLED = "ASSERTJ_ENABLED";
+    public static final String TEST_RESOURCE_FULL_PATH_ENABLED = "TEST_RESOURCE_FULL_PATH_ENABLED";
     /**
      * If enabled, then it creates a new test method if it already exists
      */

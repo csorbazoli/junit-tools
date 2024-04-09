@@ -56,6 +56,7 @@ public class TestClassGeneratorTest {
 	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
 	JUTPreferences.setAssertJEnabled(true);
 	JUTPreferences.setReplayAllVerifyAllEnabled(false);
+	JUTPreferences.setTestResurceFullPathEnabled(true);
     }
 
     @Test

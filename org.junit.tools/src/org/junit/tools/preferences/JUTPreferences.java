@@ -37,6 +37,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static String springTestClassPostfix = null;
     private static Boolean gherkinStyleEnabled = null;
     private static Boolean assertjEnabled = null;
+    private static Boolean testResurceFullPathEnabled = null;
     private static Boolean replayAllVerifyAllEnabled = null;
     private static Boolean repeatingTestMethodsEnabled = null;
     private static Boolean showSettingsBeforeGenerate = null;
@@ -381,6 +382,13 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return assertjEnabled;
     }
 
+    public static boolean isTestResourceFullPathEnabled() {
+	if (testResurceFullPathEnabled == null) {
+	    testResurceFullPathEnabled = getPreferenceBoolean(TEST_RESOURCE_FULL_PATH_ENABLED, false);
+	}
+	return testResurceFullPathEnabled;
+    }
+
     public static boolean isReplayAllVerifyAllEnabled() {
 	if (replayAllVerifyAllEnabled == null) {
 	    replayAllVerifyAllEnabled = getPreferenceBoolean(REPLAYALL_VERIFYALL_ENABLED, false);
@@ -422,6 +430,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setAssertJEnabled(Boolean enabled) {
 	JUTPreferences.assertjEnabled = enabled;
+    }
+
+    public static void setTestResurceFullPathEnabled(Boolean enabled) {
+	JUTPreferences.testResurceFullPathEnabled = enabled;
     }
 
     public static void setReplayAllVerifyAllEnabled(Boolean enabled) {
@@ -505,6 +517,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	booleanPropertyHandlers.put(REPEATING_TEST_METHODS_ENABLED, JUTPreferences::setRepeatingTestMethodsEnabled);
 	booleanPropertyHandlers.put(SHOW_SETTINGS_BEFORE_GENERATE, JUTPreferences::setShowSettingsBeforeGenerate);
 	booleanPropertyHandlers.put(REPLAYALL_VERIFYALL_ENABLED, JUTPreferences::setReplayAllVerifyAllEnabled);
+	booleanPropertyHandlers.put(TEST_RESOURCE_FULL_PATH_ENABLED, JUTPreferences::setTestResurceFullPathEnabled);
 
 	Map<String, Consumer<Integer>> intPropertyHandlers = new HashMap<>();
 	// intPropertyHandlers.put(JUNIT_VERSION, JUTPreferences::setJUnitVersion);

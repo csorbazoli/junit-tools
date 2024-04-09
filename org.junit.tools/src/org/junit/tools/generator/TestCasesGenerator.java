@@ -10,6 +10,7 @@ import java.util.Set;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.tools.generator.model.GeneratorModel;
+import org.junit.tools.generator.model.JUTElements.JUTClassesAndPackages;
 import org.junit.tools.generator.model.tml.Assertion;
 import org.junit.tools.generator.model.tml.AssertionType;
 import org.junit.tools.generator.model.tml.Method;
@@ -45,7 +46,9 @@ public class TestCasesGenerator {
 	    testCase.setTestBase("");
 	    testCase.setName("default test");
 
-	    List<Assertion> assertions = createAssertionForResult(tmlMethod, utmModel.getJUTElements().getClassesAndPackages().getBaseClassName());
+	    JUTClassesAndPackages classesAndPackages = utmModel.getJUTElements().getClassesAndPackages();
+	    List<Assertion> assertions = createAssertionForResult(tmlMethod, classesAndPackages.getBaseClass().getParent().getElementName(),
+		    classesAndPackages.getBaseClassName());
 	    if (!assertions.isEmpty()) {
 		testCase.getAssertion().addAll(assertions);
 	    }
@@ -69,15 +72,15 @@ public class TestCasesGenerator {
 	return ret;
     }
 
-    private List<Assertion> createAssertionForResult(Method tmlMethod, String testClass) {
+    private List<Assertion> createAssertionForResult(Method tmlMethod, String packageName, String testClass) {
 	if (tmlMethod.getResult() == null) {
 	    return Collections.emptyList();
 	}
 	String resultType = tmlMethod.getResult().getType();
-	return createAssertionsForResultType(resultType, tmlMethod.getName(), testClass);
+	return createAssertionsForResultType(resultType, tmlMethod.getName(), packageName, testClass);
     }
 
-    private List<Assertion> createAssertionsForResultType(String resultType, String methodName, String testClass) {
+    private List<Assertion> createAssertionsForResultType(String resultType, String methodName, String packageName, String testClass) {
 	List<Assertion> ret = new LinkedList<>();
 	Assertion defaultAssertion = new Assertion();
 	ret.add(defaultAssertion);
@@ -94,7 +97,7 @@ public class TestCasesGenerator {
 		defaultAssertion.setBase("{result}.isEmpty()");
 	    }
 	    defaultAssertion.setValue("");
-	    createAssertionsForResultType(resultType.replaceFirst("^Optional<(.*)>$", "$1"), methodName, testClass).stream()
+	    createAssertionsForResultType(resultType.replaceFirst("^Optional<(.*)>$", "$1"), methodName, packageName, testClass).stream()
 		    .map(assertion -> {
 			assertion.setBase(assertion.getBase().replace("{result}", "{result}.get()"));
 			return assertion;
@@ -104,7 +107,7 @@ public class TestCasesGenerator {
 	    defaultAssertion.setType(AssertionType.TESTFILEEQUALS);
 	    // TODO option to use full path instead of just the class name as folder
 	    defaultAssertion.setBase("TestUtils.objectToJson({result}.getBody())");
-	    defaultAssertion.setValue("\"" + testClass + "/" + methodName + ".json\"");
+	    defaultAssertion.setValue(getTestResourcePath(packageName, testClass, methodName));
 	} else if (isCollection(resultType)) {
 	    defaultAssertion.setType(AssertionType.IS_NOT_EMPTY);
 	    if (JUTPreferences.isAssertjEnabled()) {
@@ -118,14 +121,14 @@ public class TestCasesGenerator {
 	    extraAssertion.setType(AssertionType.TESTFILEEQUALS);
 	    extraAssertion.setBaseType(resultType);
 	    extraAssertion.setBase("TestUtils.objectToJson({result})");
-	    extraAssertion.setValue("\"" + testClass + "/" + methodName + ".json\"");
+	    extraAssertion.setValue(getTestResourcePath(packageName, testClass, methodName));
 	    ret.add(extraAssertion);
 	} else {
 	    String expected = JUTPreferences.getDefaultValuesByType().get(resultType);
 	    if (expected == null) {
 		defaultAssertion.setType(AssertionType.TESTFILEEQUALS);
 		defaultAssertion.setBase("TestUtils.objectToJson({result})");
-		expected = "\"" + testClass + "/" + methodName + ".json\"";
+		expected = getTestResourcePath(packageName, testClass, methodName);
 	    } else {
 		defaultAssertion.setType(AssertionType.EQUALS);
 		defaultAssertion.setBase("{result}");
@@ -134,6 +137,13 @@ public class TestCasesGenerator {
 	    defaultAssertion.setValue(expected);
 	}
 	return ret;
+    }
+
+    private String getTestResourcePath(String packageName, String testClass, String methodName) {
+	if (JUTPreferences.isTestResourceFullPathEnabled()) {
+	    return "\"" + packageName.replace(".", "\\\\") + "\\\\" + testClass + "_" + methodName + ".json\"";
+	}
+	return "\"" + testClass + "/" + methodName + ".json\"";
     }
 
     private boolean isCollection(String resultType) {

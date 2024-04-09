@@ -2,17 +2,22 @@ package org.junit.tools.generator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.tools.TestHelper;
 import org.junit.tools.generator.model.GeneratorModel;
 import org.junit.tools.generator.model.JUTElements;
+import org.junit.tools.generator.model.JUTElements.JUTClassesAndPackages;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.model.tml.Param;
 import org.junit.tools.generator.model.tml.Result;
@@ -29,6 +34,7 @@ public class TestCasesGeneratorTest {
 	JUTPreferences.setJUnitVersion(5);
 	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
 	JUTPreferences.setAssertJEnabled(true);
+	JUTPreferences.setTestResurceFullPathEnabled(false);
     }
 
     @Test
@@ -244,6 +250,7 @@ public class TestCasesGeneratorTest {
 	methodMap.put(methodKey, method);
 	model.setMethodMap(methodMap);
 	TestHelper.initDefaultValueMapping();
+	JUTPreferences.setTestResurceFullPathEnabled(true);
 	// when
 	underTest.generateTestCases(model);
 	// then
@@ -253,7 +260,7 @@ public class TestCasesGeneratorTest {
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 		.collect(Collectors.joining("\n")))
 		.isEqualTo(
-			"ResponseEntity<TestObject> TestUtils.objectToJson({result}.getBody())#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
+			"ResponseEntity<TestObject> TestUtils.objectToJson({result}.getBody())#TESTFILEEQUALS#\"com\\\\testutils\\\\somepackage\\\\SomeClass_someMethod.json\"");
     }
 
     @Test
@@ -327,7 +334,13 @@ public class TestCasesGeneratorTest {
     // helper methods
     private GeneratorModel createModel() {
 	JUTElements elements = new JUTElements();
-	elements.initClassesAndPackages().setBaseClassName("SomeClass");
+	JUTClassesAndPackages classesAndPackages = elements.initClassesAndPackages();
+	classesAndPackages.setBaseClassName("SomeClass");
+	ICompilationUnit compilationUnit = mock(ICompilationUnit.class);
+	IJavaElement parentElement = mock(IJavaElement.class);
+	when(compilationUnit.getParent()).thenReturn(parentElement);
+	when(parentElement.getElementName()).thenReturn("com.testutils.somepackage");
+	classesAndPackages.setBaseTest(compilationUnit);
 	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
 	test.setTestBase("SomeClass");
 	test.setTestClass("SomeClassTest");
