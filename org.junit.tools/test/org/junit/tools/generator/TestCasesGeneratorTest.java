@@ -260,7 +260,7 @@ public class TestCasesGeneratorTest {
 		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
 		.collect(Collectors.joining("\n")))
 		.isEqualTo(
-			"ResponseEntity<TestObject> TestUtils.objectToJson({result}.getBody())#TESTFILEEQUALS#\"com\\\\testutils\\\\somepackage\\\\SomeClass_someMethod.json\"");
+			"ResponseEntity<TestObject> TestUtils.objectToJson({result}.getBody())#TESTFILEEQUALS#\"com/testutils/somepackage/SomeClass_someMethod.json\"");
     }
 
     @Test

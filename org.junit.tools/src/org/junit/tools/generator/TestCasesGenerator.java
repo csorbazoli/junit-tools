@@ -141,7 +141,7 @@ public class TestCasesGenerator {
 
     private String getTestResourcePath(String packageName, String testClass, String methodName) {
 	if (JUTPreferences.isTestResourceFullPathEnabled()) {
-	    return "\"" + packageName.replace(".", "\\\\") + "\\\\" + testClass + "_" + methodName + ".json\"";
+	    return "\"" + packageName.replace(".", "/") + "/" + testClass + "_" + methodName + ".json\"";
 	}
 	return "\"" + testClass + "/" + methodName + ".json\"";
     }
