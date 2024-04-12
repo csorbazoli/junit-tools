@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -64,6 +66,8 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static DefaultValueMapper defaultValueMapper = null;
 
     private static String[] springAnnotations = null;
+    private static List<FieldDeclaration> additionalFields = null;
+    private static List<ImportDeclaration> additionalImports = null;
 
     public static boolean getPreferenceBoolean(String name) {
 	return getPreferenceStore().getBoolean(name);
@@ -130,6 +134,14 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setRelevantSpringAnnotations(String[] values) {
 	JUTPreferences.springAnnotations = values;
+    }
+
+    public static void setAdditionalFields(String[] values) {
+	JUTPreferences.additionalFields = parseFieldDeclarations(values);
+    }
+
+    public static void setAdditionalImports(String[] values) {
+	JUTPreferences.additionalImports = parseImports(values);
     }
 
     public static void setTestMethodFilterName(String[] testMethodFilterName) {
@@ -201,6 +213,37 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	    springAnnotations = convertToArray(getPreference(SPRING_ANNOTATIONS));
 	}
 	return springAnnotations;
+    }
+
+    public static List<ImportDeclaration> getAdditionalImports() { // TODO parse and provide details: isStatic, packageName
+	if (additionalImports == null) {
+	    additionalImports = parseImports(convertToArray(getPreference(ADDITIONAL_IMPORTS)));
+	}
+	return additionalImports;
+    }
+
+    private static List<ImportDeclaration> parseImports(String[] items) {
+	LinkedList<ImportDeclaration> ret = new LinkedList<>();
+	for (String item : items) {
+	    ImportDeclaration.fromConfigString(item).ifPresent(ret::add);
+	}
+	return ret;
+    }
+
+    public static List<FieldDeclaration> getAdditionalFields() { // TODO parse and provide details: annotation, type, name, initialValue
+	if (additionalFields == null) {
+	    additionalFields = parseFieldDeclarations(convertToArray(getPreference(ADDITIONAL_FIELDS)));
+	}
+	return additionalFields;
+    }
+
+    private static List<FieldDeclaration> parseFieldDeclarations(String[] items) {
+	LinkedList<FieldDeclaration> ret = new LinkedList<>();
+	for (String item : items) {
+	    FieldDeclaration.fromConfigString(item)
+		    .ifPresent(ret::add);
+	}
+	return ret;
     }
 
     public static DefaultValueMapper getDefaultValueMapper() {
@@ -538,6 +581,8 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
 	Map<String, Consumer<String[]>> arrayPropertyHandlers = new HashMap<>();
 	arrayPropertyHandlers.put(SPRING_ANNOTATIONS, JUTPreferences::setRelevantSpringAnnotations);
+	arrayPropertyHandlers.put(ADDITIONAL_FIELDS, JUTPreferences::setAdditionalFields);
+	arrayPropertyHandlers.put(ADDITIONAL_IMPORTS, JUTPreferences::setAdditionalImports);
 	arrayPropertyHandlers.put(STATIC_BINDINGS, JUTPreferences::setStaticBindings);
 	arrayPropertyHandlers.put(TEST_CLASS_ANNOTATIONS, JUTPreferences::setTestClassAnnotations);
 	arrayPropertyHandlers.put(TEST_METHOD_FILTER_MODIFIER, JUTPreferences::setTestMethodFilterModifier);

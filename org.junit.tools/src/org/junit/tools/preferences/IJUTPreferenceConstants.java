@@ -33,6 +33,8 @@ public interface IJUTPreferenceConstants {
     public static final String TEST_CLASS_ANNOTATIONS = "TEST_CLASS_ANNOTATIONS";
     public static final String STATIC_BINDINGS = "STATIC_BINDINGS";
     public static final String SPRING_ANNOTATIONS = "SPRING_ANNOTATIONS";
+    public static final String ADDITIONAL_IMPORTS = "ADDITIONAL_IMPORTS";
+    public static final String ADDITIONAL_FIELDS = "ADDITIONAL_FIELDS";
 
     public static final String DEFAULT_VALUE_MAPPING = "DEFAULT_VALUE_MAPPING";
     public static final String DEFAULT_VALUE_GENERIC_MAPPING = "DEFAULT_VALUE_GENERIC_MAPPING";
