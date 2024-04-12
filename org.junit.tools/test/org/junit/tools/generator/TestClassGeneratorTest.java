@@ -2,7 +2,6 @@ package org.junit.tools.generator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -846,6 +845,7 @@ public class TestClassGeneratorTest {
 	IType type = Mockito.mock(IType.class);
 	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
 	tmlTest.setOnlyStaticMethods(true);
+	JUTPreferences.setAdditionalFields(new String[0]);
 	// when
 	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
 	// then
@@ -898,7 +898,7 @@ public class TestClassGeneratorTest {
     }
 
     @Test
-    public void testCreateStandardClassFields_shouldNotCreateIfAlreadyExists() throws Exception {
+    public void testCreateStandardClassFields_shouldCreateAdditionalFieldsIfConfigured() throws Exception {
 	// given
 	IType type = Mockito.mock(IType.class);
 	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
@@ -908,7 +908,7 @@ public class TestClassGeneratorTest {
 	// when
 	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
 	// then
-	verify(type, never()).createField(anyString(), any(), anyBoolean(), any());
+	verify(type).createField("@Rule public ExpectedException expected = ExpectedException.none();", null, false, null);
     }
 
     @Test

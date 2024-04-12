@@ -33,6 +33,7 @@ import org.junit.tools.generator.model.tml.Test;
 import org.junit.tools.generator.model.tml.TestCase;
 import org.junit.tools.generator.utils.GeneratorUtils;
 import org.junit.tools.generator.utils.JDTUtils;
+import org.junit.tools.preferences.FieldDeclaration;
 import org.junit.tools.preferences.IJUTPreferenceConstants;
 import org.junit.tools.preferences.ImportDeclaration;
 import org.junit.tools.preferences.JUTPreferences;
@@ -454,6 +455,9 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    }
 	    type.createField(GeneratorUtils.createAnnoForUnderTest(tmlTest.isSpring()) + getPublicModifierIfNeeded() +
 		    testClassName + " " + UNDER_TEST + initializer + ";", null, false, null);
+	}
+	for (FieldDeclaration additionalField : JUTPreferences.getAdditionalFields()) {
+	    type.createField(additionalField.toJavaString() + ";", null, false, null);
 	}
     }
 

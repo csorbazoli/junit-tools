@@ -53,4 +53,8 @@ public class FieldDeclaration {
 	return ret.toString();
     }
 
+    public String toJavaString() {
+	return toConfigString();
+    }
+
 }

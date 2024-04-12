@@ -77,4 +77,17 @@ public class FieldDeclarationTest {
 	}
     }
 
+    @Test
+    public void testToJavaString_shouldBeSameAsConfigString() throws Exception {
+	// given
+	String item = declaration;
+	Optional<FieldDeclaration> underTest = FieldDeclaration.fromConfigString(item);
+	if (underTest.isPresent()) {
+	    // when
+	    String actual = underTest.get().toJavaString();
+	    // then
+	    assertThat(actual).isEqualTo(item);
+	}
+    }
+
 }
