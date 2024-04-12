@@ -34,6 +34,7 @@ import org.junit.tools.generator.model.tml.TestCase;
 import org.junit.tools.generator.utils.GeneratorUtils;
 import org.junit.tools.generator.utils.JDTUtils;
 import org.junit.tools.preferences.IJUTPreferenceConstants;
+import org.junit.tools.preferences.ImportDeclaration;
 import org.junit.tools.preferences.JUTPreferences;
 
 /**
@@ -396,6 +397,13 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	if (tmlTest.getSettings().isLogger()) {
 	    compilationUnit.createImport("lombok.extern.slf4j.Slf4j", null, null);
 	}
+
+	// additional imports
+	for (ImportDeclaration importDeclaration : JUTPreferences.getAdditionalImports()) {
+	    if (!importDeclaration.isStatic()) {
+		compilationUnit.createImport(importDeclaration.getPackageName(), null, null);
+	    }
+	}
     }
 
     private boolean isUsingJunit4() {
@@ -423,6 +431,13 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	if (tmlTest.isSpring() && GeneratorUtils.isSpringController(compilationUnit)) {
 	    compilationUnit.createImport("org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*", importAbove, Flags.AccStatic, null);
 	    compilationUnit.createImport("org.springframework.test.web.servlet.result.MockMvcResultMatchers.status", importAbove, Flags.AccStatic, null);
+	}
+
+	// additional imports configured
+	for (ImportDeclaration importDeclaration : JUTPreferences.getAdditionalImports()) {
+	    if (importDeclaration.isStatic()) {
+		compilationUnit.createImport(importDeclaration.getPackageName(), importAbove, Flags.AccStatic, null);
+	    }
 	}
     }
 

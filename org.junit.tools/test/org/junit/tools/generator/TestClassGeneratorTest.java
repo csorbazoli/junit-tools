@@ -9,7 +9,6 @@ import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,6 +56,8 @@ public class TestClassGeneratorTest {
 	JUTPreferences.setAssertJEnabled(true);
 	JUTPreferences.setReplayAllVerifyAllEnabled(false);
 	JUTPreferences.setTestResurceFullPathEnabled(true);
+	JUTPreferences.setAdditionalFields(new String[] { "@Rule public ExpectedException expected = ExpectedException.none()" });
+	JUTPreferences.setAdditionalImports(new String[] { "static org.mockito.Mockito.never", "java.util.List" });
     }
 
     @Test
@@ -923,9 +924,11 @@ public class TestClassGeneratorTest {
 	ArgumentCaptor<String> importCaptor = ArgumentCaptor.forClass(String.class);
 	ArgumentCaptor<Integer> flagCaptor = ArgumentCaptor.forClass(Integer.class);
 	ArgumentCaptor<IImportDeclaration> importAboveCaptor = ArgumentCaptor.forClass(IImportDeclaration.class);
-	verify(baseClass).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(), nullable(IProgressMonitor.class));
-	assertThat(importCaptor.getValue())
-		.isEqualTo("org.assertj.core.api.Assertions.assertThat");
+	verify(baseClass, atLeastOnce()).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(),
+		nullable(IProgressMonitor.class));
+	assertThat(importCaptor.getAllValues()).containsExactly(
+		"org.assertj.core.api.Assertions.assertThat",
+		"org.mockito.Mockito.never");
     }
 
     @Test
@@ -943,9 +946,11 @@ public class TestClassGeneratorTest {
 	ArgumentCaptor<String> importCaptor = ArgumentCaptor.forClass(String.class);
 	ArgumentCaptor<Integer> flagCaptor = ArgumentCaptor.forClass(Integer.class);
 	ArgumentCaptor<IImportDeclaration> importAboveCaptor = ArgumentCaptor.forClass(IImportDeclaration.class);
-	verify(baseClass).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(), nullable(IProgressMonitor.class));
-	assertThat(importCaptor.getValue())
-		.isEqualTo("org.junit.Assert.*");
+	verify(baseClass, atLeastOnce()).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(),
+		nullable(IProgressMonitor.class));
+	assertThat(importCaptor.getAllValues()).containsExactly(
+		"org.junit.Assert.*",
+		"org.mockito.Mockito.never");
     }
 
     @Test
@@ -963,11 +968,13 @@ public class TestClassGeneratorTest {
 	ArgumentCaptor<String> importCaptor = ArgumentCaptor.forClass(String.class);
 	ArgumentCaptor<Integer> flagCaptor = ArgumentCaptor.forClass(Integer.class);
 	ArgumentCaptor<IImportDeclaration> importAboveCaptor = ArgumentCaptor.forClass(IImportDeclaration.class);
-	verify(baseClass, times(3)).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(), nullable(IProgressMonitor.class));
-	assertThat(importCaptor.getAllValues())
-		.containsExactly("org.easymock.EasyMock.replay",
-			"org.easymock.EasyMock.verify",
-			"org.assertj.core.api.Assertions.assertThat");
+	verify(baseClass, atLeastOnce()).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(),
+		nullable(IProgressMonitor.class));
+	assertThat(importCaptor.getAllValues()).containsExactly(
+		"org.easymock.EasyMock.replay",
+		"org.easymock.EasyMock.verify",
+		"org.assertj.core.api.Assertions.assertThat",
+		"org.mockito.Mockito.never");
     }
 
     @Test
@@ -987,10 +994,10 @@ public class TestClassGeneratorTest {
 	verify(baseClass, atLeastOnce()).createImport(importCaptor.capture(), importAboveCaptor.capture(), flagCaptor.capture(),
 		nullable(IProgressMonitor.class));
 	assertThat(importCaptor.getAllValues())
-		.hasSize(3)
 		.containsExactly("org.assertj.core.api.Assertions.assertThat",
 			"org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*",
-			"org.springframework.test.web.servlet.result.MockMvcResultMatchers.status");
+			"org.springframework.test.web.servlet.result.MockMvcResultMatchers.status",
+			"org.mockito.Mockito.never");
     }
 
     // helper methods
