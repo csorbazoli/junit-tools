@@ -29,106 +29,62 @@ public class Messages extends NLS {
     public static String General_info_process_successful;
 
     public static String GeneratorUtils_ErrorPackageCreation;
-
     public static String GeneratorUtils_MethodExists;
-
     public static String GeneratorUtils_OnlyJavaProjects;
-
     public static String GeneratorUtils_SelectionEnd;
-
     public static String GeneratorUtils_SelectionNotSupported;
 
     public static String GeneratorWizardMainPage_afterMethodCall;
-
     public static String GeneratorWizardMainPage_beforeMethodCall;
-
     public static String GeneratorWizardMainPage_Browse;
-
     public static String GeneratorWizardMainPage_createTestBaseAfter;
-
     public static String GeneratorWizardMainPage_createTestBaseBefore;
-
     public static String GeneratorWizardMainPage_Deselect_all;
-
     public static String GeneratorWizardMainPage_existing_methods;
-
     public static String GeneratorWizardMainPage_Filter;
-
     public static String GeneratorWizardMainPage_Generate;
-
     public static String GeneratorWizardMainPage_high;
-
     public static String GeneratorWizardMainPage_Hooks_for_manuals;
-
     public static String GeneratorWizardMainPage_logger;
-
     public static String GeneratorWizardMainPage_TestUtils;
-
     public static String GeneratorWizardMainPage_ThrowsDeclaration;
-
     public static String GeneratorWizardMainPage_low;
-
     public static String GeneratorWizardMainPage_main_settings;
-
     public static String GeneratorWizardMainPage_methods;
-
     public static String GeneratorWizardMainPage_modifier;
-
     public static String GeneratorWizardMainPage_name;
-
     public static String GeneratorWizardMainPage_Other;
-
     public static String GeneratorWizardMainPage_Select_all;
-
     public static String GeneratorWizardMainPage_Standardmethods;
-
     public static String GeneratorWizardMainPage_setUp;
-
     public static String GeneratorWizardMainPage_setUpBeforeClass;
-
     public static String GeneratorWizardMainPage_standard;
-
     public static String GeneratorWizardMainPage_Super_class;
-
     public static String GeneratorWizardMainPage_tearDown;
-
     public static String GeneratorWizardMainPage_tearDownAfterClass;
-
     public static String GeneratorWizardMainPage_toggle;
-
     public static String GeneratorWizardMainPage_ShowThisDialog;
-
     public static String GeneratorWizardMainPage_Testmethod_prefix;
-
     public static String GeneratorWizardMainPage_Testpriority;
-
     public static String GeneratorWizardMainPage_Testproject;
 
     public static String GeneratorWizardTestBases_ErrorDuringConstructorHandling;
-
     public static String GeneratorWizardTestBases_ErrorWhileGetParamsFromSelectedMethod;
-
     public static String GeneratorWizardTestBases_ErrorWhileWritingTmlFile;
-
     public static String GeneratorWizardTestBases_method;
-
     public static String GeneratorWizardTestBases_MustEditTestIds;
-
     public static String GeneratorWizardTestBases_ReturnValue;
-
     public static String GeneratorWizardTestBases_testBaseId;
-
     public static String GeneratorWizardTestBases_TestBaseIdMustBeUnique;
-
     public static String GeneratorWizardTestBasesPage_Constructor;
-
     public static String GeneratorWizardTestBasesPage_mocks;
-
     public static String GeneratorWizardTestBasesPage_testbases;
-
     public static String GeneratorWizardTestCasesPage_assertions;
     public static String GeneratorWizardTestCasesPage_Method;
     public static String GeneratorWizardTestCasesPage_testcases;
+
+    public static String JUTPreferencePage_addToList;
+    public static String JUTPreferencePage_removeFromList;
 
     public static String JUTPreferenceFilterPage_description_filters;
     public static String JUTPreferenceFilterPage_Modifier_filter;
@@ -143,6 +99,12 @@ public class Messages extends NLS {
     public static String JUTPreferenceDefaultValuePage_fallback;
 
     public static String JUTPreferenceAnnotationsPage_description;
+    public static String JUTPreferenceAnnotationsPage_annotations;
+    public static String JUTPreferenceAnnotationsPage_springRelatedAnnotations;
+
+    public static String JUTPreferenceAdditionalsPage_description;
+    public static String JUTPreferenceAdditionalsPage_imports;
+    public static String JUTPreferenceAdditionalsPage_fields;
 
     public static String JUTPreferenceStaticBindingsPage_description;
 

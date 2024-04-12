@@ -33,6 +33,7 @@ public class FieldDeclarationTest {
 	return Arrays.asList(new Object[][] {
 		{ "testField", null, null, null, null, null },
 		{ "String testField", null, null, "String", "testField", null },
+		{ "List<String> testList = Arrays.asList(\"test\")", null, null, "List<String>", "testList", "Arrays.asList(\"test\")" },
 		{ "int testField = 1", null, null, "int", "testField", "1" },
 		{ "@Rule public ExpectedException expected = ExpectedException.none()", "Rule", "public", "ExpectedException", "expected",
 			"ExpectedException.none()" },

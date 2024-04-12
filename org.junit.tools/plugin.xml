@@ -288,6 +288,12 @@
         id="org.junit.tools.ui.annotations"
         name="Annotations">
   	</page>
+    <page
+        category="org.junit.tools.ui.preferencepage"
+        class="org.junit.tools.ui.preferences.JUTPreferenceAdditionalsPage"
+        id="org.junit.tools.ui.additionals"
+        name="Additional imports/fields">
+  	</page>
 	<page
         category="org.junit.tools.ui.preferencepage"
         class="org.junit.tools.ui.preferences.JUTPreferenceDefaultValuesPage"

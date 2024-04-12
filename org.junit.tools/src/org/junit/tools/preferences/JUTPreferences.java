@@ -126,10 +126,9 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return testClassAnnotations;
     }
 
-    protected static void setStaticBindings(String[] staticBindings) {
+    public static void setStaticBindings(String[] staticBindings) {
 	JUTPreferences.staticBindings = staticBindings;
 	initStaticBindingsMaps();
-	setPreference(STATIC_BINDINGS, convertFromArray(staticBindings));
     }
 
     public static void setRelevantSpringAnnotations(String[] values) {

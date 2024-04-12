@@ -12,7 +12,7 @@ public class FieldDeclaration {
     private static final Pattern CONFIG_PATTERN = Pattern
 	    .compile("^(@(?<annotation>\\w+(\\(.*\\))?)\\s+)?"
 		    + "((?<modifier>\\w+)\\s+)?"
-		    + "(?<type>\\w+)\\s+(?<name>\\w+)"
+		    + "(?<type>[\\w<>, ]+)\\s+(?<name>\\w+)"
 		    + "(\\s*=\\s*(?<value>.*))?$");
     private final String annotation;
     private final String modifier;

@@ -58,7 +58,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	// test-method-filter name
 	Group cmpAnnotationsTestClass = new Group(cmpMain, SWT.NONE);
 	cmpAnnotationsTestClass
-		.setText("Additional annotations for the test-class");
+		.setText(Messages.JUTPreferenceAnnotationsPage_annotations);
 	GridData data;
 	gd_cmpAnnotationsTestClass = new GridData(GridData.FILL_HORIZONTAL);
 	gd_cmpAnnotationsTestClass.verticalAlignment = SWT.FILL;
@@ -90,7 +90,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 
 	Button addButton = new Button(buttonCompositeFilterName, SWT.PUSH | SWT.CENTER);
 
-	addButton.setText("Add to List"); //$NON-NLS-1$
+	addButton.setText(Messages.JUTPreferencePage_addToList); // $NON-NLS-1$
 	addButton.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent event) {
@@ -107,6 +107,16 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	});
 
 	newAnnotationTestClass = new Text(buttonCompositeFilterName, SWT.BORDER);
+
+	listAnnotationsTestClass.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		if (listAnnotationsTestClass.getSelection().length > 0) {
+		    newAnnotationTestClass.setText(listAnnotationsTestClass.getSelection()[0]);
+		}
+	    }
+	});
+
 	// Create a data that takes up the extra space in the dialog .
 	gd_newAnnotationTestClass = new GridData(GridData.FILL_HORIZONTAL);
 	gd_newAnnotationTestClass.grabExcessHorizontalSpace = true;
@@ -115,7 +125,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	Button removeButton = new Button(buttonCompositeFilterName, SWT.PUSH
 		| SWT.CENTER);
 
-	removeButton.setText("Remove Selection"); //$NON-NLS-1$
+	removeButton.setText(Messages.JUTPreferencePage_removeFromList);
 	removeButton.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent event) {
@@ -131,7 +141,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	// test-method-filter modifier
 	Group cmpAnnotationsMockClass = new Group(cmpMain, SWT.NONE);
 	cmpAnnotationsMockClass
-		.setText("Relevant annotations of Spring related classes");
+		.setText(Messages.JUTPreferenceAnnotationsPage_springRelatedAnnotations);
 
 	// Create a data that takes up the extra space in the dialog .
 	gd_cmpAnnotationsSpringClass = new GridData(GridData.FILL_HORIZONTAL);
@@ -166,7 +176,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 
 	addButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
 
-	addButton.setText("Add to List"); //$NON-NLS-1$
+	addButton.setText(Messages.JUTPreferencePage_addToList);
 	addButton.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent event) {
@@ -182,6 +192,15 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	});
 
 	newAnnotationSpringClass = new Text(buttonComposite, SWT.BORDER);
+	listAnnotationsSpringClass.addSelectionListener(new SelectionAdapter() {
+	    @Override
+	    public void widgetSelected(SelectionEvent event) {
+		if (listAnnotationsSpringClass.getSelection().length > 0) {
+		    newAnnotationSpringClass.setText(listAnnotationsSpringClass.getSelection()[0]);
+		}
+	    }
+	});
+
 	// Create a data that takes up the extra space in the dialog .
 	gd_newAnnotationSpringClass = new GridData(GridData.FILL_HORIZONTAL);
 	gd_newAnnotationSpringClass.grabExcessHorizontalSpace = true;
@@ -189,7 +208,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 
 	removeButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
 
-	removeButton.setText("Remove Selection"); //$NON-NLS-1$
+	removeButton.setText(Messages.JUTPreferencePage_removeFromList);
 	removeButton.addSelectionListener(new SelectionAdapter() {
 	    @Override
 	    public void widgetSelected(SelectionEvent event) {
@@ -224,7 +243,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
     @Override
     public boolean performOk() {
 	setAnnotationsTestClass(listAnnotationsTestClass.getItems());
-	setAnnotationsMockClass(listAnnotationsSpringClass.getItems());
+	setAnnotationsSpringClass(listAnnotationsSpringClass.getItems());
 	return super.performOk();
     }
 
@@ -240,7 +259,7 @@ public class JUTPreferenceAnnotationsPage extends PreferencePage implements
 	return JUTPreferences.convertToArray(getPreferenceStore().getString(TEST_CLASS_ANNOTATIONS));
     }
 
-    public void setAnnotationsMockClass(String[] values) {
+    public void setAnnotationsSpringClass(String[] values) {
 	getPreferenceStore().setValue(SPRING_ANNOTATIONS, JUTPreferences.convertFromArray(values));
     }
 
