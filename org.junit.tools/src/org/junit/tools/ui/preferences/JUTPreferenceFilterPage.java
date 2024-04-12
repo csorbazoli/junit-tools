@@ -76,7 +76,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 	cmpInjectionFilterModifier.setLayout(layout);
 
 	listNonInjectedTypeFilter = new List(cmpInjectionFilterModifier,
-		SWT.BORDER);
+		SWT.BORDER | SWT.V_SCROLL);
 	listNonInjectedTypeFilter.setItems(getInjectionTypeFilterPref());
 
 	// Create a data that takes up the extra space in the dialog and spans
@@ -156,7 +156,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 	cmpTestmethodFilterModifier.setLayout(layout);
 
 	listMethodFilterModifier = new List(cmpTestmethodFilterModifier,
-		SWT.BORDER);
+		SWT.BORDER | SWT.V_SCROLL);
 	listMethodFilterModifier.setItems(getMethodFilterModifierPref());
 
 	// Create a data that takes up the extra space in the dialog and spans
@@ -231,7 +231,7 @@ public class JUTPreferenceFilterPage extends PreferencePage implements
 	cmpTestmethodFilterName.setLayoutData(data);
 	cmpTestmethodFilterName.setLayout(new GridLayout());
 
-	listMethodFilterName = new List(cmpTestmethodFilterName, SWT.BORDER);
+	listMethodFilterName = new List(cmpTestmethodFilterName, SWT.BORDER | SWT.V_SCROLL);
 	listMethodFilterName.setItems(getMethodFilterNamePref());
 
 	// Create a data that takes up the extra space in the dialog and spans

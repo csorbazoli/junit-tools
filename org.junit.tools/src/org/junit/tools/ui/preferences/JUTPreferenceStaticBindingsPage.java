@@ -65,7 +65,7 @@ public class JUTPreferenceStaticBindingsPage extends PreferencePage implements
 	cmpStaticBindings.setLayoutData(gd_cmpStaticBindings);
 	cmpStaticBindings.setLayout(new GridLayout());
 
-	listStaticBindings = new List(cmpStaticBindings, SWT.BORDER);
+	listStaticBindings = new List(cmpStaticBindings, SWT.BORDER | SWT.V_SCROLL);
 	listStaticBindings.setItems(getStaticBindings());
 
 	// Create a data that takes up the extra space in the dialog and spans

@@ -253,7 +253,7 @@ public class JUTPreferenceDefaultValuesPage extends PreferencePage implements
 	GridLayout layout = new GridLayout();
 	cmpGenericTypeSettings.setLayout(layout);
 
-	listGenericTypes = new List(cmpGenericTypeSettings, SWT.BORDER);
+	listGenericTypes = new List(cmpGenericTypeSettings, SWT.BORDER | SWT.V_SCROLL);
 	listGenericTypes.setItems(getGenericTypeSettigns());
 
 	GridData data = new GridData(GridData.FILL_BOTH);
