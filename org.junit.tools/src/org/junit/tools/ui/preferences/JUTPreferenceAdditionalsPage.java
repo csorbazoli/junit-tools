@@ -245,11 +245,11 @@ public class JUTPreferenceAdditionalsPage extends PreferencePage implements
     }
 
     public void setAdditionalImports(String[] values) {
-	JUTPreferences.setAdditionalImports(values);
+	getPreferenceStore().setValue(ADDITIONAL_IMPORTS, JUTPreferences.convertFromArray(values));
     }
 
     public void setAdditionalFields(String[] values) {
-	JUTPreferences.setAdditionalFields(values);
+	getPreferenceStore().setValue(ADDITIONAL_FIELDS, JUTPreferences.convertFromArray(values));
     }
 
     public String[] getDefaultAdditionalImports() {
