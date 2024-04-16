@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,14 +36,14 @@ public class ImportDeclarationTest {
 	// given
 	String item = declaration;
 	// when
-	Optional<ImportDeclaration> actual = ImportDeclaration.fromConfigString(item);
+	ImportDeclaration actual = ImportDeclaration.fromConfigString(item);
 	// then
 	if (expectedPackageName == null) {
-	    assertThat(actual).isEmpty();
+	    assertThat(actual).isNull();
 	} else {
-	    assertThat(actual).isPresent();
-	    assertThat(actual.get().isStatic()).isEqualTo(expectedIsStatic);
-	    assertThat(actual.get().getPackageName()).isEqualTo(expectedPackageName);
+	    assertThat(actual).isNotNull();
+	    assertThat(actual.isStatic()).isEqualTo(expectedIsStatic);
+	    assertThat(actual.getPackageName()).isEqualTo(expectedPackageName);
 	}
     }
 
@@ -52,10 +51,10 @@ public class ImportDeclarationTest {
     public void testToConfigString() throws Exception {
 	// given
 	String item = declaration;
-	Optional<ImportDeclaration> underTest = ImportDeclaration.fromConfigString(item);
-	if (underTest.isPresent()) {
+	ImportDeclaration underTest = ImportDeclaration.fromConfigString(item);
+	if (underTest != null) {
 	    // when
-	    String actual = underTest.get().toConfigString();
+	    String actual = underTest.toConfigString();
 	    // then
 	    assertThat(actual).isEqualTo(item);
 	}

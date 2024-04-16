@@ -1,6 +1,5 @@
 package org.junit.tools.preferences;
 
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,17 +19,17 @@ public class FieldDeclaration {
     private final String name;
     private final String initialValue;
 
-    public static Optional<FieldDeclaration> fromConfigString(String item) {
+    public static FieldDeclaration fromConfigString(String item) {
 	Matcher matcher = CONFIG_PATTERN.matcher(item);
 	if (matcher.matches()) {
-	    return Optional.of(new FieldDeclaration(
+	    return new FieldDeclaration(
 		    matcher.group("annotation"),
 		    matcher.group("modifier"),
 		    matcher.group("type"),
 		    matcher.group("name"),
-		    matcher.group("value")));
+		    matcher.group("value"));
 	}
-	return Optional.empty();
+	return null;
     }
 
     public String toConfigString() {
