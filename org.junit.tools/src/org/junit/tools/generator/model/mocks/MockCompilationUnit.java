@@ -2,7 +2,6 @@ package org.junit.tools.generator.model.mocks;
 
 import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTED;
 
-import org.assertj.core.util.Arrays;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -141,7 +140,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public boolean hasChildren() {
-	return !Arrays.isNullOrEmpty(children);
+	return children != null && children.length > 0;
     }
 
     @Override

@@ -2,7 +2,6 @@ package org.junit.tools.ui.preferences;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
@@ -31,8 +30,6 @@ import org.junit.tools.preferences.IJUTPreferenceConstants;
  */
 public class JUTPreferenceStandardMethodsPage extends PreferencePage implements
 	IWorkbenchPreferencePage, IJUTPreferenceConstants {
-
-    private final Logger logger = Logger.getLogger(JUTPreferenceStandardMethodsPage.class.getName());
 
     private final Map<String, BooleanFieldEditor> checkBoxMap = new HashMap<>();
     private final Map<String, Text> bodyEditorMap = new HashMap<>();

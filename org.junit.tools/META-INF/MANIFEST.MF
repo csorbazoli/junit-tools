@@ -34,4 +34,5 @@ Export-Package: org.junit.tools,
  org.junit.tools.ui.generator.wizards.pages,
  org.junit.tools.ui.preferences,
  org.junit.tools.ui.utils
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/lombok-1.18.24.jar
