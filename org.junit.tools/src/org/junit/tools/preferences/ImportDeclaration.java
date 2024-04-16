@@ -1,5 +1,7 @@
 package org.junit.tools.preferences;
 
+import java.util.Optional;
+
 import lombok.Data;
 
 @Data
@@ -8,14 +10,14 @@ public class ImportDeclaration {
     private final boolean isStatic;
     private final String packageName;
 
-    public static ImportDeclaration fromConfigString(String item) {
+    public static Optional<ImportDeclaration> fromConfigString(String item) {
 	if (item == null || item.trim().isEmpty()) {
-	    return null;
+	    return Optional.empty();
 	}
 	if (item.startsWith("static")) {
-	    return new ImportDeclaration(true, item.substring(6).trim());
+	    return Optional.of(new ImportDeclaration(true, item.substring(6).trim()));
 	}
-	return new ImportDeclaration(false, item.trim());
+	return Optional.of(new ImportDeclaration(false, item.trim()));
     }
 
     public String toConfigString() {

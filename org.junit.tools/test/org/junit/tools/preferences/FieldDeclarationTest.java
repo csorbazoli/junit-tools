@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,17 +51,17 @@ public class FieldDeclarationTest {
 	// given
 	String item = declaration;
 	// when
-	FieldDeclaration actual = FieldDeclaration.fromConfigString(item);
+	Optional<FieldDeclaration> actual = FieldDeclaration.fromConfigString(item);
 	// then
 	if (expectedName == null) {
-	    assertThat(actual).isNull();
+	    assertThat(actual).isEmpty();
 	} else {
-	    assertThat(actual).isNotNull();
-	    assertThat(actual.getAnnotation()).isEqualTo(expectedAnnotation);
-	    assertThat(actual.getInitialValue()).isEqualTo(expectedInitialValue);
-	    assertThat(actual.getModifier()).isEqualTo(expectedModifier);
-	    assertThat(actual.getName()).isEqualTo(expectedName);
-	    assertThat(actual.getType()).isEqualTo(expectedType);
+	    assertThat(actual).isNotEmpty();
+	    assertThat(actual.get().getAnnotation()).isEqualTo(expectedAnnotation);
+	    assertThat(actual.get().getInitialValue()).isEqualTo(expectedInitialValue);
+	    assertThat(actual.get().getModifier()).isEqualTo(expectedModifier);
+	    assertThat(actual.get().getName()).isEqualTo(expectedName);
+	    assertThat(actual.get().getType()).isEqualTo(expectedType);
 	}
     }
 
@@ -68,10 +69,10 @@ public class FieldDeclarationTest {
     public void testToConfigString() throws Exception {
 	// given
 	String item = declaration;
-	FieldDeclaration underTest = FieldDeclaration.fromConfigString(item);
-	if (underTest != null) {
+	Optional<FieldDeclaration> underTest = FieldDeclaration.fromConfigString(item);
+	if (underTest.isPresent()) {
 	    // when
-	    String actual = underTest.toConfigString();
+	    String actual = underTest.get().toConfigString();
 	    // then
 	    assertThat(actual).isEqualTo(item);
 	}
@@ -81,10 +82,10 @@ public class FieldDeclarationTest {
     public void testToJavaString_shouldBeSameAsConfigString() throws Exception {
 	// given
 	String item = declaration;
-	FieldDeclaration underTest = FieldDeclaration.fromConfigString(item);
-	if (underTest != null) {
+	Optional<FieldDeclaration> underTest = FieldDeclaration.fromConfigString(item);
+	if (underTest.isPresent()) {
 	    // when
-	    String actual = underTest.toJavaString();
+	    String actual = underTest.get().toJavaString();
 	    // then
 	    assertThat(actual).isEqualTo(item);
 	}

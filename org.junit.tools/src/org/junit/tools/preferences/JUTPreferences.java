@@ -224,10 +224,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static List<ImportDeclaration> parseImports(String[] items) {
 	LinkedList<ImportDeclaration> ret = new LinkedList<>();
 	for (String item : items) {
-	    ImportDeclaration declaration = ImportDeclaration.fromConfigString(item);
-	    if (declaration != null) {
-		ret.add(declaration);
-	    }
+	    ImportDeclaration.fromConfigString(item).ifPresent(ret::add);
 	}
 	return ret;
     }
@@ -242,10 +239,8 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static List<FieldDeclaration> parseFieldDeclarations(String[] items) {
 	LinkedList<FieldDeclaration> ret = new LinkedList<>();
 	for (String item : items) {
-	    FieldDeclaration declaration = FieldDeclaration.fromConfigString(item);
-	    if (declaration != null) {
-		ret.add(declaration);
-	    }
+	    FieldDeclaration.fromConfigString(item)
+		    .ifPresent(ret::add);
 	}
 	return ret;
     }
