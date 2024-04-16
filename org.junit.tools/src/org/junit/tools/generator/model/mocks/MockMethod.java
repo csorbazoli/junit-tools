@@ -6,15 +6,20 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.jdt.core.IBuffer;
-import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IAnnotation;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IModuleDescription;
+import org.eclipse.jdt.core.ILocalVariable;
+import org.eclipse.jdt.core.IMemberValuePair;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IOpenable;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeParameter;
+import org.eclipse.jdt.core.ITypeRoot;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,24 +30,66 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MockPackageFragmentRoot implements IPackageFragmentRoot {
+public class MockMethod implements IMethod {
 
-    private IJavaProject javaProject;
-    private IPath path;
+    private boolean exists;
+    private int flags;
+    private String elementName;
+    private boolean isConstructor;
 
     @Override
-    public IJavaElement[] getChildren() {
+    public String[] getCategories() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean hasChildren() {
+    public IClassFile getClassFile() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ICompilationUnit getCompilationUnit() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IType getDeclaringType() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public int getFlags() {
+	return flags;
+    }
+
+    @Override
+    public ISourceRange getJavadocRange() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public int getOccurrenceCount() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IType getType(String arg0, int arg1) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ITypeRoot getTypeRoot() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public boolean isBinary() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
     public boolean exists() {
-	return true;
+	return exists;
     }
 
     @Override
@@ -57,11 +104,6 @@ public class MockPackageFragmentRoot implements IPackageFragmentRoot {
 
     @Override
     public IResource getCorrespondingResource() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public String getElementName() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -81,12 +123,22 @@ public class MockPackageFragmentRoot implements IPackageFragmentRoot {
     }
 
     @Override
+    public IJavaProject getJavaProject() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
     public IOpenable getOpenable() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
     public IJavaElement getParent() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IPath getPath() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -126,124 +178,152 @@ public class MockPackageFragmentRoot implements IPackageFragmentRoot {
     }
 
     @Override
-    public void close() {
+    public ISourceRange getNameRange() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public String findRecommendedLineSeparator() {
+    public String getSource() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IBuffer getBuffer() {
+    public ISourceRange getSourceRange() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean hasUnsavedChanges() {
+    public void copy(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) {
+
+    }
+
+    @Override
+    public void delete(boolean arg0, IProgressMonitor arg1) {
+
+    }
+
+    @Override
+    public void move(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) {
+
+    }
+
+    @Override
+    public void rename(String arg0, boolean arg1, IProgressMonitor arg2) {
+
+    }
+
+    @Override
+    public IJavaElement[] getChildren() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isConsistent() {
+    public boolean hasChildren() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isOpen() {
+    public IAnnotation getAnnotation(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void makeConsistent(IProgressMonitor arg0) {
+    public IAnnotation[] getAnnotations() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void open(IProgressMonitor arg0) {
+    public IMemberValuePair getDefaultValue() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void save(IProgressMonitor arg0, boolean arg1) {
+    public String getElementName() {
+	return elementName;
+    }
+
+    @Override
+    public String[] getExceptionTypes() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void attachSource(IPath arg0, IPath arg1, IProgressMonitor arg2) {
+    public String getKey() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void copy(IPath arg0, int arg1, int arg2, IClasspathEntry arg3, IProgressMonitor arg4) {
+    public int getNumberOfParameters() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragment createPackageFragment(String arg0, boolean arg1, IProgressMonitor arg2) {
+    public String[] getParameterNames() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void delete(int arg0, int arg1, IProgressMonitor arg2) {
+    public String[] getParameterTypes() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public int getKind() {
+    public ILocalVariable[] getParameters() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IModuleDescription getModuleDescription() {
+    public String[] getRawParameterNames() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public Object[] getNonJavaResources() {
+    public String getReturnType() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragment getPackageFragment(String name) {
-	return MockPackageFragment.builder()
-		.elementName(name)
-		.build();
-    }
-
-    @Override
-    public IClasspathEntry getRawClasspathEntry() {
+    public String getSignature() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IClasspathEntry getResolvedClasspathEntry() {
+    public ITypeParameter getTypeParameter(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPath getSourceAttachmentPath() {
+    public String[] getTypeParameterSignatures() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPath getSourceAttachmentRootPath() {
+    public ITypeParameter[] getTypeParameters() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isArchive() {
+    public boolean isConstructor() {
+	return isConstructor;
+    }
+
+    @Override
+    public boolean isLambdaMethod() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isExternal() {
+    public boolean isMainMethod() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void move(IPath arg0, int arg1, int arg2, IClasspathEntry arg3, IProgressMonitor arg4) {
+    public boolean isResolved() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public boolean isSimilar(IMethod arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 

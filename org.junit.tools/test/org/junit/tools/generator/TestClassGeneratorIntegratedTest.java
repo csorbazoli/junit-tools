@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.junit.Before;
@@ -25,11 +26,14 @@ import org.junit.tools.generator.model.GeneratorModel;
 import org.junit.tools.generator.model.JUTElements;
 import org.junit.tools.generator.model.JUTElements.JUTClassesAndPackages;
 import org.junit.tools.generator.model.JUTElements.JUTConstructorsAndMethods;
+import org.junit.tools.generator.model.mocks.MockAnnotation;
 import org.junit.tools.generator.model.mocks.MockCompilationUnit;
 import org.junit.tools.generator.model.mocks.MockJavaProject;
+import org.junit.tools.generator.model.mocks.MockMethod;
 import org.junit.tools.generator.model.mocks.MockPackageFragment;
 import org.junit.tools.generator.model.mocks.MockPackageFragmentRoot;
 import org.junit.tools.generator.model.mocks.MockProject;
+import org.junit.tools.generator.model.mocks.MockType;
 import org.junit.tools.generator.model.tml.Annotation;
 import org.junit.tools.generator.model.tml.Attribute;
 import org.junit.tools.generator.utils.TestUtils;
@@ -93,7 +97,15 @@ public class TestClassGeneratorIntegratedTest {
 
     private GeneratorModel initGeneratorModel(org.junit.tools.generator.model.tml.Test tmlTest) throws JUTWarning {
 	JUTElements jutElements = initJUTElements();
-	return new GeneratorModel(jutElements, tmlTest);
+	GeneratorModel ret = new GeneratorModel(jutElements, tmlTest);
+	ret.setMethodsToCreate(Arrays.asList(initMockMethod()));
+	return ret;
+    }
+
+    private MockMethod initMockMethod() {
+	return MockMethod.builder()
+		.elementName("testMethod")
+		.build();
     }
 
     private JUTElements initJUTElements() throws JUTWarning {
@@ -106,6 +118,14 @@ public class TestClassGeneratorIntegratedTest {
 
     private ICompilationUnit initCompilationUnit() {
 	return MockCompilationUnit.builder()
+		.baseTypes(new IType[] { initMockType() })
+		.build();
+    }
+
+    private IType initMockType() {
+	return MockType.builder()
+		.elementName("TestClass")
+		.annotations(new MockAnnotation[0])
 		.build();
     }
 
@@ -128,6 +148,7 @@ public class TestClassGeneratorIntegratedTest {
 			.build())
 		.build();
 	classesPackages.setBasePackages(Arrays.asList(basePackage));
+	classesPackages.setBaseTest(initCompilationUnit());
 	return classesPackages;
     }
 

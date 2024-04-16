@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IProblemRequestor;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.text.edits.TextEdit;
@@ -44,6 +43,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     private String elementName;
     private IJavaProject javaProject;
     private boolean readOnly;
+    private IType[] baseTypes;
 
     @Override
     public IType findPrimaryType() {
@@ -51,12 +51,12 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public IJavaElement getElementAt(int arg0) throws JavaModelException {
+    public IJavaElement getElementAt(int arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public ICompilationUnit getWorkingCopy(WorkingCopyOwner arg0, IProgressMonitor arg1) throws JavaModelException {
+    public ICompilationUnit getWorkingCopy(WorkingCopyOwner arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -71,12 +71,12 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public String getAttachedJavadoc(IProgressMonitor arg0) throws JavaModelException {
+    public String getAttachedJavadoc(IProgressMonitor arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IResource getCorrespondingResource() throws JavaModelException {
+    public IResource getCorrespondingResource() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -123,12 +123,12 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public IResource getUnderlyingResource() throws JavaModelException {
+    public IResource getUnderlyingResource() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isStructureKnown() throws JavaModelException {
+    public boolean isStructureKnown() {
 	return true;
     }
 
@@ -140,32 +140,32 @@ public class MockCompilationUnit implements ICompilationUnit {
     private IJavaElement[] children;
 
     @Override
-    public boolean hasChildren() throws JavaModelException {
+    public boolean hasChildren() {
 	return !Arrays.isNullOrEmpty(children);
     }
 
     @Override
-    public void close() throws JavaModelException {
+    public void close() {
 	// nothing to do
     }
 
     @Override
-    public String findRecommendedLineSeparator() throws JavaModelException {
+    public String findRecommendedLineSeparator() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IBuffer getBuffer() throws JavaModelException {
+    public IBuffer getBuffer() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean hasUnsavedChanges() throws JavaModelException {
+    public boolean hasUnsavedChanges() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isConsistent() throws JavaModelException {
+    public boolean isConsistent() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -175,83 +175,83 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public void makeConsistent(IProgressMonitor arg0) throws JavaModelException {
+    public void makeConsistent(IProgressMonitor arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void open(IProgressMonitor arg0) throws JavaModelException {
+    public void open(IProgressMonitor arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void save(IProgressMonitor arg0, boolean arg1) throws JavaModelException {
+    public void save(IProgressMonitor arg0, boolean arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public ISourceRange getNameRange() throws JavaModelException {
+    public ISourceRange getNameRange() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public String getSource() throws JavaModelException {
+    public String getSource() {
 	StringBuilder ret = new StringBuilder();
 	return ret.toString();
     }
 
     @Override
-    public ISourceRange getSourceRange() throws JavaModelException {
+    public ISourceRange getSourceRange() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void codeComplete(int arg0, ICodeCompletionRequestor arg1) throws JavaModelException {
+    public void codeComplete(int arg0, ICodeCompletionRequestor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void codeComplete(int arg0, ICompletionRequestor arg1) throws JavaModelException {
+    public void codeComplete(int arg0, ICompletionRequestor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void codeComplete(int arg0, CompletionRequestor arg1) throws JavaModelException {
+    public void codeComplete(int arg0, CompletionRequestor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void codeComplete(int arg0, CompletionRequestor arg1, IProgressMonitor arg2) throws JavaModelException {
+    public void codeComplete(int arg0, CompletionRequestor arg1, IProgressMonitor arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void codeComplete(int arg0, ICompletionRequestor arg1, WorkingCopyOwner arg2) throws JavaModelException {
+    public void codeComplete(int arg0, ICompletionRequestor arg1, WorkingCopyOwner arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void codeComplete(int arg0, CompletionRequestor arg1, WorkingCopyOwner arg2) throws JavaModelException {
+    public void codeComplete(int arg0, CompletionRequestor arg1, WorkingCopyOwner arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void codeComplete(int arg0, CompletionRequestor arg1, WorkingCopyOwner arg2, IProgressMonitor arg3) throws JavaModelException {
+    public void codeComplete(int arg0, CompletionRequestor arg1, WorkingCopyOwner arg2, IProgressMonitor arg3) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaElement[] codeSelect(int arg0, int arg1) throws JavaModelException {
+    public IJavaElement[] codeSelect(int arg0, int arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaElement[] codeSelect(int arg0, int arg1, WorkingCopyOwner arg2) throws JavaModelException {
+    public IJavaElement[] codeSelect(int arg0, int arg1, WorkingCopyOwner arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void commit(boolean arg0, IProgressMonitor arg1) throws JavaModelException {
+    public void commit(boolean arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -276,17 +276,17 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public IJavaElement getSharedWorkingCopy(IProgressMonitor arg0, IBufferFactory arg1, IProblemRequestor arg2) throws JavaModelException {
+    public IJavaElement getSharedWorkingCopy(IProgressMonitor arg0, IBufferFactory arg1, IProblemRequestor arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaElement getWorkingCopy() throws JavaModelException {
+    public IJavaElement getWorkingCopy() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaElement getWorkingCopy(IProgressMonitor arg0, IBufferFactory arg1, IProblemRequestor arg2) throws JavaModelException {
+    public IJavaElement getWorkingCopy(IProgressMonitor arg0, IBufferFactory arg1, IProblemRequestor arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -296,77 +296,77 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public IMarker[] reconcile() throws JavaModelException {
+    public IMarker[] reconcile() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void reconcile(boolean arg0, IProgressMonitor arg1) throws JavaModelException {
+    public void reconcile(boolean arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void copy(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) throws JavaModelException {
+    public void copy(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void delete(boolean arg0, IProgressMonitor arg1) throws JavaModelException {
+    public void delete(boolean arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void move(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) throws JavaModelException {
+    public void move(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void rename(String arg0, boolean arg1, IProgressMonitor arg2) throws JavaModelException {
+    public void rename(String arg0, boolean arg1, IProgressMonitor arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public UndoEdit applyTextEdit(TextEdit arg0, IProgressMonitor arg1) throws JavaModelException {
+    public UndoEdit applyTextEdit(TextEdit arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void becomeWorkingCopy(IProgressMonitor arg0) throws JavaModelException {
+    public void becomeWorkingCopy(IProgressMonitor arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void becomeWorkingCopy(IProblemRequestor arg0, IProgressMonitor arg1) throws JavaModelException {
+    public void becomeWorkingCopy(IProblemRequestor arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void commitWorkingCopy(boolean arg0, IProgressMonitor arg1) throws JavaModelException {
+    public void commitWorkingCopy(boolean arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IImportDeclaration createImport(String arg0, IJavaElement arg1, IProgressMonitor arg2) throws JavaModelException {
+    public IImportDeclaration createImport(String arg0, IJavaElement arg1, IProgressMonitor arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IImportDeclaration createImport(String arg0, IJavaElement arg1, int arg2, IProgressMonitor arg3) throws JavaModelException {
+    public IImportDeclaration createImport(String arg0, IJavaElement arg1, int arg2, IProgressMonitor arg3) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageDeclaration createPackageDeclaration(String arg0, IProgressMonitor arg1) throws JavaModelException {
+    public IPackageDeclaration createPackageDeclaration(String arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IType createType(String arg0, IJavaElement arg1, boolean arg2, IProgressMonitor arg3) throws JavaModelException {
+    public IType createType(String arg0, IJavaElement arg1, boolean arg2, IProgressMonitor arg3) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void discardWorkingCopy() throws JavaModelException {
+    public void discardWorkingCopy() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -381,7 +381,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public IType[] getAllTypes() throws JavaModelException {
+    public IType[] getAllTypes() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -396,7 +396,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public IImportDeclaration[] getImports() throws JavaModelException {
+    public IImportDeclaration[] getImports() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -411,7 +411,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public IPackageDeclaration[] getPackageDeclarations() throws JavaModelException {
+    public IPackageDeclaration[] getPackageDeclarations() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -426,17 +426,17 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public IType[] getTypes() throws JavaModelException {
+    public IType[] getTypes() {
+	return baseTypes;
+    }
+
+    @Override
+    public ICompilationUnit getWorkingCopy(IProgressMonitor arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public ICompilationUnit getWorkingCopy(IProgressMonitor arg0) throws JavaModelException {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public ICompilationUnit getWorkingCopy(WorkingCopyOwner arg0, IProblemRequestor arg1, IProgressMonitor arg2) throws JavaModelException {
+    public ICompilationUnit getWorkingCopy(WorkingCopyOwner arg0, IProblemRequestor arg1, IProgressMonitor arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -451,22 +451,22 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public CompilationUnit reconcile(int arg0, boolean arg1, WorkingCopyOwner arg2, IProgressMonitor arg3) throws JavaModelException {
+    public CompilationUnit reconcile(int arg0, boolean arg1, WorkingCopyOwner arg2, IProgressMonitor arg3) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public CompilationUnit reconcile(int arg0, int arg1, WorkingCopyOwner arg2, IProgressMonitor arg3) throws JavaModelException {
+    public CompilationUnit reconcile(int arg0, int arg1, WorkingCopyOwner arg2, IProgressMonitor arg3) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public CompilationUnit reconcile(int arg0, boolean arg1, boolean arg2, WorkingCopyOwner arg3, IProgressMonitor arg4) throws JavaModelException {
+    public CompilationUnit reconcile(int arg0, boolean arg1, boolean arg2, WorkingCopyOwner arg3, IProgressMonitor arg4) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void restore() throws JavaModelException {
+    public void restore() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 

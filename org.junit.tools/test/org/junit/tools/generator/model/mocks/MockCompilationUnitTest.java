@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,12 +18,12 @@ public class MockCompilationUnitTest {
     MockCompilationUnit underTest;
 
     @Test
-    public void testGetSource_should() throws Exception {
+    public void testGetSource_shouldGenerateSourceCode() throws Exception {
 	// given
 	// when
 	String actual = underTest.getSource();
 	// then
-	assertEquals("", actual);
+	assertEquals("", actual); // TODO
     }
 
     @Test
@@ -70,5 +71,16 @@ public class MockCompilationUnitTest {
 	underTest.close();
 	// then
 	assertThat(underTest).isNotNull();
+    }
+
+    @Test
+    public void testGetTypes_shouldReturnConfiguredTypes() throws Exception {
+	// given
+	IType element = mock(IType.class);
+	underTest.setBaseTypes(new IType[] { element });
+	// when
+	IType[] actual = underTest.getTypes();
+	// then
+	assertThat(actual).containsExactly(element);
     }
 }

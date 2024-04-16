@@ -2,28 +2,32 @@ package org.junit.tools.generator.model.mocks;
 
 import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTED;
 
-import java.util.Map;
-import java.util.Set;
+import java.io.InputStream;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.jdt.core.IBuffer;
-import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.CompletionRequestor;
+import org.eclipse.jdt.core.IAnnotation;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.ICompletionRequestor;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IInitializer;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IModuleDescription;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IOpenable;
+import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IRegion;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
+import org.eclipse.jdt.core.ITypeParameter;
+import org.eclipse.jdt.core.ITypeRoot;
+import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.core.WorkingCopyOwner;
-import org.eclipse.jdt.core.eval.IEvaluationContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,19 +38,53 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MockJavaProject implements IJavaProject {
+public class MockType implements IType {
 
     private String elementName;
-    private IProject project;
-    private IPackageFragmentRoot packageFragmentRoot;
+    private IAnnotation[] annotations;
 
     @Override
-    public IJavaElement[] getChildren() {
+    public String[] getCategories() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean hasChildren() {
+    public ICompilationUnit getCompilationUnit() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IType getDeclaringType() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public int getFlags() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ISourceRange getJavadocRange() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public int getOccurrenceCount() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IType getType(String arg0, int arg1) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ITypeRoot getTypeRoot() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public boolean isBinary() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -141,331 +179,371 @@ public class MockJavaProject implements IJavaProject {
     }
 
     @Override
-    public void close() {
+    public ISourceRange getNameRange() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public String findRecommendedLineSeparator() {
+    public String getSource() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IBuffer getBuffer() {
+    public ISourceRange getSourceRange() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean hasUnsavedChanges() {
+    public void copy(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isConsistent() {
+    public void delete(boolean arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isOpen() {
+    public void move(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void makeConsistent(IProgressMonitor arg0) {
+    public void rename(String arg0, boolean arg1, IProgressMonitor arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void open(IProgressMonitor arg0) {
+    public IJavaElement[] getChildren() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void save(IProgressMonitor arg0, boolean arg1) {
+    public boolean hasChildren() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IClasspathEntry decodeClasspathEntry(String arg0) {
+    public IAnnotation getAnnotation(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public Set<String> determineModulesOfProjectsWithNonEmptyClasspath() {
+    public IAnnotation[] getAnnotations() {
+	return annotations;
+    }
+
+    @Override
+    public void codeComplete(char[] arg0, int arg1, int arg2, char[][] arg3, char[][] arg4, int[] arg5, boolean arg6, ICompletionRequestor arg7) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public String encodeClasspathEntry(IClasspathEntry arg0) {
+    public void codeComplete(char[] arg0, int arg1, int arg2, char[][] arg3, char[][] arg4, int[] arg5, boolean arg6, CompletionRequestor arg7) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IClasspathEntry findContainingClasspathEntry(IResource arg0) {
+    public void codeComplete(char[] arg0, int arg1, int arg2, char[][] arg3, char[][] arg4, int[] arg5, boolean arg6, ICompletionRequestor arg7,
+	    WorkingCopyOwner arg8) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaElement findElement(IPath arg0) {
+    public void codeComplete(char[] arg0, int arg1, int arg2, char[][] arg3, char[][] arg4, int[] arg5, boolean arg6, CompletionRequestor arg7,
+	    IProgressMonitor arg8) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaElement findElement(IPath arg0, WorkingCopyOwner arg1) {
+    public void codeComplete(char[] arg0, int arg1, int arg2, char[][] arg3, char[][] arg4, int[] arg5, boolean arg6, CompletionRequestor arg7,
+	    WorkingCopyOwner arg8) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaElement findElement(String arg0, WorkingCopyOwner arg1) {
+    public void codeComplete(char[] arg0, int arg1, int arg2, char[][] arg3, char[][] arg4, int[] arg5, boolean arg6, CompletionRequestor arg7,
+	    WorkingCopyOwner arg8, IProgressMonitor arg9) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IModuleDescription findModule(String arg0, WorkingCopyOwner arg1) {
+    public IField createField(String arg0, IJavaElement arg1, boolean arg2, IProgressMonitor arg3) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragment findPackageFragment(IPath arg0) {
+    public IInitializer createInitializer(String arg0, IJavaElement arg1, IProgressMonitor arg2) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragmentRoot findPackageFragmentRoot(IPath arg0) {
+    public IMethod createMethod(String arg0, IJavaElement arg1, boolean arg2, IProgressMonitor arg3) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragmentRoot[] findPackageFragmentRoots(IClasspathEntry arg0) {
+    public IType createType(String arg0, IJavaElement arg1, boolean arg2, IProgressMonitor arg3) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IType findType(String arg0) {
+    public IMethod[] findMethods(IMethod arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IType findType(String arg0, IProgressMonitor arg1) {
+    public IJavaElement[] getChildrenForCategory(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IType findType(String arg0, WorkingCopyOwner arg1) {
+    public IOrdinaryClassFile getClassFile() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IType findType(String arg0, String arg1) {
+    public String getElementName() {
+	return elementName;
+    }
+
+    @Override
+    public IField getField(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IType findType(String arg0, WorkingCopyOwner arg1, IProgressMonitor arg2) {
+    public IField[] getFields() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IType findType(String arg0, String arg1, IProgressMonitor arg2) {
+    public String getFullyQualifiedName() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IType findType(String arg0, String arg1, WorkingCopyOwner arg2) {
+    public String getFullyQualifiedName(char arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IType findType(String arg0, String arg1, WorkingCopyOwner arg2, IProgressMonitor arg3) {
+    public String getFullyQualifiedParameterizedName() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragmentRoot[] findUnfilteredPackageFragmentRoots(IClasspathEntry arg0) {
+    public IInitializer getInitializer(int arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragmentRoot[] getAllPackageFragmentRoots() {
+    public IInitializer[] getInitializers() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IClasspathEntry getClasspathEntryFor(IPath arg0) {
+    public String getKey() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IModuleDescription getModuleDescription() {
+    public IMethod getMethod(String arg0, String[] arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public Object[] getNonJavaResources() {
+    public IMethod[] getMethods() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public String getOption(String arg0, boolean arg1) {
+    public IPackageFragment getPackageFragment() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public Map<String, String> getOptions(boolean arg0) {
+    public String[] getPermittedSubtypeNames() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPath getOutputLocation() {
+    public IField getRecordComponent(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IModuleDescription getOwnModuleDescription() {
+    public String[] getSuperInterfaceNames() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragmentRoot getPackageFragmentRoot(String arg0) {
+    public String[] getSuperInterfaceTypeSignatures() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragmentRoot getPackageFragmentRoot(IResource arg0) {
-	return packageFragmentRoot;
-    }
-
-    @Override
-    public IPackageFragmentRoot[] getPackageFragmentRoots() {
+    public String getSuperclassName() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragmentRoot[] getPackageFragmentRoots(IClasspathEntry arg0) {
+    public String getSuperclassTypeSignature() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPackageFragment[] getPackageFragments() {
+    public IType getType(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IClasspathEntry[] getRawClasspath() {
-	return new IClasspathEntry[] {
-		MockClasspathEntry.builder()
-			.path(this.packageFragmentRoot.getPath())
-			.build()
-	};
-    }
-
-    @Override
-    public IClasspathEntry[] getReferencedClasspathEntries() {
+    public ITypeParameter getTypeParameter(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public String[] getRequiredProjectNames() {
+    public String[] getTypeParameterSignatures() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IClasspathEntry[] getResolvedClasspath(boolean arg0) {
+    public ITypeParameter[] getTypeParameters() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean hasBuildState() {
+    public String getTypeQualifiedName() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean hasClasspathCycle(IClasspathEntry[] arg0) {
+    public String getTypeQualifiedName(char arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isOnClasspath(IJavaElement arg0) {
+    public IType[] getTypes() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isOnClasspath(IResource arg0) {
+    public boolean isAnnotation() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IEvaluationContext newEvaluationContext() {
+    public boolean isAnonymous() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public ITypeHierarchy newTypeHierarchy(IRegion arg0, IProgressMonitor arg1) {
+    public boolean isClass() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public ITypeHierarchy newTypeHierarchy(IRegion arg0, WorkingCopyOwner arg1, IProgressMonitor arg2) {
+    public boolean isEnum() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public ITypeHierarchy newTypeHierarchy(IType arg0, IRegion arg1, IProgressMonitor arg2) {
+    public boolean isInterface() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public ITypeHierarchy newTypeHierarchy(IType arg0, IRegion arg1, WorkingCopyOwner arg2, IProgressMonitor arg3) {
+    public boolean isLambda() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPath readOutputLocation() {
+    public boolean isLocal() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IClasspathEntry[] readRawClasspath() {
+    public boolean isMember() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void setOption(String arg0, String arg1) {
+    public boolean isRecord() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void setOptions(Map<String, String> arg0) {
+    public boolean isResolved() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void setOutputLocation(IPath arg0, IProgressMonitor arg1) {
+    public boolean isSealed() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void setRawClasspath(IClasspathEntry[] arg0, IProgressMonitor arg1) {
+    public ITypeHierarchy loadTypeHierachy(InputStream arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void setRawClasspath(IClasspathEntry[] arg0, boolean arg1, IProgressMonitor arg2) {
+    public ITypeHierarchy newSupertypeHierarchy(IProgressMonitor arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void setRawClasspath(IClasspathEntry[] arg0, IPath arg1, IProgressMonitor arg2) {
+    public ITypeHierarchy newSupertypeHierarchy(ICompilationUnit[] arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void setRawClasspath(IClasspathEntry[] arg0, IPath arg1, boolean arg2, IProgressMonitor arg3) {
+    public ITypeHierarchy newSupertypeHierarchy(IWorkingCopy[] arg0, IProgressMonitor arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void setRawClasspath(IClasspathEntry[] arg0, IClasspathEntry[] arg1, IPath arg2, IProgressMonitor arg3) {
+    public ITypeHierarchy newSupertypeHierarchy(WorkingCopyOwner arg0, IProgressMonitor arg1) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ITypeHierarchy newTypeHierarchy(IProgressMonitor arg0) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ITypeHierarchy newTypeHierarchy(IJavaProject arg0, IProgressMonitor arg1) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ITypeHierarchy newTypeHierarchy(ICompilationUnit[] arg0, IProgressMonitor arg1) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ITypeHierarchy newTypeHierarchy(IWorkingCopy[] arg0, IProgressMonitor arg1) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ITypeHierarchy newTypeHierarchy(WorkingCopyOwner arg0, IProgressMonitor arg1) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ITypeHierarchy newTypeHierarchy(IJavaProject arg0, WorkingCopyOwner arg1, IProgressMonitor arg2) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public String[][] resolveType(String arg0) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public String[][] resolveType(String arg0, WorkingCopyOwner arg1) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
