@@ -2,6 +2,9 @@ package org.junit.tools.generator.model.mocks;
 
 import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTED;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -9,16 +12,13 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.ILocalVariable;
-import org.eclipse.jdt.core.IMemberValuePair;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IOpenable;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.ITypeRoot;
 
 import lombok.AllArgsConstructor;
@@ -30,14 +30,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MockMethod implements IMethod {
+public class MockField implements IField {
 
-    private boolean exists;
-    private int flags;
+    private final List<MockAnnotation> annotations = new LinkedList<>();
+    private String typeSignature;
     private String elementName;
-    private boolean isConstructor;
+    private int flags;
+    private MockJavaElement ancestor;
     private String source;
-    private String[] parameterTypes;
+    private boolean exists;
 
     @Override
     public String[] getCategories() {
@@ -71,7 +72,7 @@ public class MockMethod implements IMethod {
 
     @Override
     public int getOccurrenceCount() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return 0;
     }
 
     @Override
@@ -95,8 +96,8 @@ public class MockMethod implements IMethod {
     }
 
     @Override
-    public IJavaElement getAncestor(int ancestorType) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IJavaElement getAncestor(int arg0) {
+	return ancestor;
     }
 
     @Override
@@ -221,7 +222,7 @@ public class MockMethod implements IMethod {
 
     @Override
     public boolean hasChildren() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return false;
     }
 
     @Override
@@ -231,11 +232,11 @@ public class MockMethod implements IMethod {
 
     @Override
     public IAnnotation[] getAnnotations() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return annotations.toArray(new IAnnotation[0]);
     }
 
     @Override
-    public IMemberValuePair getDefaultValue() {
+    public Object getConstant() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -245,87 +246,27 @@ public class MockMethod implements IMethod {
     }
 
     @Override
-    public String[] getExceptionTypes() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
     public String getKey() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public int getNumberOfParameters() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public String getTypeSignature() {
+	return typeSignature;
     }
 
     @Override
-    public String[] getParameterNames() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public boolean isEnumConstant() {
+	return false;
     }
 
     @Override
-    public String[] getParameterTypes() {
-	return parameterTypes;
-    }
-
-    @Override
-    public ILocalVariable[] getParameters() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public String[] getRawParameterNames() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public String getReturnType() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public String getSignature() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public ITypeParameter getTypeParameter(String arg0) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public String[] getTypeParameterSignatures() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public ITypeParameter[] getTypeParameters() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public boolean isConstructor() {
-	return isConstructor;
-    }
-
-    @Override
-    public boolean isLambdaMethod() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public boolean isMainMethod() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public boolean isRecordComponent() {
+	return false;
     }
 
     @Override
     public boolean isResolved() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
-    }
-
-    @Override
-    public boolean isSimilar(IMethod arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 

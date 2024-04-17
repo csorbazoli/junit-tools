@@ -3,13 +3,16 @@ package org.junit.tools.generator;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.ui.text.PreferencesAdapter;
@@ -26,7 +29,6 @@ import org.junit.tools.generator.model.GeneratorModel;
 import org.junit.tools.generator.model.JUTElements;
 import org.junit.tools.generator.model.JUTElements.JUTClassesAndPackages;
 import org.junit.tools.generator.model.JUTElements.JUTConstructorsAndMethods;
-import org.junit.tools.generator.model.mocks.MockAnnotation;
 import org.junit.tools.generator.model.mocks.MockCompilationUnit;
 import org.junit.tools.generator.model.mocks.MockJavaProject;
 import org.junit.tools.generator.model.mocks.MockMethod;
@@ -36,6 +38,8 @@ import org.junit.tools.generator.model.mocks.MockProject;
 import org.junit.tools.generator.model.mocks.MockType;
 import org.junit.tools.generator.model.tml.Annotation;
 import org.junit.tools.generator.model.tml.Attribute;
+import org.junit.tools.generator.model.tml.Method;
+import org.junit.tools.generator.model.tml.Settings;
 import org.junit.tools.generator.utils.TestUtils;
 import org.junit.tools.preferences.JUTPreferences;
 
@@ -98,13 +102,24 @@ public class TestClassGeneratorIntegratedTest {
     private GeneratorModel initGeneratorModel(org.junit.tools.generator.model.tml.Test tmlTest) throws JUTWarning {
 	JUTElements jutElements = initJUTElements();
 	GeneratorModel ret = new GeneratorModel(jutElements, tmlTest);
-	ret.setMethodsToCreate(Arrays.asList(initMockMethod()));
+	MockMethod methodToCreate = initMockMethod();
+	ret.setMethodsToCreate(Arrays.asList(methodToCreate));
+	Map<IMethod, Method> methodMap = new HashMap<>();
+	Method tmlMethod = initTmlMethod();
+	methodMap.put(methodToCreate, tmlMethod);
+	ret.setMethodMap(methodMap);
 	return ret;
+    }
+
+    private Method initTmlMethod() {
+	Method tmlMethod = new Method();
+	tmlMethod.setName("testSomeMethod");
+	return tmlMethod;
     }
 
     private MockMethod initMockMethod() {
 	return MockMethod.builder()
-		.elementName("testMethod")
+		.elementName("testSomeMethod")
 		.build();
     }
 
@@ -117,15 +132,16 @@ public class TestClassGeneratorIntegratedTest {
     }
 
     private ICompilationUnit initCompilationUnit() {
-	return MockCompilationUnit.builder()
-		.baseTypes(new IType[] { initMockType() })
+	MockCompilationUnit ret = MockCompilationUnit.builder()
+		.elementName("TestClassTest")
 		.build();
+	ret.createType("TestClassTest", null, false, null);
+	return ret;
     }
 
     private IType initMockType() {
 	return MockType.builder()
 		.elementName("TestClass")
-		.annotations(new MockAnnotation[0])
 		.build();
     }
 
@@ -149,11 +165,26 @@ public class TestClassGeneratorIntegratedTest {
 		.build();
 	classesPackages.setBasePackages(Arrays.asList(basePackage));
 	classesPackages.setBaseTest(initCompilationUnit());
+	classesPackages.setBaseClassName("TestClass");
+	classesPackages.setTestClassName("TestClassTest");
 	return classesPackages;
     }
 
     private static org.junit.tools.generator.model.tml.Test initTestModel() {
 	org.junit.tools.generator.model.tml.Test ret = new org.junit.tools.generator.model.tml.Test();
+	ret.setSettings(initSettings());
+	return ret;
+    }
+
+    private static Settings initSettings() {
+	Settings ret = new Settings();
+	ret.setLogger(false);
+	ret.setSetUp(false);
+	ret.setSetUpBeforeClass(false);
+	ret.setTearDown(false);
+	ret.setTearDownAfterClass(false);
+	ret.setTestUtils(false);
+	ret.setThrowsDeclaration(true);
 	return ret;
     }
 

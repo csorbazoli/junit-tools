@@ -2,6 +2,7 @@ package org.junit.tools.generator.model;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jdt.core.IMethod;
 import org.junit.tools.generator.model.tml.Method;
@@ -18,7 +19,7 @@ public class GeneratorModel {
     private JUTElements jutElements;
     private Test tmlTest;
 
-    private HashMap<IMethod, Method> methodMap = new HashMap<IMethod, Method>();
+    private Map<IMethod, Method> methodMap = new HashMap<IMethod, Method>();
     private List<IMethod> methodsToCreate;
 
     /**
@@ -61,14 +62,14 @@ public class GeneratorModel {
     /**
      * @return the method map
      */
-    public HashMap<IMethod, Method> getMethodMap() {
+    public Map<IMethod, Method> getMethodMap() {
 	return methodMap;
     }
 
     /**
      * @param methodMap
      */
-    public void setMethodMap(HashMap<IMethod, Method> methodMap) {
+    public void setMethodMap(Map<IMethod, Method> methodMap) {
 	this.methodMap = methodMap;
     }
 

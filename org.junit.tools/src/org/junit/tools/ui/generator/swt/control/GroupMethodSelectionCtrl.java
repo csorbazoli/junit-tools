@@ -2,6 +2,7 @@ package org.junit.tools.ui.generator.swt.control;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -447,7 +448,7 @@ public class GroupMethodSelectionCtrl implements IGeneratorConstants {
      * @return true if method is in the method list
      */
     protected boolean containMethod(IMethod method, List<Method> tmlMethods) {
-	HashMap<IMethod, Method> methodMap = getModel().getMethodMap();
+	Map<IMethod, Method> methodMap = getModel().getMethodMap();
 
 	if (methodMap.containsKey(method)) {
 	    if (methodMap.get(method) != null) {

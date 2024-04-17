@@ -2,6 +2,10 @@ package org.junit.tools.generator.model.mocks;
 
 import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTED;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -17,12 +21,12 @@ import org.eclipse.jdt.core.IImportContainer;
 import org.eclipse.jdt.core.IImportDeclaration;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IOpenable;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IProblemRequestor;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.text.edits.TextEdit;
@@ -40,13 +44,18 @@ import lombok.NoArgsConstructor;
 public class MockCompilationUnit implements ICompilationUnit {
 
     private String elementName;
-    private IJavaProject javaProject;
+    private MockJavaProject javaProject;
     private boolean readOnly;
-    private IType[] baseTypes;
+    private final List<MockType> baseTypes = new LinkedList<>();
+    private final List<MockJavaElement> childElements = new LinkedList<>();
+    private final List<MockImportDeclaration> importDeclarations = new LinkedList<>();
+    private final List<MockPackageDeclaration> packageDeclarations = new LinkedList<>();
+    private MockJavaElement primaryElement;
+    private boolean changed = true;
 
     @Override
     public IType findPrimaryType() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return baseTypes.get(0);
     }
 
     @Override
@@ -55,7 +64,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public ICompilationUnit getWorkingCopy(WorkingCopyOwner arg0, IProgressMonitor arg1) {
+    public ICompilationUnit getWorkingCopy(WorkingCopyOwner arg0, IProgressMonitor monitor) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -109,7 +118,10 @@ public class MockCompilationUnit implements ICompilationUnit {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
-    private IJavaElement primaryElement;
+    @Override
+    public IJavaElement[] getChildren() throws JavaModelException {
+	return childElements.toArray(new IJavaElement[0]);
+    }
 
     @Override
     public IResource getResource() {
@@ -136,11 +148,9 @@ public class MockCompilationUnit implements ICompilationUnit {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
-    private IJavaElement[] children;
-
     @Override
     public boolean hasChildren() {
-	return children != null && children.length > 0;
+	return !childElements.isEmpty();
     }
 
     @Override
@@ -160,7 +170,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public boolean hasUnsavedChanges() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return changed;
     }
 
     @Override
@@ -175,7 +185,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public void makeConsistent(IProgressMonitor arg0) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	// nothing to do
     }
 
     @Override
@@ -185,7 +195,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public void save(IProgressMonitor arg0, boolean arg1) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	// nothing to do
     }
 
     @Override
@@ -196,6 +206,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     @Override
     public String getSource() {
 	StringBuilder ret = new StringBuilder();
+	// todo build content from elements
 	return ret.toString();
     }
 
@@ -250,7 +261,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public void commit(boolean arg0, IProgressMonitor arg1) {
+    public void commit(boolean arg0, IProgressMonitor monitor) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -300,7 +311,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public void reconcile(boolean arg0, IProgressMonitor arg1) {
+    public void reconcile(boolean arg0, IProgressMonitor monitor) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -310,7 +321,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public void delete(boolean arg0, IProgressMonitor arg1) {
+    public void delete(boolean arg0, IProgressMonitor monitor) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -325,7 +336,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public UndoEdit applyTextEdit(TextEdit arg0, IProgressMonitor arg1) {
+    public UndoEdit applyTextEdit(TextEdit arg0, IProgressMonitor monitor) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
@@ -335,33 +346,52 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public void becomeWorkingCopy(IProblemRequestor arg0, IProgressMonitor arg1) {
+    public void becomeWorkingCopy(IProblemRequestor arg0, IProgressMonitor monitor) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void commitWorkingCopy(boolean arg0, IProgressMonitor arg1) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public void commitWorkingCopy(boolean arg0, IProgressMonitor monitor) {
+	changed = false;
     }
 
     @Override
-    public IImportDeclaration createImport(String arg0, IJavaElement arg1, IProgressMonitor arg2) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IImportDeclaration createImport(String name, IJavaElement sibling, IProgressMonitor monitor) {
+	MockImportDeclaration ret = MockImportDeclaration.builder()
+		.elementName(name)
+		.ancestor((MockJavaElement) sibling)
+		.build();
+	importDeclarations.add(ret);
+	return ret;
     }
 
     @Override
-    public IImportDeclaration createImport(String arg0, IJavaElement arg1, int arg2, IProgressMonitor arg3) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IImportDeclaration createImport(String name, IJavaElement sibling, int flags, IProgressMonitor monitor) {
+	MockImportDeclaration ret = MockImportDeclaration.builder()
+		.elementName(name)
+		.ancestor((MockJavaElement) sibling)
+		.flags(flags)
+		.build();
+	importDeclarations.add(ret);
+	return ret;
     }
 
     @Override
-    public IPackageDeclaration createPackageDeclaration(String arg0, IProgressMonitor arg1) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IPackageDeclaration createPackageDeclaration(String name, IProgressMonitor monitor) {
+	MockPackageDeclaration ret = MockPackageDeclaration.builder()
+		.elementName(name)
+		.build();
+	packageDeclarations.add(ret);
+	return ret;
     }
 
     @Override
-    public IType createType(String arg0, IJavaElement arg1, boolean arg2, IProgressMonitor arg3) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IType createType(String contents, IJavaElement sibling, boolean force, IProgressMonitor monitor) {
+	MockType ret = MockType.builder()
+		.source(contents)
+		.build();
+	baseTypes.add(ret);
+	return ret;
     }
 
     @Override
@@ -396,7 +426,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public IImportDeclaration[] getImports() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return importDeclarations.toArray(new IImportDeclaration[0]);
     }
 
     @Override
@@ -420,13 +450,26 @@ public class MockCompilationUnit implements ICompilationUnit {
     }
 
     @Override
-    public IType getType(String arg0) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    /**
+     * Returns the top-level type declared in this compilation unit with the given
+     * simple type name.
+     */
+    public IType getType(String name) {
+	Optional<MockType> ret = baseTypes.stream()
+		.filter(t -> name.equals(t.getElementName()))
+		.findFirst();
+	if (!ret.isPresent()) {
+	    ret = Optional.of(MockType.builder()
+		    .elementName(name)
+		    .build());
+	    baseTypes.add(ret.get());
+	}
+	return ret.get();
     }
 
     @Override
     public IType[] getTypes() {
-	return baseTypes;
+	return baseTypes.toArray(new IType[0]);
     }
 
     @Override

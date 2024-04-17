@@ -3,6 +3,8 @@ package org.junit.tools.generator.model.mocks;
 import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTED;
 
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -41,7 +43,12 @@ import lombok.NoArgsConstructor;
 public class MockType implements IType {
 
     private String elementName;
-    private IAnnotation[] annotations;
+    private boolean exists;
+    private String source;
+
+    private final List<MockAnnotation> mockAnnotations = new LinkedList<>();
+    private final List<MockField> mockFields = new LinkedList<>();
+    private final List<MockMethod> mockMethods = new LinkedList<>();
 
     @Override
     public String[] getCategories() {
@@ -90,7 +97,7 @@ public class MockType implements IType {
 
     @Override
     public boolean exists() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return exists;
     }
 
     @Override
@@ -185,7 +192,7 @@ public class MockType implements IType {
 
     @Override
     public String getSource() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return source;
     }
 
     @Override
@@ -230,7 +237,7 @@ public class MockType implements IType {
 
     @Override
     public IAnnotation[] getAnnotations() {
-	return annotations;
+	return mockAnnotations.toArray(new IAnnotation[0]);
     }
 
     @Override
@@ -268,8 +275,13 @@ public class MockType implements IType {
     }
 
     @Override
-    public IField createField(String arg0, IJavaElement arg1, boolean arg2, IProgressMonitor arg3) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IField createField(String contents, IJavaElement sibling, boolean force, org.eclipse.core.runtime.IProgressMonitor monitor) {
+	MockField ret = MockField.builder()
+		.source(contents)
+		.ancestor((MockJavaElement) sibling)
+		.build();
+	mockFields.add(ret);
+	return ret;
     }
 
     @Override
@@ -278,8 +290,13 @@ public class MockType implements IType {
     }
 
     @Override
-    public IMethod createMethod(String arg0, IJavaElement arg1, boolean arg2, IProgressMonitor arg3) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IMethod createMethod(String contents, IJavaElement sibling, boolean force, org.eclipse.core.runtime.IProgressMonitor monitor) {
+	MockMethod ret = MockMethod.builder()
+		.source(contents)
+		// .ancestor((MockJavaElement) sibling)
+		.build();
+	mockMethods.add(ret);
+	return ret;
     }
 
     @Override
@@ -308,13 +325,19 @@ public class MockType implements IType {
     }
 
     @Override
-    public IField getField(String arg0) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IField getField(String name) {
+	return mockFields.stream()
+		.filter(f -> name.equals(f.getElementName()))
+		.findFirst()
+		.orElseGet(() -> MockField.builder()
+			.elementName(name)
+			.exists(false)
+			.build());
     }
 
     @Override
     public IField[] getFields() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return mockFields.toArray(new IField[0]);
     }
 
     @Override
@@ -348,13 +371,20 @@ public class MockType implements IType {
     }
 
     @Override
-    public IMethod getMethod(String arg0, String[] arg1) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IMethod getMethod(String name, String[] parameterTypeSignatures) {
+	return mockMethods.stream()
+		.filter(m -> name.equals(m.getElementName()))
+		.findFirst()
+		.orElseGet(() -> MockMethod.builder()
+			.elementName(name)
+			.exists(false)
+			.parameterTypes(parameterTypeSignatures)
+			.build());
     }
 
     @Override
     public IMethod[] getMethods() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return mockMethods.toArray(new IMethod[0]);
     }
 
     @Override

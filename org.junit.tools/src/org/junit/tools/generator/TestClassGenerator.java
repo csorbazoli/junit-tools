@@ -492,7 +492,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
     }
 
-    private boolean createTestMethods(IType type, HashMap<IMethod, Method> methodMap, List<IMethod> methodsToCreate,
+    private boolean createTestMethods(IType type, Map<IMethod, Method> methodMap, List<IMethod> methodsToCreate,
 	    Settings tmlSettings, ICompilationUnit baseClass, boolean mvcTest, IProgressMonitor monitor, int increment)
 	    throws JavaModelException {
 
