@@ -5,7 +5,6 @@ import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTE
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +24,8 @@ import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,11 +35,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIncludeProperties({ "elementName", "project", "packageFragmentRoot"
+})
 public class MockJavaProject implements IJavaProject {
 
     private String elementName;
-    private IProject project;
-    private IPackageFragmentRoot packageFragmentRoot;
+    private MockProject project;
+    private MockPackageFragmentRoot packageFragmentRoot;
 
     @Override
     public IJavaElement[] getChildren() {

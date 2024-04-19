@@ -53,9 +53,14 @@ public class TestUtils {
     }
 
     private static ObjectMapper objectMapper;
+    private static boolean overwriteTestResources;
 
     private TestUtils() {
 	// private constructor
+    }
+
+    public static void setOverwriteTestResources(boolean overwrite) {
+	overwriteTestResources = overwrite;
     }
 
     /**
@@ -71,7 +76,12 @@ public class TestUtils {
 	boolean ret = testFile.canRead();
 	if (ret) {
 	    String expected = readTestFile(relativePath);
-	    assertEquals(expected, actual);
+	    ret = expected.equals(actual);
+	    if (!ret && overwriteTestResources) {
+		Files.write(testFile.toPath(), actual.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+	    } else {
+		assertEquals(expected, actual);
+	    }
 	} else {
 	    testFile.getParentFile().mkdirs();
 	    Files.write(testFile.toPath(), actual.getBytes(), StandardOpenOption.CREATE);

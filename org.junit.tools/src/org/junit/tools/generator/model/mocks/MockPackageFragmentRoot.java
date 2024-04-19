@@ -10,11 +10,12 @@ import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.IOpenable;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,10 +26,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIncludeProperties({ "elementName",
+	// "javaProject", - would lead to Infinite recursion
+	"path" })
 public class MockPackageFragmentRoot implements IPackageFragmentRoot {
 
-    private IJavaProject javaProject;
-    private IPath path;
+    private String elementName;
+    private MockJavaProject javaProject;
+    private MockPath path;
 
     @Override
     public IJavaElement[] getChildren() {
@@ -62,7 +67,7 @@ public class MockPackageFragmentRoot implements IPackageFragmentRoot {
 
     @Override
     public String getElementName() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return elementName;
     }
 
     @Override
@@ -245,6 +250,16 @@ public class MockPackageFragmentRoot implements IPackageFragmentRoot {
     @Override
     public void move(IPath arg0, int arg1, int arg2, IClasspathEntry arg3, IProgressMonitor arg4) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public MockJavaProject getJavaProject() {
+	return javaProject;
+    }
+
+    @Override
+    public MockPath getPath() {
+	return path;
     }
 
 }

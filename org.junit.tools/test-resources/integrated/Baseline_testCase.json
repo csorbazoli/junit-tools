@@ -1,0 +1,90 @@
+{
+  "tmlTest" : {
+    "settings" : {
+      "setUp" : false,
+      "setUpBeforeClass" : false,
+      "tearDown" : false,
+      "tearDownAfterClass" : false,
+      "logger" : false,
+      "testUtils" : false,
+      "throwsDeclaration" : true
+    },
+    "testBases" : null,
+    "method" : [ ],
+    "testBase" : null,
+    "testClass" : null,
+    "version" : null,
+    "spring" : false,
+    "onlyStaticMethods" : false
+  },
+  "basePackage" : {
+    "elementName" : null,
+    "parent" : {
+      "elementName" : null,
+      "javaProject" : null,
+      "readOnly" : false,
+      "baseTypes" : [ ],
+      "childElements" : [ ],
+      "importDeclarations" : [ ],
+      "packageDeclarations" : [ ],
+      "primaryElement" : null,
+      "changed" : true
+    },
+    "elementType" : 0,
+    "handleIdentifier" : null,
+    "javaProject" : null,
+    "primaryElement" : null,
+    "defaultPackage" : false,
+    "open" : false
+  },
+  "testClassCompilationUnit" : {
+    "elementName" : "TestClassTest",
+    "javaProject" : null,
+    "readOnly" : false,
+    "baseTypes" : [ {
+      "elementName" : null,
+      "exists" : false,
+      "source" : "TestClassTest",
+      "mockAnnotations" : [ ],
+      "mockFields" : [ ],
+      "mockMethods" : [ ]
+    } ],
+    "childElements" : [ ],
+    "importDeclarations" : [ ],
+    "packageDeclarations" : [ ],
+    "primaryElement" : null,
+    "changed" : true
+  },
+  "javaProject" : {
+    "elementName" : "TestProject",
+    "project" : {
+      "dummy" : null
+    },
+    "packageFragmentRoot" : {
+      "elementName" : null,
+      "path" : {
+        "elementName" : "testProject"
+      }
+    }
+  },
+  "tmlMethod" : {
+    "param" : [ ],
+    "paramsDefault" : [ ],
+    "preconditions" : [ ],
+    "testCase" : [ ],
+    "result" : null,
+    "assertion" : [ ],
+    "annotations" : [ ],
+    "name" : "testSomeMethod",
+    "modifier" : null,
+    "signature" : null,
+    "static" : null
+  },
+  "testMethod" : {
+    "exists" : false,
+    "flags" : 0,
+    "elementName" : "testSomeMethod",
+    "source" : null,
+    "parameterTypes" : null
+  }
+}

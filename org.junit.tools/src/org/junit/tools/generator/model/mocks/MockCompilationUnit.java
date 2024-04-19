@@ -32,6 +32,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.UndoEdit;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,6 +43,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIncludeProperties({ "elementName", "javaProject", "readOnly", "baseTypes", "childElements", "importDeclarations", "packageDeclarations", "primaryElement",
+	"changed" })
 public class MockCompilationUnit implements ICompilationUnit {
 
     private String elementName;
@@ -51,6 +55,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     private final List<MockImportDeclaration> importDeclarations = new LinkedList<>();
     private final List<MockPackageDeclaration> packageDeclarations = new LinkedList<>();
     private MockJavaElement primaryElement;
+    @Builder.Default
     private boolean changed = true;
 
     @Override
@@ -441,7 +446,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public IPackageDeclaration[] getPackageDeclarations() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return packageDeclarations.toArray(new IPackageDeclaration[0]);
     }
 
     @Override
@@ -484,7 +489,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public boolean hasResourceChanged() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return changed;
     }
 
     @Override

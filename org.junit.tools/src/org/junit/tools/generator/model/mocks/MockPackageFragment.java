@@ -11,12 +11,13 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IModularClassFile;
 import org.eclipse.jdt.core.IOpenable;
 import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.WorkingCopyOwner;
+
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +28,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIncludeProperties({ "elementName", "parent", "elementType", "handleIdentifier", "javaProject", "primaryElement", "defaultPackage", "isReadOnly", "open" })
 public class MockPackageFragment implements IPackageFragment {
 
+    private String elementName;
     private MockCompilationUnit parent;
+    private int elementType;
+    private String handleIdentifier;
+    private MockJavaProject javaProject;
+    private MockJavaElement primaryElement;
+    private boolean defaultPackage;
+    private boolean isReadOnly;
+    private boolean open;
 
     @Override
     public IJavaElement[] getChildren() {
@@ -61,30 +71,10 @@ public class MockPackageFragment implements IPackageFragment {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
-    private int elementType;
-
-    private String handleIdentifier;
-
-    private IJavaModel javaModel;
-
-    private IJavaProject javaProject;
-
-    private IOpenable openable;
-
-    private IPath path;
-
-    private IJavaElement primaryElement;
-
-    private IResource resource;
-
-    private ISchedulingRule schedulingRule;
-
     @Override
     public IResource getUnderlyingResource() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
-
-    private boolean isReadOnly;
 
     @Override
     public boolean isStructureKnown() {
@@ -120,8 +110,6 @@ public class MockPackageFragment implements IPackageFragment {
     public boolean isConsistent() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
-
-    private boolean open;
 
     @Override
     public void makeConsistent(IProgressMonitor arg0) {
@@ -200,14 +188,10 @@ public class MockPackageFragment implements IPackageFragment {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
-    private String elementName;
-
     @Override
     public int getKind() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
-
-    private IModularClassFile modularClassFile;
 
     @Override
     public Object[] getNonJavaResources() {
@@ -229,6 +213,34 @@ public class MockPackageFragment implements IPackageFragment {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
-    private boolean defaultPackage;
+    @Override
+    public IJavaModel getJavaModel() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IOpenable getOpenable() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IPath getPath() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IResource getResource() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ISchedulingRule getSchedulingRule() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IModularClassFile getModularClassFile() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
 
 }

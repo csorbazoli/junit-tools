@@ -21,6 +21,8 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeRoot;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +32,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIncludeProperties({ "annotations", "typeSignature0", "elementName", "flags", "ancestor", "source", "exists" })
 public class MockField implements IField {
 
     private final List<MockAnnotation> annotations = new LinkedList<>();

@@ -14,6 +14,8 @@ import org.eclipse.jdt.core.IOpenable;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.ISourceRange;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,6 +25,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@JsonIncludeProperties({ "elementName", "ancestor", "source" })
 public class MockPackageDeclaration implements IPackageDeclaration {
 
     private MockJavaElement ancestor;

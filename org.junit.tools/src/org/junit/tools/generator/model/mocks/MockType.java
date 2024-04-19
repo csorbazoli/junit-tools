@@ -31,6 +31,8 @@ import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,6 +42,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIncludeProperties({ "elementName", "exists", "source", "mockAnnotations", "mockFields", "mockMethods" })
 public class MockType implements IType {
 
     private String elementName;

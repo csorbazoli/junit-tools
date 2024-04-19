@@ -18,6 +18,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
@@ -30,6 +31,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.springframework.util.FileCopyUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestUtilsTest {
@@ -39,6 +41,13 @@ public class TestUtilsTest {
     @Before
     public void setupTest() {
 	// prepare test
+	TestUtils.setOverwriteTestResources(false);
+    }
+
+    @AfterClass
+    public static void tearDownTest() {
+	// prepare test
+	TestUtils.setOverwriteTestResources(false);
     }
 
     @Test
@@ -96,6 +105,27 @@ public class TestUtilsTest {
 	ComparisonFailure actual = assertThrows(ComparisonFailure.class, () -> TestUtils.assertTestFileEquals(relativePath, text));
 	// then
 	assertEquals("expected:<{\"Name\":\"test[]\",\"Number\":1}> but was:<{\"Name\":\"test[er]\",\"Number\":1}>", actual.getMessage());
+    }
+
+    @Test
+    public void testAssertTestFileEquals_existing_misMatching_forceUpdate() throws Exception {
+	// given
+	String relativePath = "samples/sample_toupdate.json";
+	File existing = new File("test-resources/samples/sample_oneline.json");
+	File testFile = new File("test-resources/" + relativePath);
+	FileCopyUtils.copy(existing, testFile);
+	String text = "{\"Name\":\"tester\",\"Number\":1}";
+	TestUtils.setOverwriteTestResources(true);
+	// when
+	boolean actual = TestUtils.assertTestFileEquals(relativePath, text);
+	// then
+	try {
+	    assertThat(actual).isFalse();
+	    assertTrue(testFile.exists());
+	    assertEquals(text, TestUtils.readTestFile(relativePath));
+	} finally {
+	    testFile.delete();
+	}
     }
 
     @Test

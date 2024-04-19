@@ -8,6 +8,8 @@ import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,21 +19,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIncludeProperties({ "contentKind", "entryKind", "exported", "path" })
 public class MockClasspathEntry implements IClasspathEntry {
 
-    private IAccessRule[] accessRules;
     private int contentKind;
     private int entryKind;
-    private IPath[] exclusionPatterns;
-    private IClasspathAttribute[] extraAttributes;
-    private IPath[] inclusionPatterns;
-    private IPath outputLocation;
-    private IPath path;
-    private IClasspathEntry referencingEntry;
-    private IClasspathEntry resolvedEntry;
-    private IPath sourceAttachmentPath;
-    private IPath sourceAttachmentRootPath;
     private boolean exported;
+    private MockPath path;
 
     @Override
     public boolean combineAccessRules() {
@@ -40,6 +34,56 @@ public class MockClasspathEntry implements IClasspathEntry {
 
     @Override
     public IPath getExternalAnnotationPath(IProject arg0, boolean arg1) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IAccessRule[] getAccessRules() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IPath[] getExclusionPatterns() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IClasspathAttribute[] getExtraAttributes() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IPath[] getInclusionPatterns() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IPath getOutputLocation() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public MockPath getPath() {
+	return path;
+    }
+
+    @Override
+    public IClasspathEntry getReferencingEntry() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IClasspathEntry getResolvedEntry() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IPath getSourceAttachmentPath() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IPath getSourceAttachmentRootPath() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 

@@ -2,163 +2,189 @@ package org.junit.tools.generator.model.mocks;
 
 import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTED;
 
-import org.eclipse.core.resources.IResource;
+import java.io.File;
+
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.jdt.core.IImportDeclaration;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IOpenable;
-import org.eclipse.jdt.core.ISourceRange;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-@JsonIncludeProperties({ "flags", "source" })
-public class MockImportDeclaration extends MockJavaElement implements IImportDeclaration {
+@Builder
+@JsonIncludeProperties({ "elementName" })
+public class MockPath implements IPath {
 
-    private int flags;
-    private String source;
+    private String elementName;
 
     @Override
-    public boolean exists() {
+    public MockPath clone() {
+	return MockPath.builder()
+		.build();
+    }
+
+    @Override
+    public IPath addFileExtension(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public String getAttachedJavadoc(IProgressMonitor arg0) {
+    public IPath addTrailingSeparator() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IResource getCorrespondingResource() {
+    public IPath append(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public int getElementType() {
+    public IPath append(IPath arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public String getHandleIdentifier() {
+    public String getDevice() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaModel getJavaModel() {
+    public String getFileExtension() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaProject getJavaProject() {
+    public boolean hasTrailingSeparator() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IOpenable getOpenable() {
+    public boolean isAbsolute() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaElement getParent() {
+    public boolean isEmpty() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IPath getPath() {
+    public boolean isPrefixOf(IPath arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IJavaElement getPrimaryElement() {
+    public boolean isRoot() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IResource getResource() {
+    public boolean isUNC() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public ISchedulingRule getSchedulingRule() {
+    public boolean isValidPath(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public IResource getUnderlyingResource() {
+    public boolean isValidSegment(String arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isReadOnly() {
+    public String lastSegment() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isStructureKnown() {
+    public IPath makeAbsolute() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public <T> T getAdapter(Class<T> arg0) {
+    public IPath makeRelative() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public ISourceRange getNameRange() {
+    public IPath makeRelativeTo(IPath arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public String getSource() {
-	return source;
-    }
-
-    @Override
-    public ISourceRange getSourceRange() {
+    public IPath makeUNC(boolean arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void copy(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) {
+    public int matchingFirstSegments(IPath arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void delete(boolean arg0, IProgressMonitor arg1) {
+    public IPath removeFileExtension() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void move(IJavaElement arg0, IJavaElement arg1, String arg2, boolean arg3, IProgressMonitor arg4) {
+    public IPath removeFirstSegments(int arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public void rename(String arg0, boolean arg1, IProgressMonitor arg2) {
+    public IPath removeLastSegments(int arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public int getFlags() {
-	return flags;
+    public IPath removeTrailingSeparator() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 
     @Override
-    public boolean isOnDemand() {
+    public String segment(int arg0) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public int segmentCount() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public String[] segments() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IPath setDevice(String arg0) {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public File toFile() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public String toOSString() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public String toPortableString() {
+	throw new IllegalStateException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public IPath uptoSegment(int arg0) {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
     }
 

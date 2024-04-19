@@ -14,7 +14,21 @@ import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IOpenable;
 import org.eclipse.jdt.core.ISourceRange;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@JsonIncludeProperties({ "elementName" })
 public class MockAnnotation implements IAnnotation {
+
+    private String elementName;
 
     @Override
     public boolean exists() {
@@ -123,7 +137,7 @@ public class MockAnnotation implements IAnnotation {
 
     @Override
     public String getElementName() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return elementName;
     }
 
     @Override
