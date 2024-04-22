@@ -210,9 +210,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public String getSource() {
-	StringBuilder ret = new StringBuilder();
-	// todo build content from elements
-	return ret.toString();
+	return CompilationUnitSourceConverter.toJavaSource(this);
     }
 
     @Override

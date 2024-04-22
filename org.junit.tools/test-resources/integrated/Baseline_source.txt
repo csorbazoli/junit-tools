@@ -1,0 +1,18 @@
+package com.example.junittoolsdemo;
+
+import static org.junit.Assert.*;
+
+import java.util.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+// BaseTypes: [MockType(elementName=TestClassTest, exists=false, source=null, mockAnnotations=[], mockFields=[MockField(annotations=[], typeSignature=null, elementName=null, flags=0, ancestor=null, source=@InjectMocks
+TestClass underTest;, exists=false)], mockMethods=[MockMethod(exists=false, flags=0, elementName=null, isConstructor=false, source=@Test
+ void testSomeMethod() throws Exception {
+
+}, parameterTypes=null)]), MockType(elementName=null, exists=false, source=@ExtendWith(MockitoExtension.class)
+ class TestClassTest{ 
+}, mockAnnotations=[], mockFields=[], mockMethods=[])]
+// PrimaryElement: null
+// ChildElements: []

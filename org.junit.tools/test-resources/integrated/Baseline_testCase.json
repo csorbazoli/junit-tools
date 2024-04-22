@@ -18,7 +18,7 @@
     "onlyStaticMethods" : false
   },
   "basePackage" : {
-    "elementName" : null,
+    "elementName" : "com.example.junittoolsdemo",
     "parent" : {
       "elementName" : null,
       "javaProject" : null,

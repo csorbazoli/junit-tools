@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Data
@@ -26,7 +27,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@JsonIncludeProperties({ "flags", "source" })
+@JsonIncludeProperties({ "flags", "source", "elementName", "ancestor" })
+@ToString(callSuper = true)
 public class MockImportDeclaration extends MockJavaElement implements IImportDeclaration {
 
     private int flags;

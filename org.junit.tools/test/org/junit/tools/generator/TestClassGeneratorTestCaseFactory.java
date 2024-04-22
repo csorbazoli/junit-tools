@@ -127,11 +127,14 @@ public class TestClassGeneratorTestCaseFactory {
 		    .build();
 	    testCaseModel.setBasePackage(basePackage);
 	}
+	basePackage.setElementName("com.example.junittoolsdemo");
 	classesPackages.setBasePackages(Arrays.asList(basePackage));
 	MockCompilationUnit testClass = initCompilationUnit(testCaseModel);
 	classesPackages.setBaseTest(testClass);
 	classesPackages.setTestClassName(testClass.getElementName());
 	classesPackages.setBaseClassName(testClass.getElementName().replaceFirst("Test$", ""));
+	classesPackages.setTestPackageName("com.example.junittoolsdemo");
+	classesPackages.setTestPackage(basePackage);
 	return classesPackages;
     }
 

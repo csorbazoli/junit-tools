@@ -1,5 +1,6 @@
 package org.junit.tools.generator;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ import org.junit.tools.Activator;
 import org.junit.tools.base.JUTWarning;
 import org.junit.tools.generator.model.GeneratorModel;
 import org.junit.tools.generator.model.JUTElements;
+import org.junit.tools.generator.model.mocks.MockCompilationUnit;
 import org.junit.tools.generator.model.mocks.MockMethod;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.utils.TestUtils;
@@ -58,7 +60,8 @@ public class TestClassGeneratorIntegratedTest {
 	    // when
 	    ICompilationUnit actual = underTest.generate(model, Arrays.asList(), new NullProgressMonitor());
 	    // then
-	    TestUtils.assertTestFileEquals("integrated/" + testCase + ".java", actual.getSource());
+	    assertThat(actual).isInstanceOf(MockCompilationUnit.class);
+	    TestUtils.assertTestFileEquals("integrated/" + testCase + "_source.txt", actual.getSource().trim());
 	} catch (Exception e) {
 	    e.printStackTrace();
 	    fail(e.getMessage());
