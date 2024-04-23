@@ -239,8 +239,8 @@ public class MockType implements IType {
     }
 
     @Override
-    public IAnnotation[] getAnnotations() {
-	return mockAnnotations.toArray(new IAnnotation[0]);
+    public MockAnnotation[] getAnnotations() {
+	return mockAnnotations.toArray(new MockAnnotation[0]);
     }
 
     @Override

@@ -59,8 +59,8 @@ public class MockCompilationUnit implements ICompilationUnit {
     private boolean changed = true;
 
     @Override
-    public IType findPrimaryType() {
-	return baseTypes.get(0);
+    public MockType findPrimaryType() {
+	return baseTypes.isEmpty() ? null : baseTypes.get(0);
     }
 
     @Override
@@ -390,10 +390,15 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public IType createType(String contents, IJavaElement sibling, boolean force, IProgressMonitor monitor) {
-	MockType ret = MockType.builder()
-		.source(contents)
-		.build();
-	baseTypes.add(ret);
+	MockType ret = findPrimaryType();
+	if (ret == null) {
+	    MockType.builder()
+		    .source(contents)
+		    .build();
+	    baseTypes.add(ret);
+	} else {
+	    ret.setSource(contents);
+	}
 	return ret;
     }
 

@@ -729,6 +729,7 @@ public class JDTUtils implements IGeneratorConstants {
 	IMethod tmpMethod = type.getMethod(methodName, null); // TODO mit
 	// parametern
 	StringBuilder sbMethod = new StringBuilder();
+	String indent = getIndentation(1);
 
 	if (force && tmpMethod.exists()) {
 	    tmpMethod.delete(true, null);
@@ -750,7 +751,8 @@ public class JDTUtils implements IGeneratorConstants {
 		    annotation = "@" + annotation; //$NON-NLS-1$
 		}
 
-		sbMethod.append(annotation);
+		sbMethod.append(indent)
+			.append(annotation);
 		sbMethod.append("\n"); //$NON-NLS-1$
 	    }
 	}
@@ -769,10 +771,19 @@ public class JDTUtils implements IGeneratorConstants {
 	    params = ""; //$NON-NLS-1$
 	}
 
-	sbMethod.append(modifier)
-		.append(" ").append(returnType).append(" ").append(methodName) //$NON-NLS-1$ //$NON-NLS-2$
-		.append("(").append(params).append(") " + throwsClause + " {\n").append(body) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		.append("\n}"); //$NON-NLS-1$
+	sbMethod.append(indent);
+	if (modifier != null && !modifier.isEmpty()) {
+	    sbMethod.append(modifier);
+	    if (!modifier.endsWith(" ") || !modifier.endsWith("\t")) {
+		sbMethod.append(' ');
+	    }
+	}
+
+	sbMethod.append(returnType).append(" ").append(methodName) //$NON-NLS-1$ //$NON-NLS-2$
+		.append("(").append(params).append(") " + throwsClause + " {\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		.append(indent).append(indent).append(body)
+		.append("\n")//$NON-NLS-1$
+		.append(indent).append("}"); //$NON-NLS-1$
 
 	try {
 	    tmpMethod = type.createMethod(sbMethod.toString(), null, force,
@@ -1439,6 +1450,16 @@ public class JDTUtils implements IGeneratorConstants {
     public static boolean hasDefaultConstructor(IType type) {
 	String className = type.getElementName();
 	return type.getMethod(className, null) != null;
+    }
+
+    public static String getIndentation(int depth) {
+	String indentationUnit = "\t";
+	switch (depth) {
+	case 2:
+	    return indentationUnit + indentationUnit;
+	default:
+	    return indentationUnit;
+	}
     }
 
 }

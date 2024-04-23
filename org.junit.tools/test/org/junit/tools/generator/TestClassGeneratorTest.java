@@ -822,8 +822,8 @@ public class TestClassGeneratorTest {
 	// when
 	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
 	// then
-	verify(type).createField("@InjectMocks\n"
-		+ "SomeClass underTest;", null, false, null);
+	verify(type).createField("\t@InjectMocks\n"
+		+ "\tSomeClass underTest;", null, false, null);
     }
 
     @Test
@@ -835,8 +835,8 @@ public class TestClassGeneratorTest {
 	// when
 	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
 	// then
-	verify(type).createField("@TestSubject\n"
-		+ "SomeClass underTest = new SomeClass();", null, false, null);
+	verify(type).createField("\t@TestSubject\n"
+		+ "\tSomeClass underTest = new SomeClass();", null, false, null);
     }
 
     @Test
@@ -908,7 +908,7 @@ public class TestClassGeneratorTest {
 	// when
 	underTest.createStandardClassFields(type, "SomeClass", tmlTest);
 	// then
-	verify(type).createField("@Rule public ExpectedException expected = ExpectedException.none();", null, false, null);
+	verify(type).createField("\t@Rule public ExpectedException expected = ExpectedException.none();", null, false, null);
     }
 
     @Test

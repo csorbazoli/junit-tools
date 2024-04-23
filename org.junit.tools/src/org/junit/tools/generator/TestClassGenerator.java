@@ -277,8 +277,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	if (source == null) {
 	    String customComment = getTestClassComment();
 
-	    source = customComment + annotations.toString() + getPublicModifierIfNeeded() + " class " + testclassName
-		    + "{ " + RETURN + "}";
+	    source = customComment + annotations.toString() + getPublicModifierIfNeeded() + "class " + testclassName
+		    + " { " + RETURN + "}";
 	} else {
 	    source = annotations + source;
 	}
@@ -448,16 +448,17 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * @param b
      */
     protected void createStandardClassFields(IType type, String testClassName, Test tmlTest) throws JavaModelException {
+	String indent = JDTUtils.getIndentation(1);
 	if (!tmlTest.isOnlyStaticMethods() && GeneratorUtils.findField(type, UNDER_TEST) == null) {
 	    String initializer = "";
 	    if (GeneratorUtils.isUsingEasyMock()) {
 		initializer = " = new " + testClassName + "()";
 	    }
-	    type.createField(GeneratorUtils.createAnnoForUnderTest(tmlTest.isSpring()) + getPublicModifierIfNeeded() +
+	    type.createField(indent + GeneratorUtils.createAnnoForUnderTest(tmlTest.isSpring()) + indent + getPublicModifierIfNeeded() +
 		    testClassName + " " + UNDER_TEST + initializer + ";", null, false, null);
 	}
 	for (FieldDeclaration additionalField : JUTPreferences.getAdditionalFields()) {
-	    type.createField(additionalField.toJavaString() + ";", null, false, null);
+	    type.createField(indent + additionalField.toJavaString() + ";", null, false, null);
 	}
     }
 
