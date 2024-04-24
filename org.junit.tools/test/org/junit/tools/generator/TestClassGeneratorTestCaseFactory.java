@@ -19,6 +19,8 @@ import org.junit.tools.generator.model.mocks.MockType;
 import org.junit.tools.generator.model.tml.Annotation;
 import org.junit.tools.generator.model.tml.Attribute;
 import org.junit.tools.generator.model.tml.Method;
+import org.junit.tools.generator.model.tml.Param;
+import org.junit.tools.generator.model.tml.Result;
 import org.junit.tools.generator.model.tml.Settings;
 import org.junit.tools.generator.model.tml.Test;
 import org.junit.tools.generator.utils.TestUtils;
@@ -56,6 +58,20 @@ public class TestClassGeneratorTestCaseFactory {
 	    ret.setName("testSomeMethod");
 	    testCaseModel.setTmlMethod(ret);
 	}
+	if (ret.getParam().isEmpty()) {
+	    Param param = new Param();
+	    param.setName("input");
+	    param.setPrimitive(true);
+	    param.setType("java.lang.String");
+	    ret.getParam().add(param);
+	}
+	if (ret.getResult() == null) {
+	    Result result = new Result();
+	    result.setName("actual");
+	    result.setType("String");
+	    ret.setResult(result);
+	    ret.setStatic(false);
+	}
 	return ret;
     }
 
@@ -86,6 +102,9 @@ public class TestClassGeneratorTestCaseFactory {
 		    .build();
 	    ret.createType("TestClassTest", null, false, null);
 	    testCaseModel.setTestClassCompilationUnit(ret);
+	}
+	if (ret.getPackageDeclarations().length == 0) {
+	    ret.createPackageDeclaration(initBasePackage(testCaseModel).getElementName(), null);
 	}
 	return ret;
     }
@@ -119,15 +138,7 @@ public class TestClassGeneratorTestCaseFactory {
 
     private static JUTClassesAndPackages initClassesAndPackages(JUTClassesAndPackages classesPackages, TestClassGeneratorTestCase testCaseModel) {
 
-	MockPackageFragment basePackage = testCaseModel.getBasePackage();
-	if (basePackage == null) {
-	    basePackage = MockPackageFragment.builder()
-		    .parent(MockCompilationUnit.builder()
-			    .build())
-		    .build();
-	    testCaseModel.setBasePackage(basePackage);
-	}
-	basePackage.setElementName("com.example.junittoolsdemo");
+	MockPackageFragment basePackage = initBasePackage(testCaseModel);
 	classesPackages.setBasePackages(Arrays.asList(basePackage));
 	MockCompilationUnit testClass = initCompilationUnit(testCaseModel);
 	classesPackages.setBaseTest(testClass);
@@ -136,6 +147,19 @@ public class TestClassGeneratorTestCaseFactory {
 	classesPackages.setTestPackageName("com.example.junittoolsdemo");
 	classesPackages.setTestPackage(basePackage);
 	return classesPackages;
+    }
+
+    private static MockPackageFragment initBasePackage(TestClassGeneratorTestCase testCaseModel) {
+	MockPackageFragment basePackage = testCaseModel.getBasePackage();
+	if (basePackage == null) {
+	    basePackage = MockPackageFragment.builder()
+		    .parent(MockCompilationUnit.builder()
+			    .build())
+		    .build();
+	    testCaseModel.setBasePackage(basePackage);
+	    basePackage.setElementName("com.example.junittoolsdemo");
+	}
+	return basePackage;
     }
 
     public static Test initTestModel(TestClassGeneratorTestCase testCaseModel) {

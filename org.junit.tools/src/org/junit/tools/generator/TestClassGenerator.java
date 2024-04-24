@@ -278,7 +278,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    String customComment = getTestClassComment();
 
 	    source = customComment + annotations.toString() + getPublicModifierIfNeeded() + "class " + testclassName
-		    + " { " + RETURN + "}";
+		    + " {" + RETURN + RETURN + "}";
 	} else {
 	    source = annotations + source;
 	}

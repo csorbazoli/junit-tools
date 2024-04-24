@@ -1,20 +1,32 @@
 package com.example.junittoolsdemo;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static java.util.Arrays.asList;
 
 import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class TestClassTest { 
+class TestClassTest {
+
 	@InjectMocks
 	TestClass underTest;
 
+	@Rule ExpectedException expected = ExpectedExcepton.none;
+
 	@Test
 	void testSomeMethod() throws Exception {
-		
+		// given
+		String input = "TestInput";
+		// when
+		String actual=underTest.testSomeMethod(input);
+		// then
+		TestUtils.assertTestFileEquals("TestClass/testSomeMethod.json", TestUtils.objectToJson(actual));
 	}
 
 }

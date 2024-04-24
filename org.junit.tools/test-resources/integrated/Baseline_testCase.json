@@ -51,7 +51,11 @@
     } ],
     "childElements" : [ ],
     "importDeclarations" : [ ],
-    "packageDeclarations" : [ ],
+    "packageDeclarations" : [ {
+      "ancestor" : null,
+      "source" : null,
+      "elementName" : "com.example.junittoolsdemo"
+    } ],
     "primaryElement" : null,
     "changed" : true
   },
@@ -68,17 +72,43 @@
     }
   },
   "tmlMethod" : {
-    "param" : [ ],
+    "param" : [ {
+      "name" : "input",
+      "type" : "String",
+      "primitive" : true,
+      "hasDefaultConstructor" : false,
+      "annotations" : [ ]
+    } ],
     "paramsDefault" : [ ],
     "preconditions" : [ ],
-    "testCase" : [ ],
-    "result" : null,
+    "testCase" : [ {
+      "paramAssignments" : [ {
+        "paramType" : "String",
+        "paramName" : "input",
+        "assignment" : "\"TestInput\""
+      } ],
+      "preconditions" : [ ],
+      "assertion" : [ {
+        "value" : "\"TestClass/testSomeMethod.json\"",
+        "message" : null,
+        "base" : "TestUtils.objectToJson({result})",
+        "baseType" : "String",
+        "type" : "TESTFILEEQUALS"
+      } ],
+      "name" : "default test",
+      "testBase" : ""
+    } ],
+    "result" : {
+      "value" : null,
+      "name" : "actual",
+      "type" : "String"
+    },
     "assertion" : [ ],
     "annotations" : [ ],
     "name" : "testSomeMethod",
     "modifier" : null,
     "signature" : null,
-    "static" : null
+    "static" : false
   },
   "testMethod" : {
     "exists" : false,

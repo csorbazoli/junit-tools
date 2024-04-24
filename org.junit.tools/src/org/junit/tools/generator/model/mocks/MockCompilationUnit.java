@@ -115,7 +115,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 
     @Override
     public IJavaElement getParent() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+	return packageDeclarations.get(0);
     }
 
     @Override

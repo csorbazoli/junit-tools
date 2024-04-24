@@ -12,6 +12,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.junit.Before;
@@ -39,6 +40,12 @@ public class TestClassGeneratorIntegratedTest {
     public static List<Object[]> getParameters() {
 	return Arrays.asList(new Object[][] {
 		{ "Baseline" }
+		// only static methods
+		// junit4 vs junit5
+		// easymock vs mockito
+		// repeating test method
+		// gherkin switched off
+		// Spring MVC
 	});
     }
 
@@ -48,7 +55,16 @@ public class TestClassGeneratorIntegratedTest {
     @Before
     public void setupTest() {
 	JUTPreferences.setJUnitVersion(5);
+	JUTPreferences.setAdditionalFields(new String[] { "@Rule ExpectedException expected = ExpectedExcepton.none" });
+	JUTPreferences.setAdditionalImports(new String[] { "java.util.List", "static java.util.Arrays.asList" });
+	JUTPreferences.setAssertJEnabled(true);
 	JUTPreferences.setGherkinStyleEnabled(true);
+	JUTPreferences.setGherkinStyleEnabled(true);
+	JUTPreferences.setJUnitVersion(5);
+	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
+	JUTPreferences.setRepeatingTestMethodsEnabled(true);
+	JUTPreferences.setReplayAllVerifyAllEnabled(true);
+	JUTPreferences.setShowSettingsBeforeGenerate(false);
 	initPluginActivator();
     }
 
@@ -84,18 +100,23 @@ public class TestClassGeneratorIntegratedTest {
 	return ret;
     }
 
-    private GeneratorModel initGeneratorModel() throws JUTWarning, IOException {
+    private GeneratorModel initGeneratorModel() throws JUTWarning, IOException, JavaModelException {
 	TestClassGeneratorTestCase testCaseModel = TestClassGeneratorTestCaseFactory.loadTestCaseModel(testCase);
 
 	org.junit.tools.generator.model.tml.Test tmlTest = TestClassGeneratorTestCaseFactory.initTestModel(testCaseModel);
 	JUTElements jutElements = TestClassGeneratorTestCaseFactory.initJUTElements(testCaseModel);
 	GeneratorModel ret = new GeneratorModel(jutElements, tmlTest);
+
 	MockMethod methodToCreate = TestClassGeneratorTestCaseFactory.initMockMethod(testCaseModel);
 	ret.setMethodsToCreate(Arrays.asList(methodToCreate));
 	Map<IMethod, Method> methodMap = new HashMap<>();
 	Method tmlMethod = TestClassGeneratorTestCaseFactory.initTmlMethod(testCaseModel);
 	methodMap.put(methodToCreate, tmlMethod);
 	ret.setMethodMap(methodMap);
+	if (tmlMethod.getTestCase().isEmpty()) {
+	    TestCasesGenerator tcg = new TestCasesGenerator();
+	    tcg.generateTestCases(ret);
+	}
 
 	TestClassGeneratorTestCaseFactory.saveTestCaseModel(testCase, testCaseModel);
 	return ret;

@@ -729,7 +729,7 @@ public class JDTUtils implements IGeneratorConstants {
 	IMethod tmpMethod = type.getMethod(methodName, null); // TODO mit
 	// parametern
 	StringBuilder sbMethod = new StringBuilder();
-	String indent = getIndentation(1);
+	String baseIndent = getIndentation(1);
 
 	if (force && tmpMethod.exists()) {
 	    tmpMethod.delete(true, null);
@@ -751,7 +751,7 @@ public class JDTUtils implements IGeneratorConstants {
 		    annotation = "@" + annotation; //$NON-NLS-1$
 		}
 
-		sbMethod.append(indent)
+		sbMethod.append(baseIndent)
 			.append(annotation);
 		sbMethod.append("\n"); //$NON-NLS-1$
 	    }
@@ -771,7 +771,7 @@ public class JDTUtils implements IGeneratorConstants {
 	    params = ""; //$NON-NLS-1$
 	}
 
-	sbMethod.append(indent);
+	sbMethod.append(baseIndent);
 	if (modifier != null && !modifier.isEmpty()) {
 	    sbMethod.append(modifier);
 	    if (!modifier.endsWith(" ") || !modifier.endsWith("\t")) {
@@ -779,11 +779,13 @@ public class JDTUtils implements IGeneratorConstants {
 	    }
 	}
 
+	String incrementedIndent = getIndentation(2);
+
 	sbMethod.append(returnType).append(" ").append(methodName) //$NON-NLS-1$ //$NON-NLS-2$
 		.append("(").append(params).append(") " + throwsClause + " {\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		.append(indent).append(indent).append(body)
+		.append(incrementedIndent).append(body.replace("\n", "\n" + incrementedIndent))
 		.append("\n")//$NON-NLS-1$
-		.append(indent).append("}"); //$NON-NLS-1$
+		.append(baseIndent).append("}"); //$NON-NLS-1$
 
 	try {
 	    tmpMethod = type.createMethod(sbMethod.toString(), null, force,
