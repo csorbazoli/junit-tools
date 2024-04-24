@@ -20,6 +20,19 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 
     @Override
     public void initializeDefaultPreferences() {
+	initDefaultPreferences();
+
+	// set custom preferences
+	ExtensionPointHandler extensionHandler = Activator.getDefault()
+		.getExtensionHandler();
+	for (AbstractPreferenceInitializer initializer : extensionHandler
+		.getPreferenceInitializer()) {
+	    initializer.initializeDefaultPreferences();
+	}
+
+    }
+
+    public static void initDefaultPreferences() {
 	IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
 	// useful settings
@@ -67,15 +80,6 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 
 	// initialize JUT-preferences
 	JUTPreferences.initialize();
-
-	// set custom preferences
-	ExtensionPointHandler extensionHandler = Activator.getDefault()
-		.getExtensionHandler();
-	for (AbstractPreferenceInitializer initializer : extensionHandler
-		.getPreferenceInitializer()) {
-	    initializer.initializeDefaultPreferences();
-	}
-
     }
 
 }

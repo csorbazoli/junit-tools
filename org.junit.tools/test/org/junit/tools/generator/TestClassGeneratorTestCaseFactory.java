@@ -62,7 +62,7 @@ public class TestClassGeneratorTestCaseFactory {
 	    Param param = new Param();
 	    param.setName("input");
 	    param.setPrimitive(true);
-	    param.setType("java.lang.String");
+	    param.setType("String");
 	    ret.getParam().add(param);
 	}
 	if (ret.getResult() == null) {
@@ -100,8 +100,10 @@ public class TestClassGeneratorTestCaseFactory {
 	    ret = MockCompilationUnit.builder()
 		    .elementName("TestClassTest")
 		    .build();
-	    ret.createType("TestClassTest", null, false, null);
 	    testCaseModel.setTestClassCompilationUnit(ret);
+	}
+	if (ret.findPrimaryType() == null) {
+	    ret.createType("TestClassTest", null, false, null);
 	}
 	if (ret.getPackageDeclarations().length == 0) {
 	    ret.createPackageDeclaration(initBasePackage(testCaseModel).getElementName(), null);

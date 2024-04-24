@@ -17,4 +17,5 @@ public class TestClassGeneratorTestCase {
     private MockJavaProject javaProject;
     private Method tmlMethod;
     private MockMethod testMethod;
+    private TestJUTPreferences preferences;
 }

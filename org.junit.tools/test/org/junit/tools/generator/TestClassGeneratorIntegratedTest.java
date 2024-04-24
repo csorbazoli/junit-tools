@@ -29,6 +29,7 @@ import org.junit.tools.generator.model.mocks.MockCompilationUnit;
 import org.junit.tools.generator.model.mocks.MockMethod;
 import org.junit.tools.generator.model.tml.Method;
 import org.junit.tools.generator.utils.TestUtils;
+import org.junit.tools.preferences.JUTPreferenceInitializer;
 import org.junit.tools.preferences.JUTPreferences;
 
 @RunWith(Parameterized.class)
@@ -54,18 +55,8 @@ public class TestClassGeneratorIntegratedTest {
 
     @Before
     public void setupTest() {
-	JUTPreferences.setJUnitVersion(5);
-	JUTPreferences.setAdditionalFields(new String[] { "@Rule ExpectedException expected = ExpectedExcepton.none" });
-	JUTPreferences.setAdditionalImports(new String[] { "java.util.List", "static java.util.Arrays.asList" });
-	JUTPreferences.setAssertJEnabled(true);
-	JUTPreferences.setGherkinStyleEnabled(true);
-	JUTPreferences.setGherkinStyleEnabled(true);
-	JUTPreferences.setJUnitVersion(5);
-	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
-	JUTPreferences.setRepeatingTestMethodsEnabled(true);
-	JUTPreferences.setReplayAllVerifyAllEnabled(true);
-	JUTPreferences.setShowSettingsBeforeGenerate(false);
 	initPluginActivator();
+	JUTPreferenceInitializer.initDefaultPreferences();
     }
 
     @Test
@@ -102,6 +93,28 @@ public class TestClassGeneratorIntegratedTest {
 
     private GeneratorModel initGeneratorModel() throws JUTWarning, IOException, JavaModelException {
 	TestClassGeneratorTestCase testCaseModel = TestClassGeneratorTestCaseFactory.loadTestCaseModel(testCase);
+
+	TestJUTPreferences preferences = testCaseModel.getPreferences();
+	if (preferences == null) {
+	    preferences = new TestJUTPreferences();
+	    preferences.setAdditionalFields(new String[] { "@Rule ExpectedException expected = ExpectedExcepton.none" });
+	    preferences.setAdditionalImports(new String[] { "java.util.List", "static java.util.Arrays.asList" });
+	    preferences.setAssertJEnabled(true);
+	    preferences.setGherkinStyleEnabled(true);
+	    preferences.setJUnitVersion(5);
+	    preferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
+	    preferences.setRepeatingTestMethodsEnabled(true);
+	    preferences.setReplayAllVerifyAllEnabled(true);
+	}
+	JUTPreferences.setAdditionalFields(preferences.getAdditionalFields());
+	JUTPreferences.setAdditionalImports(preferences.getAdditionalImports());
+	JUTPreferences.setAssertJEnabled(preferences.isAssertJEnabled());
+	JUTPreferences.setGherkinStyleEnabled(preferences.isGherkinStyleEnabled());
+	JUTPreferences.setJUnitVersion(preferences.getJUnitVersion());
+	JUTPreferences.setMockFramework(preferences.getMockFramework());
+	JUTPreferences.setRepeatingTestMethodsEnabled(preferences.isRepeatingTestMethodsEnabled());
+	JUTPreferences.setReplayAllVerifyAllEnabled(preferences.isReplayAllVerifyAllEnabled());
+	JUTPreferences.setShowSettingsBeforeGenerate(false);
 
 	org.junit.tools.generator.model.tml.Test tmlTest = TestClassGeneratorTestCaseFactory.initTestModel(testCaseModel);
 	JUTElements jutElements = TestClassGeneratorTestCaseFactory.initJUTElements(testCaseModel);

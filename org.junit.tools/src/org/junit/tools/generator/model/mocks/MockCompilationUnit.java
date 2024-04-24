@@ -392,7 +392,7 @@ public class MockCompilationUnit implements ICompilationUnit {
     public IType createType(String contents, IJavaElement sibling, boolean force, IProgressMonitor monitor) {
 	MockType ret = findPrimaryType();
 	if (ret == null) {
-	    MockType.builder()
+	    ret = MockType.builder()
 		    .source(contents)
 		    .build();
 	    baseTypes.add(ret);

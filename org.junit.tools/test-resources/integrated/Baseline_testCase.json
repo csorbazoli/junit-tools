@@ -116,5 +116,6 @@
     "elementName" : "testSomeMethod",
     "source" : null,
     "parameterTypes" : null
-  }
+  },
+  "preferences" : null
 }
