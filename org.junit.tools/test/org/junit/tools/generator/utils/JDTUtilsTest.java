@@ -238,7 +238,9 @@ public class JDTUtilsTest {
 	assertThat(getMethodsNames(type))
 		.containsExactly("firstHelperMethod",
 			"firstTestMethod",
+			"firstTestMethod_1",
 			"innerHelperMethod",
+			"lastTestMethod_1",
 			"lastTestMethod",
 			"NEWMETHOD",
 			"lastHelperMethod");
@@ -266,7 +268,9 @@ public class JDTUtilsTest {
 		.containsExactly("firstHelperMethod",
 			"NEWMETHOD",
 			"firstTestMethod",
+			"firstTestMethod_1",
 			"innerHelperMethod",
+			"lastTestMethod_1",
 			"lastTestMethod",
 			"lastHelperMethod");
     }
@@ -288,12 +292,14 @@ public class JDTUtilsTest {
 	// when
 	IMethod actual = JDTUtils.createMethod(type, modifier, returnType, methodName, throwsClause, params, body, increment, annotations);
 	// then
-	assertThat(actual.getSource()).contains("public void firstTestMethod_1()");
+	assertThat(actual.getSource()).contains("public void firstTestMethod_2()");
 	assertThat(getMethodsNames(type))
 		.containsExactly("firstHelperMethod",
 			"firstTestMethod",
+			"firstTestMethod_1",
 			"NEWMETHOD",
 			"innerHelperMethod",
+			"lastTestMethod_1",
 			"lastTestMethod",
 			"lastHelperMethod");
     }
@@ -315,12 +321,14 @@ public class JDTUtilsTest {
 	// when
 	IMethod actual = JDTUtils.createMethod(type, modifier, returnType, methodName, throwsClause, params, body, increment, annotations);
 	// then
-	assertThat(actual.getSource()).contains("public void lastTestMethod_1()");
+	assertThat(actual.getSource()).contains("public void lastTestMethod_2()");
 	assertThat(getMethodsNames(type))
 		.containsExactly("firstHelperMethod",
 			"firstTestMethod",
+			"firstTestMethod_1",
 			"innerHelperMethod",
 			"NEWMETHOD",
+			"lastTestMethod_1",
 			"lastTestMethod",
 			"lastHelperMethod");
     }
@@ -346,7 +354,9 @@ public class JDTUtilsTest {
 	assertThat(getMethodsNames(type))
 		.containsExactly("firstHelperMethod",
 			"firstTestMethod",
+			"firstTestMethod_1",
 			"innerHelperMethod",
+			"lastTestMethod_1",
 			"lastTestMethod",
 			"NEWMETHOD",
 			"lastHelperMethod");
@@ -357,7 +367,9 @@ public class JDTUtilsTest {
 	MockType type = MockType.builder().build();
 	addMethod(type, "firstHelperMethod", false);
 	addMethod(type, "firstTestMethod", true);
+	addMethod(type, "firstTestMethod_1", true);
 	addMethod(type, "innerHelperMethod", false);
+	addMethod(type, "lastTestMethod_1", true);
 	addMethod(type, "lastTestMethod", true);
 	addMethod(type, "lastHelperMethod", false);
 	return type;

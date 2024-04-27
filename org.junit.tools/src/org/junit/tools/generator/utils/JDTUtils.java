@@ -739,9 +739,18 @@ public class JDTUtils implements IGeneratorConstants {
 	}
 
 	if (increment) {
+	    IMethod lastExisting = null;
 	    while (tmpMethod.exists()) {
+		lastExisting = tmpMethod;
 		methodName = increment(methodName, "_"); //$NON-NLS-1$
 		tmpMethod = type.getMethod(methodName, null);
+	    }
+	    if (lastExisting != null) {
+		if (IJUTPreferenceConstants.POSITION_BEFORE.equals(JUTPreferences.getTestMethodPosition())) {
+		    sibling = lastExisting;
+		} else if (IJUTPreferenceConstants.POSITION_AFTER.equals(JUTPreferences.getTestMethodPosition())) {
+		    sibling = GeneratorUtils.findNextMethod(type, lastExisting);
+		}
 	    }
 	} else if (tmpMethod.exists()) {
 	    logger.fine(Messages.GeneratorUtils_MethodExists + methodName);
