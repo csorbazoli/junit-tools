@@ -63,6 +63,7 @@ public class JUTPreferenceInitializer extends AbstractPreferenceInitializer
 	store.setDefault(TEST_RESOURCE_FULL_PATH_ENABLED, false);
 	store.setDefault(REPLAYALL_VERIFYALL_ENABLED, false);
 	store.setDefault(REPEATING_TEST_METHODS_ENABLED, true);
+	store.setDefault(TEST_METHOD_POSITION, POSITION_AFTER);
 	// settings to be implemented/used
 	store.setDefault(JUNIT_VERSION, 5);
 	store.setDefault(SHOW_SETTINGS_BEFORE_GENERATE, false);

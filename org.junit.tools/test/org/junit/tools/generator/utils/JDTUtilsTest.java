@@ -9,11 +9,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.junit.Test;
+import org.junit.tools.generator.model.mocks.MockAnnotation;
+import org.junit.tools.generator.model.mocks.MockMethod;
+import org.junit.tools.generator.model.mocks.MockType;
+import org.junit.tools.preferences.IJUTPreferenceConstants;
 import org.junit.tools.preferences.JUTPreferences;
 
 public class JDTUtilsTest {
@@ -209,6 +215,172 @@ public class JDTUtilsTest {
 	boolean actual = JDTUtils.isStaticMethodOrConstructors(methods);
 	// then
 	assertThat(actual).isFalse();
+    }
+
+    @Test
+    public void testCreateMethod_shouldInsertNewMethodAfterLastTestMethod() throws Exception {
+	// given
+	MockType type = initTestClassWithExistingMethods();
+	String modifier = "public";
+	String returnType = "void";
+	String methodName = "testSomeMethod";
+	String throwsClause = "Exception";
+	String params = null;
+	String body = "//given\n\t\t//when\n\t\t//then";
+	boolean increment = true;
+	String[] annotations = new String[] { "Test" };
+
+	JUTPreferences.setTestMethodPosition(IJUTPreferenceConstants.POSITION_AFTER);
+	// when
+	IMethod actual = JDTUtils.createMethod(type, modifier, returnType, methodName, throwsClause, params, body, increment, annotations);
+	// then
+	assertThat(actual.getSource()).contains("public void testSomeMethod()");
+	assertThat(getMethodsNames(type))
+		.containsExactly("firstHelperMethod",
+			"firstTestMethod",
+			"innerHelperMethod",
+			"lastTestMethod",
+			"NEWMETHOD",
+			"lastHelperMethod");
+    }
+
+    @Test
+    public void testCreateMethod_shouldInsertNewMethodBeforeFirstTestMethod() throws Exception {
+	// given
+	MockType type = initTestClassWithExistingMethods();
+	String modifier = "public";
+	String returnType = "void";
+	String methodName = "testSomeMethod";
+	String throwsClause = "Exception";
+	String params = null;
+	String body = "//given\n\t\t//when\n\t\t//then";
+	boolean increment = true;
+	String[] annotations = new String[] { "Test" };
+
+	JUTPreferences.setTestMethodPosition(IJUTPreferenceConstants.POSITION_BEFORE);
+	// when
+	IMethod actual = JDTUtils.createMethod(type, modifier, returnType, methodName, throwsClause, params, body, increment, annotations);
+	// then
+	assertThat(actual.getSource()).contains("public void testSomeMethod()");
+	assertThat(getMethodsNames(type))
+		.containsExactly("firstHelperMethod",
+			"NEWMETHOD",
+			"firstTestMethod",
+			"innerHelperMethod",
+			"lastTestMethod",
+			"lastHelperMethod");
+    }
+
+    @Test
+    public void testCreateMethod_shouldInsertNewMethodAfterSameTestMethod() throws Exception {
+	// given
+	MockType type = initTestClassWithExistingMethods();
+	String modifier = "public";
+	String returnType = "void";
+	String methodName = "firstTestMethod";
+	String throwsClause = "Exception";
+	String params = null;
+	String body = "//given\n\t\t//when\n\t\t//then";
+	boolean increment = true;
+	String[] annotations = new String[] { "Test" };
+
+	JUTPreferences.setTestMethodPosition(IJUTPreferenceConstants.POSITION_AFTER);
+	// when
+	IMethod actual = JDTUtils.createMethod(type, modifier, returnType, methodName, throwsClause, params, body, increment, annotations);
+	// then
+	assertThat(actual.getSource()).contains("public void firstTestMethod_1()");
+	assertThat(getMethodsNames(type))
+		.containsExactly("firstHelperMethod",
+			"firstTestMethod",
+			"NEWMETHOD",
+			"innerHelperMethod",
+			"lastTestMethod",
+			"lastHelperMethod");
+    }
+
+    @Test
+    public void testCreateMethod_shouldInsertNewMethodBeforeSameTestMethod() throws Exception {
+	// given
+	MockType type = initTestClassWithExistingMethods();
+	String modifier = "public";
+	String returnType = "void";
+	String methodName = "lastTestMethod";
+	String throwsClause = "Exception";
+	String params = null;
+	String body = "//given\n\t\t//when\n\t\t//then";
+	boolean increment = true;
+	String[] annotations = new String[] { "Test" };
+
+	JUTPreferences.setTestMethodPosition(IJUTPreferenceConstants.POSITION_BEFORE);
+	// when
+	IMethod actual = JDTUtils.createMethod(type, modifier, returnType, methodName, throwsClause, params, body, increment, annotations);
+	// then
+	assertThat(actual.getSource()).contains("public void lastTestMethod_1()");
+	assertThat(getMethodsNames(type))
+		.containsExactly("firstHelperMethod",
+			"firstTestMethod",
+			"innerHelperMethod",
+			"NEWMETHOD",
+			"lastTestMethod",
+			"lastHelperMethod");
+    }
+
+    @Test
+    public void testCreateMethod_shouldInsertNewMethodAfterAllMethods() throws Exception {
+	// given
+	MockType type = initTestClassWithExistingMethods();
+	String modifier = "public";
+	String returnType = "void";
+	String methodName = "testSomeMethod";
+	String throwsClause = "Exception";
+	String params = null;
+	String body = "//given\n\t\t//when\n\t\t//then";
+	boolean increment = true;
+	String[] annotations = new String[] { "Test" };
+
+	JUTPreferences.setTestMethodPosition(IJUTPreferenceConstants.POSITION_LAST);
+	// when
+	IMethod actual = JDTUtils.createMethod(type, modifier, returnType, methodName, throwsClause, params, body, increment, annotations);
+	// then
+	assertThat(actual.getSource()).contains("public void testSomeMethod()");
+	assertThat(getMethodsNames(type))
+		.containsExactly("firstHelperMethod",
+			"firstTestMethod",
+			"innerHelperMethod",
+			"lastTestMethod",
+			"NEWMETHOD",
+			"lastHelperMethod");
+    }
+
+    // helper methods
+    private MockType initTestClassWithExistingMethods() {
+	MockType type = MockType.builder().build();
+	addMethod(type, "firstHelperMethod", false);
+	addMethod(type, "firstTestMethod", true);
+	addMethod(type, "innerHelperMethod", false);
+	addMethod(type, "lastTestMethod", true);
+	addMethod(type, "lastHelperMethod", false);
+	return type;
+    }
+
+    private void addMethod(MockType type, String methodName, boolean testMethod) {
+	if (testMethod) {
+	    type.createMethod("@Test\n\tpublic void " + methodName + "() throws Exception {\n\t}", type, true, null)
+		    .addAnnotation(MockAnnotation.builder()
+			    .elementName("@Test")
+			    .build())
+		    .setElementName(methodName);
+	} else {
+	    type.createMethod("private void " + methodName + "() throws Exception {\n\t}", type, true, null)
+		    .setElementName(methodName);
+	}
+    }
+
+    private List<String> getMethodsNames(MockType type) {
+	return Stream.of(type.getMethods())
+		.map(MockMethod.class::cast)
+		.map(method -> method.getElementName() == null ? "NEWMETHOD" : method.getElementName())
+		.collect(Collectors.toList());
     }
 
 }

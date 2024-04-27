@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IAnnotation;
@@ -19,6 +20,9 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.Test;
 import org.junit.tools.base.MethodRef;
+import org.junit.tools.generator.model.mocks.MockAnnotation;
+import org.junit.tools.generator.model.mocks.MockMethod;
+import org.junit.tools.generator.model.mocks.MockType;
 import org.junit.tools.preferences.JUTPreferences;
 
 public class GeneratorUtilsTest {
@@ -317,4 +321,100 @@ public class GeneratorUtilsTest {
 	return ret;
     }
 
+    @Test
+    public void testFindNextMethod_shouldReturnNullIfLast() throws Exception {
+	// given
+	MockType type = createMockType();
+	MockMethod method = createMockMethod("existingMethod");
+	type.addMethod(method);
+	// when
+	IMethod actual = GeneratorUtils.findNextMethod(type, method);
+	// then
+	assertThat(actual).isNull();
+    }
+
+    @Test
+    public void testFindNextMethod_shouldReturnNextIfNotLast() throws Exception {
+	// given
+	MockType type = createMockType();
+	MockMethod method = createMockMethod("existingMethod");
+	type.addMethod(method);
+	type.addMethod(createMockMethod("nextMethodName"));
+	// when
+	IMethod actual = GeneratorUtils.findNextMethod(type, method);
+	// then
+	assertThat(actual.getElementName()).isEqualTo("nextMethodName");
+    }
+
+    @Test
+    public void testFindFirstTestMethod_shouldReturnNullIfNoTestMethodFound() throws Exception {
+	// given
+	MockType type = createMockType();
+	type.addMethod(createMockMethod("existingMethod"));
+	// when
+	IMethod actual = GeneratorUtils.findFirstTestMethod(type);
+	// then
+	assertThat(actual).isNull();
+    }
+
+    @Test
+    public void testFindFirstTestMethod_shouldReturnFirstMethodWithTestAnnotation() throws Exception {
+	// given
+	MockType type = createMockType();
+	type.addMethod(createMockMethod("firstTestMethod", "@Test"));
+	type.addMethod(createMockMethod("innerHelperMethod"));
+	type.addMethod(createMockMethod("nextTestMethod", "@Test"));
+	type.addMethod(createMockMethod("lastTestMethod", "@Test"));
+	type.addMethod(createMockMethod("firstHelperMethod"));
+	// when
+	IMethod actual = GeneratorUtils.findFirstTestMethod(type);
+	// then
+	assertThat(actual.getElementName()).isEqualTo("firstTestMethod");
+    }
+
+    @Test
+    public void testFindLastTestMethod_shouldReturnNullIfNoTestMethodFound() throws Exception {
+	// given
+	MockType type = createMockType();
+	type.addMethod(createMockMethod("firstHelperMethod"));
+	type.addMethod(createMockMethod("lastHelperMethod"));
+	// when
+	IMethod actual = GeneratorUtils.findLastTestMethod(type);
+	// then
+	assertThat(actual).isNull();
+    }
+
+    @Test
+    public void testFindLastTestMethod_shouldReturnLastMethodWithTestAnnotation() throws Exception {
+	// given
+	MockType type = createMockType();
+	type.addMethod(createMockMethod("firstTestMethod", "@Test"));
+	type.addMethod(createMockMethod("innerHelperMethod"));
+	type.addMethod(createMockMethod("nextTestMethod", "@Test"));
+	type.addMethod(createMockMethod("lastTestMethod", "@Test"));
+	type.addMethod(createMockMethod("firstHelperMethod"));
+	// when
+	IMethod actual = GeneratorUtils.findLastTestMethod(type);
+	// then
+	assertThat(actual.getElementName()).isEqualTo("lastTestMethod");
+    }
+
+    private MockType createMockType() {
+	MockType type = MockType.builder()
+		.elementName("TestClass")
+		.build();
+	return type;
+    }
+
+    private MockMethod createMockMethod(String name, String... annotations) {
+	MockMethod ret = MockMethod.builder()
+		.elementName(name)
+		.build();
+	Stream.of(annotations)
+		.map(annotation -> MockAnnotation.builder()
+			.elementName(annotation)
+			.build())
+		.forEach(ret::addAnnotation);
+	return ret;
+    }
 }

@@ -141,6 +141,7 @@ public class Messages extends NLS {
     public static String JUTPreferenceMainPage_TestResourceFullPath_Enabled;
     public static String JUTPreferenceMainPage_ReplayAllVerifyAll_Enabled;
     public static String JUTPreferenceMainPage_Repeating_Test_Methods_Enabled;
+    public static String JUTPreferenceMainPage_Test_Method_Position;
 
     public static String GeneratorWizard_description_main;
     public static String GeneratorWizard_description_testbases;

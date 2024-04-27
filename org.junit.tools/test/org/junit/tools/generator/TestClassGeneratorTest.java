@@ -853,11 +853,26 @@ public class TestClassGeneratorTest {
     }
 
     @Test
-    public void testMocksForDependencies() throws Exception {
+    public void testMocksForDependencies_spring() throws Exception {
 	// given
 	IType type = Mockito.mock(IType.class);
 	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
 	ICompilationUnit baseClass = createSpringClassWithAutowiredField("Component", "QSomeService;", "someService");
+
+	JUTPreferences.setRelevantSpringAnnotations(new String[] { "Controller", "RestController", "Service", "Component" });
+	// when
+	underTest.createMocksForDependencies(type, baseClass, false);
+	// then
+	verify(type).createField("@Mock\n"
+		+ "SomeService someService;", null, false, null);
+    }
+
+    @Test
+    public void testMocksForDependencies_spring_noAutowiredFields() throws Exception {
+	// given
+	IType type = Mockito.mock(IType.class);
+	org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+	ICompilationUnit baseClass = createSpringClassWithField("Component", "QSomeService;", "someService", false);
 
 	JUTPreferences.setRelevantSpringAnnotations(new String[] { "Controller", "RestController", "Service", "Component" });
 	// when
@@ -1026,6 +1041,10 @@ public class TestClassGeneratorTest {
     }
 
     private ICompilationUnit createSpringClassWithAutowiredField(String annotation, String fieldClass, String fieldName) throws JavaModelException {
+	return createSpringClassWithField(annotation, fieldClass, fieldName, true);
+    }
+
+    private ICompilationUnit createSpringClassWithField(String annotation, String fieldClass, String fieldName, boolean autowired) throws JavaModelException {
 	ICompilationUnit baseClass = mock(ICompilationUnit.class);
 	IType testType = mock(IType.class);
 	when(baseClass.getTypes()).thenReturn(new IType[] { testType });
@@ -1039,9 +1058,13 @@ public class TestClassGeneratorTest {
 	when(existingField.getElementName()).thenReturn(fieldName);
 	when(existingField.getTypeSignature()).thenReturn(fieldClass);
 	when(primaryType.getFields()).thenReturn(new IField[] { existingField });
-	IAnnotation fieldAnnotation = mock(IAnnotation.class);
-	when(existingField.getAnnotations()).thenReturn(new IAnnotation[] { fieldAnnotation });
-	when(fieldAnnotation.getElementName()).thenReturn("Autowired");
+	if (autowired) {
+	    IAnnotation fieldAnnotation = mock(IAnnotation.class);
+	    when(existingField.getAnnotations()).thenReturn(new IAnnotation[] { fieldAnnotation });
+	    when(fieldAnnotation.getElementName()).thenReturn("Autowired");
+	} else {
+	    when(existingField.getAnnotations()).thenReturn(new IAnnotation[] {});
+	}
 
 	when(primaryType.getMethods()).thenReturn(new IMethod[] {});
 	return baseClass;

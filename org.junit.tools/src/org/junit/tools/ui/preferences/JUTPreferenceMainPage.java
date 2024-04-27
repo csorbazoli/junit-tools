@@ -247,6 +247,15 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 		getFieldEditorParent(),
 		true));
 
+	addField(new RadioGroupFieldEditor(TEST_METHOD_POSITION, Messages.JUTPreferenceMainPage_Test_Method_Position, 1,
+		new String[][] {
+			{ "Before first test method", POSITION_BEFORE },
+			{ "After last test method (default)", POSITION_AFTER },
+			{ "Last method in test class", POSITION_LAST },
+		},
+		getFieldEditorParent(),
+		true));
+
 	addField(new BooleanFieldEditor(SHOW_SETTINGS_BEFORE_GENERATE, Messages.JUTPreferenceMainPage_Show_Settings_Before_Generate,
 		getFieldEditorParent()));
 

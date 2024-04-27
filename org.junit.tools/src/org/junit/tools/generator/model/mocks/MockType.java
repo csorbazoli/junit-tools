@@ -53,6 +53,11 @@ public class MockType implements IType {
     private final List<MockField> mockFields = new LinkedList<>();
     private final List<MockMethod> mockMethods = new LinkedList<>();
 
+    public MockType addMethod(MockMethod method) {
+	mockMethods.add(method);
+	return this;
+    }
+
     @Override
     public String[] getCategories() {
 	throw new IllegalStateException(NOT_IMPLEMENTED);
@@ -293,12 +298,17 @@ public class MockType implements IType {
     }
 
     @Override
-    public IMethod createMethod(String contents, IJavaElement sibling, boolean force, org.eclipse.core.runtime.IProgressMonitor monitor) {
+    public MockMethod createMethod(String contents, IJavaElement sibling, boolean force, org.eclipse.core.runtime.IProgressMonitor monitor) {
 	MockMethod ret = MockMethod.builder()
 		.source(contents)
-		// .ancestor((MockJavaElement) sibling)
+		.exists(true)
 		.build();
-	mockMethods.add(ret);
+	int pos = sibling == null ? -1 : mockMethods.indexOf(sibling);
+	if (pos < 0) {
+	    mockMethods.add(ret);
+	} else {
+	    mockMethods.add(pos, ret);
+	}
 	return ret;
     }
 

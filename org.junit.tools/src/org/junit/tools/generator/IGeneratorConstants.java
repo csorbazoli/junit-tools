@@ -51,6 +51,7 @@ public interface IGeneratorConstants {
     public static final String ANNO_MOCK = "@Mock";
     public static final String ANNO_MOCKBEAN = "@MockBean";
     public static final String ANNO_RULE = "@Rule";
+    public static final String ANNO_TEST = "@Test";
 
     public static final String ANNO_METHOD_REF_NAME = "MethodRef";
     public static final String ANNO_METHOD_REF = "@";

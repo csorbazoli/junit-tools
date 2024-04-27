@@ -45,6 +45,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static Boolean showSettingsBeforeGenerate = null;
     private static String mockFramework = null;
     private static int junitVersion = 0;
+    private static String testMethodPosition = null;
 
     // from annotations-page
     private static String[] testClassAnnotations = null;
@@ -214,7 +215,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return springAnnotations;
     }
 
-    public static List<ImportDeclaration> getAdditionalImports() { // TODO parse and provide details: isStatic, packageName
+    public static List<ImportDeclaration> getAdditionalImports() {
 	if (additionalImports == null) {
 	    additionalImports = parseImports(convertToArray(getPreference(ADDITIONAL_IMPORTS)));
 	}
@@ -229,7 +230,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return ret;
     }
 
-    public static List<FieldDeclaration> getAdditionalFields() { // TODO parse and provide details: annotation, type, name, initialValue
+    public static List<FieldDeclaration> getAdditionalFields() {
 	if (additionalFields == null) {
 	    additionalFields = parseFieldDeclarations(convertToArray(getPreference(ADDITIONAL_FIELDS)));
 	}
@@ -445,6 +446,13 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return repeatingTestMethodsEnabled;
     }
 
+    public static String getTestMethodPosition() {
+	if (testMethodPosition == null) {
+	    testMethodPosition = getPreference(TEST_METHOD_POSITION);
+	}
+	return testMethodPosition;
+    }
+
     public static boolean isShowSettingsBeforeGenerate() {
 	if (showSettingsBeforeGenerate == null) {
 	    showSettingsBeforeGenerate = getPreferenceBoolean(SHOW_SETTINGS_BEFORE_GENERATE, true);
@@ -484,6 +492,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setRepeatingTestMethodsEnabled(Boolean enabled) {
 	JUTPreferences.repeatingTestMethodsEnabled = enabled;
+    }
+
+    public static void setTestMethodPosition(String value) {
+	JUTPreferences.testMethodPosition = value;
     }
 
     public static void setShowSettingsBeforeGenerate(Boolean enabled) {
@@ -577,6 +589,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	stringPropertyHandlers.put(TEST_CLASS_PREFIX, JUTPreferences::setTestClassPrefix);
 	stringPropertyHandlers.put(TEST_CLASS_POSTFIX, JUTPreferences::setTestClassPostfix);
 	stringPropertyHandlers.put(TEST_CLASS_SUPER_TYPE, JUTPreferences::setTestClassSuperType);
+	stringPropertyHandlers.put(TEST_METHOD_POSITION, JUTPreferences::setTestMethodPosition);
 
 	Map<String, Consumer<String[]>> arrayPropertyHandlers = new HashMap<>();
 	arrayPropertyHandlers.put(SPRING_ANNOTATIONS, JUTPreferences::setRelevantSpringAnnotations);

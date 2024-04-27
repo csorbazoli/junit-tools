@@ -3,7 +3,9 @@ package org.junit.tools.generator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -212,13 +214,13 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     }
 
     private String createReplayAllInstruction(ICompilationUnit baseClass) throws JavaModelException {
-	return GeneratorUtils.findPotentialInjectedFields(baseClass).keySet()
+	return findInjectedFields(baseClass).keySet()
 		.stream()
 		.collect(Collectors.joining(", ", "replay(", ");"));
     }
 
     private String createVerifyAllInstruction(ICompilationUnit baseClass) throws JavaModelException {
-	return GeneratorUtils.findPotentialInjectedFields(baseClass).keySet()
+	return findInjectedFields(baseClass).keySet()
 		.stream()
 		.collect(Collectors.joining(", ", "verify(", ");"));
     }
@@ -470,20 +472,26 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
      * (e.g. @Component, @Service, @Controller or similar)
      */
     protected void createMocksForDependencies(IType testClassType, ICompilationUnit baseClass, boolean spring) throws JavaModelException {
-	if (GeneratorUtils.hasSpringAnnotation(baseClass)) {
-	    for (Map.Entry<String, String> fieldNameAndType : GeneratorUtils.findInjectedFields(baseClass).entrySet()) {
-		createMockField(testClassType, fieldNameAndType.getValue(), fieldNameAndType.getKey(), spring);
-	    }
-	} else {
-	    for (Map.Entry<String, String> fieldNameAndType : GeneratorUtils.findPotentialInjectedFields(baseClass).entrySet()) {
-		createMockField(testClassType, fieldNameAndType.getValue(), fieldNameAndType.getKey(), spring);
-	    }
+	Set<Entry<String, String>> autowiredFields = findInjectedFields(baseClass).entrySet();
+	for (Map.Entry<String, String> fieldNameAndType : autowiredFields) {
+	    createMockField(testClassType, fieldNameAndType.getValue(), fieldNameAndType.getKey(), spring);
 	}
 	if (spring && GeneratorUtils.isSpringController(baseClass)
 		&& GeneratorUtils.findField(testClassType, "mockMvc") == null) {
 	    testClassType.createField("MockMvc mockMvc;", null, false, null);
 	}
 
+    }
+
+    private Map<String, String> findInjectedFields(ICompilationUnit baseClass) throws JavaModelException {
+	Map<String, String> ret = null;
+	if (GeneratorUtils.hasSpringAnnotation(baseClass)) {
+	    ret = GeneratorUtils.findInjectedFields(baseClass);
+	}
+	if (ret == null || ret.isEmpty()) {
+	    ret = GeneratorUtils.findPotentialInjectedFields(baseClass);
+	}
+	return ret;
     }
 
     private void createMockField(IType testClassType, String mockClass, String mockName, boolean springTest) throws JavaModelException {

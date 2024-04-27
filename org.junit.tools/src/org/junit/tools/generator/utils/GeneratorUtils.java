@@ -736,4 +736,38 @@ public class GeneratorUtils implements IGeneratorConstants {
 	return ret;
     }
 
+    public static IMethod findNextMethod(IType type, IMethod existingMethod) throws JavaModelException {
+	if (existingMethod == null) {
+	    return null;
+	}
+	boolean found = false;
+	for (IMethod method : type.getMethods()) {
+	    if (method.getElementName().equals(existingMethod.getElementName())) {
+		found = true;
+	    } else if (found) {
+		return method;
+	    }
+	}
+	return null;
+    }
+
+    public static IMethod findFirstTestMethod(IType type) throws JavaModelException {
+	for (IMethod method : type.getMethods()) {
+	    if (method.getAnnotation(ANNO_TEST) != null) {
+		return method;
+	    }
+	}
+	return null;
+    }
+
+    public static IMethod findLastTestMethod(IType type) throws JavaModelException {
+	IMethod ret = null;
+	for (IMethod method : type.getMethods()) {
+	    if (method.getAnnotation(ANNO_TEST) != null) {
+		ret = method;
+	    }
+	}
+	return ret;
+    }
+
 }

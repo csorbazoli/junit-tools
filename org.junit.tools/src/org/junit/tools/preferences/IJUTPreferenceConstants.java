@@ -26,6 +26,10 @@ public interface IJUTPreferenceConstants {
     public static final String ASSERTJ_ENABLED = "ASSERTJ_ENABLED";
     public static final String TEST_RESOURCE_FULL_PATH_ENABLED = "TEST_RESOURCE_FULL_PATH_ENABLED";
     /**
+     * BEFORE, AFTER, LAST
+     */
+    public static final String TEST_METHOD_POSITION = "TEST_METHOD_POSITION";
+    /**
      * If enabled, then it creates a new test method if it already exists
      */
     public static final String REPEATING_TEST_METHODS_ENABLED = "MULTIPLE_TEST_METHODS";
@@ -47,6 +51,10 @@ public interface IJUTPreferenceConstants {
 
     public static final String MOCKFW_MOCKITO = "mockito";
     public static final String MOCKFW_EASYMOCK = "easymock";
+
+    public static final String POSITION_BEFORE = "BEFORE";
+    public static final String POSITION_AFTER = "AFTER";
+    public static final String POSITION_LAST = "LAST";
 
     // options/flags
     public static final String BEFORE_METHOD_ENABLED = "SetupSelection";

@@ -53,6 +53,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.junit.tools.base.JUTWarning;
 import org.junit.tools.generator.IGeneratorConstants;
 import org.junit.tools.messages.Messages;
+import org.junit.tools.preferences.IJUTPreferenceConstants;
 import org.junit.tools.preferences.JUTPreferences;
 import org.junit.tools.ui.utils.EclipseUIUtils;
 
@@ -698,30 +699,6 @@ public class JDTUtils implements IGeneratorConstants {
 		throwsClause, params, body, increment, false, annotations);
     }
 
-    /**
-     * @param type
-     * @param method
-     * @return created method
-     * @throws JavaModelException
-     */
-    public static IMethod createMethod(IType type, IMethod method,
-	    String methodName, String body, String annotations)
-	    throws JavaModelException {
-	String modifier = getMethodModifier(method);
-	String returnType = createReturnType(method.getReturnType());
-	String params = createParamList(method);
-
-	String throwsClause = "";
-	String comma = "";
-	for (String exceptionType : method.getExceptionTypes()) {
-	    throwsClause = comma + exceptionType;
-	    comma = ",";
-	}
-
-	return createMethod(type, modifier, returnType, methodName,
-		throwsClause, params, body, false, true, annotations);
-    }
-
     public static IMethod createMethod(IType type, String modifier,
 	    String returnType, String methodName, String throwsClause,
 	    String params, String body, boolean increment, boolean force,
@@ -730,6 +707,32 @@ public class JDTUtils implements IGeneratorConstants {
 	// parametern
 	StringBuilder sbMethod = new StringBuilder();
 	String baseIndent = getIndentation(1);
+	IMethod sibling; // new method will be inserted before the sibling (last if no sibling specified)
+
+	// handle BEFORE or LAST options
+	switch (JUTPreferences.getTestMethodPosition()) {
+	case IJUTPreferenceConstants.POSITION_BEFORE:
+	    if (tmpMethod.exists() && force) { // will be deleted so find the next one to insert before
+		sibling = GeneratorUtils.findNextMethod(type, tmpMethod);
+	    } else if (tmpMethod.exists()) {
+		sibling = tmpMethod;
+	    } else {
+		sibling = GeneratorUtils.findFirstTestMethod(type);
+	    }
+	    break;
+	case IJUTPreferenceConstants.POSITION_AFTER:
+	    // placing after existing or last
+	    if (tmpMethod.exists()) { // insert incremented right before the next to the current one
+		sibling = GeneratorUtils.findNextMethod(type, tmpMethod);
+	    } else { // insert to last position (after last existing test method)
+		sibling = GeneratorUtils.findNextMethod(type, GeneratorUtils.findLastTestMethod(type));
+	    }
+	    break;
+	case IJUTPreferenceConstants.POSITION_LAST:
+	default:
+	    sibling = GeneratorUtils.findNextMethod(type, GeneratorUtils.findLastTestMethod(type));
+	    break;
+	}
 
 	if (force && tmpMethod.exists()) {
 	    tmpMethod.delete(true, null);
@@ -788,7 +791,7 @@ public class JDTUtils implements IGeneratorConstants {
 		.append(baseIndent).append("}"); //$NON-NLS-1$
 
 	try {
-	    tmpMethod = type.createMethod(sbMethod.toString(), null, force,
+	    tmpMethod = type.createMethod(sbMethod.toString(), sibling, force,
 		    null);
 	} catch (Exception ex) {
 	    logger.severe(ExceptionUtils.getFullStackTrace(ex));

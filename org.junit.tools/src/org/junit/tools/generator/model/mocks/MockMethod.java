@@ -2,6 +2,9 @@ package org.junit.tools.generator.model.mocks;
 
 import static org.junit.tools.generator.model.mocks.MockConstants.NOT_IMPLEMENTED;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,6 +44,13 @@ public class MockMethod implements IMethod {
     private boolean isConstructor;
     private String source;
     private String[] parameterTypes;
+    @Builder.Default
+    private List<MockAnnotation> annotations = new LinkedList<>();
+
+    public MockMethod addAnnotation(MockAnnotation annotation) {
+	annotations.add(annotation);
+	return this;
+    }
 
     @Override
     public String[] getCategories() {
@@ -228,13 +238,16 @@ public class MockMethod implements IMethod {
     }
 
     @Override
-    public IAnnotation getAnnotation(String arg0) {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public IAnnotation getAnnotation(String name) {
+	return annotations.stream()
+		.filter(annotation -> annotation.getElementName().startsWith(name))
+		.findFirst()
+		.orElse(null);
     }
 
     @Override
-    public IAnnotation[] getAnnotations() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public MockAnnotation[] getAnnotations() {
+	return annotations.toArray(new MockAnnotation[0]);
     }
 
     @Override
