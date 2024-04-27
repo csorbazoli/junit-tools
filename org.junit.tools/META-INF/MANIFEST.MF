@@ -35,4 +35,5 @@ Export-Package: org.junit.tools,
  org.junit.tools.ui.preferences,
  org.junit.tools.ui.utils
 Bundle-ClassPath: .,
- lib/lombok-1.18.24.jar
+ lib/lombok-1.18.24.jar,
+ lib/jackson-annotations-2.14.1.jar
