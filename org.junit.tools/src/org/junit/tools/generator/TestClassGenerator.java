@@ -58,7 +58,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
     protected Boolean repeatingTestMethods = null;
 
     @Override
-    public ICompilationUnit generate(GeneratorModel model, List<ITestDataFactory> testDataFactories,
+    public IMethod generate(GeneratorModel model, List<ITestDataFactory> testDataFactories,
 	    IProgressMonitor monitor) throws Exception {
 	// boolean writeTML = JUTPreferences.isWriteTML();
 
@@ -138,7 +138,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
 
 	// create test-methods
-	createTestMethods(testClassType, model.getMethodMap(), model.getMethodsToCreate(), tmlSettings, baseClass,
+	IMethod lastTestMethodCreated = createTestMethods(testClassType, model.getMethodMap(), model.getMethodsToCreate(), tmlSettings, baseClass,
 		springController && tmlTest.isSpring(), monitor, increment);
 
 	// create static standard-imports
@@ -160,7 +160,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    testClass.commitWorkingCopy(true, null);
 	}
 
-	return testClass;
+	return lastTestMethodCreated;
     }
 
     /**
@@ -501,9 +501,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	}
     }
 
-    private boolean createTestMethods(IType type, Map<IMethod, Method> methodMap, List<IMethod> methodsToCreate,
+    private IMethod createTestMethods(IType type, Map<IMethod, Method> methodMap, List<IMethod> methodsToCreate,
 	    Settings tmlSettings, ICompilationUnit baseClass, boolean mvcTest, IProgressMonitor monitor, int increment)
 	    throws JavaModelException {
+
+	IMethod newTestMethod = null;
 
 	int i = 0;
 
@@ -517,24 +519,24 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    Method tmlMethod = methodMap.get(methodToCreate);
 	    String httpMethod = mvcTest ? GeneratorUtils.determineHttpMethod(methodToCreate) : null;
 	    if (httpMethod != null) {
-		createMvcTestMethod(tmlSettings, type, tmlMethod, methodToCreate, httpMethod, basePath);
+		newTestMethod = createMvcTestMethod(tmlSettings, type, tmlMethod, methodToCreate, httpMethod, basePath);
 	    } else {
-		createTestMethod(tmlSettings, type, tmlMethod, baseClassName);
+		newTestMethod = createTestMethod(tmlSettings, type, tmlMethod, baseClassName);
 	    }
 
 	    if (i++ == increment) {
 		i = 0;
 		// increment task
 		if (incrementTask(monitor)) {
-		    return true;
+		    return newTestMethod;
 		}
 	    }
 	}
 
-	return false;
+	return newTestMethod;
     }
 
-    private void createMvcTestMethod(Settings settings, IType type, Method tmlMethod, IMethod testedMethod, String httpMethod, String basePath)
+    private IMethod createMvcTestMethod(Settings settings, IType type, Method tmlMethod, IMethod testedMethod, String httpMethod, String basePath)
 	    throws JavaModelException {
 
 	// create test-method-name
@@ -552,11 +554,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	String testMethodBody = createMvcTestMethodBody(type, tmlMethod, httpMethod, basePath + GeneratorUtils.determineRequestPath(testedMethod));
 
 	// throws Exception declaration is always needed for MVC testing
-	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, EXCEPTION, null,
+	return JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, EXCEPTION, null,
 		testMethodBody, isRepeatingTestMethods(), ANNO_JUNIT_TEST);
     }
 
-    private void createTestMethod(Settings settings, IType type, Method tmlMethod, String baseClassName)
+    private IMethod createTestMethod(Settings settings, IType type, Method tmlMethod, String baseClassName)
 	    throws JavaModelException {
 
 	// create test-method-name
@@ -573,7 +575,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	// create test-method-body
 	String testMethodBody = createTestMethodBody(type, tmlMethod, baseClassName);
 
-	JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, settings.isThrowsDeclaration() ? EXCEPTION : null, null,
+	return JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, testMethodName, settings.isThrowsDeclaration() ? EXCEPTION : null, null,
 		testMethodBody, isRepeatingTestMethods(), ANNO_JUNIT_TEST);
     }
 

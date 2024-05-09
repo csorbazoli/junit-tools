@@ -52,6 +52,7 @@ public class MockType implements IType {
     private final List<MockAnnotation> mockAnnotations = new LinkedList<>();
     private final List<MockField> mockFields = new LinkedList<>();
     private final List<MockMethod> mockMethods = new LinkedList<>();
+    private MockCompilationUnit compilationUnit;
 
     public MockType addMethod(MockMethod method) {
 	mockMethods.add(method);
@@ -64,8 +65,8 @@ public class MockType implements IType {
     }
 
     @Override
-    public ICompilationUnit getCompilationUnit() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public MockCompilationUnit getCompilationUnit() {
+	return compilationUnit;
     }
 
     @Override
@@ -300,6 +301,7 @@ public class MockType implements IType {
     @Override
     public MockMethod createMethod(String contents, IJavaElement sibling, boolean force, org.eclipse.core.runtime.IProgressMonitor monitor) {
 	MockMethod ret = MockMethod.builder()
+		.compilationUnit(compilationUnit)
 		.source(contents)
 		.exists(true)
 		.build();

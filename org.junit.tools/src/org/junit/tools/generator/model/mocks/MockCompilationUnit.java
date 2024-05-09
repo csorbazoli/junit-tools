@@ -393,6 +393,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 	MockType ret = findPrimaryType();
 	if (ret == null) {
 	    ret = MockType.builder()
+		    .compilationUnit(this)
 		    .source(contents)
 		    .build();
 	    baseTypes.add(ret);
@@ -468,6 +469,7 @@ public class MockCompilationUnit implements ICompilationUnit {
 		.findFirst();
 	if (!ret.isPresent()) {
 	    ret = Optional.of(MockType.builder()
+		    .compilationUnit(this)
 		    .elementName(name)
 		    .build());
 	    baseTypes.add(ret.get());

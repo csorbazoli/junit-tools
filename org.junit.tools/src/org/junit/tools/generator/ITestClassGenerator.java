@@ -3,7 +3,7 @@ package org.junit.tools.generator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IMethod;
 import org.junit.tools.generator.model.GeneratorModel;
 
 /**
@@ -13,16 +13,17 @@ import org.junit.tools.generator.model.GeneratorModel;
  */
 public interface ITestClassGenerator {
     /**
-     * Generates a test class with the model. The base is a class, general
-     * options and the tml-model.
+     * Generates a test class with the model. The base is a class, general options
+     * and the tml-model.
      * 
      * @param model
      * @param testDataFactories
      * @param monitor
-     * @return the generate test class as saved file
+     * @return the last generated test method in a new or existing test class as
+     *         saved file
      * @throws Exception
      */
-    public ICompilationUnit generate(GeneratorModel model,
+    public IMethod generate(GeneratorModel model,
 	    List<ITestDataFactory> testDataFactories, IProgressMonitor monitor)
 	    throws Exception;
 

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.text.PreferencesAdapter;
@@ -65,10 +64,11 @@ public class TestClassGeneratorIntegratedTest {
 	try {
 	    GeneratorModel model = initGeneratorModel();
 	    // when
-	    ICompilationUnit actual = underTest.generate(model, Arrays.asList(), new NullProgressMonitor());
+	    IMethod actual = underTest.generate(model, Arrays.asList(), new NullProgressMonitor());
 	    // then
-	    assertThat(actual).isInstanceOf(MockCompilationUnit.class);
-	    TestUtils.assertTestFileEquals("integrated/" + testCase + "_source.txt", actual.getSource().trim());
+	    assertThat(actual).isInstanceOf(MockMethod.class);
+	    assertThat(actual.getCompilationUnit()).isInstanceOf(MockCompilationUnit.class);
+	    TestUtils.assertTestFileEquals("integrated/" + testCase + "_source.txt", actual.getCompilationUnit().getSource().trim());
 	} catch (Exception e) {
 	    e.printStackTrace();
 	    fail(e.getMessage());

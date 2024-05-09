@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -46,6 +45,7 @@ public class MockMethod implements IMethod {
     private String[] parameterTypes;
     @Builder.Default
     private List<MockAnnotation> annotations = new LinkedList<>();
+    private MockCompilationUnit compilationUnit;
 
     public MockMethod addAnnotation(MockAnnotation annotation) {
 	annotations.add(annotation);
@@ -63,8 +63,8 @@ public class MockMethod implements IMethod {
     }
 
     @Override
-    public ICompilationUnit getCompilationUnit() {
-	throw new IllegalStateException(NOT_IMPLEMENTED);
+    public MockCompilationUnit getCompilationUnit() {
+	return compilationUnit;
     }
 
     @Override

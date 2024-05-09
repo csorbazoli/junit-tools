@@ -56,6 +56,7 @@ public class MainController implements IGeneratorConstants {
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
     private ICompilationUnit generatedTestClass = null;
+    private IMethod generatedTestMethod = null;
 
     private boolean error = false;
 
@@ -176,13 +177,16 @@ public class MainController implements IGeneratorConstants {
 		public void run(IProgressMonitor monitor) {
 		    try {
 			ICompilationUnit generatedClass = null;
+			IMethod newTestMethod = null;
 			for (ITestClassGenerator testClassGenerator : getExtensionHandler()
 				.getTestClassGenerators()) {
-			    generatedClass = testClassGenerator.generate(model,
+			    newTestMethod = testClassGenerator.generate(model,
 				    getExtensionHandler().getTestDataFactories(),
 				    monitor);
+			    generatedClass = newTestMethod.getCompilationUnit();
 			}
 			setGeneratedTestClass(generatedClass);
+			setGeneratedTestMethod(newTestMethod);
 
 			monitor.done();
 		    } catch (Exception e) {
@@ -213,7 +217,7 @@ public class MainController implements IGeneratorConstants {
 	    EclipseUIUtils.format(site, testClass);
 
 	    // open in editor
-	    openInEditor(activeWorkbenchWindow.getShell(), (IFile) getGeneratedTestClass().getResource());
+	    openInEditor(activeWorkbenchWindow.getShell(), (IFile) getGeneratedTestClass().getResource(), getGeneratedTestMethod());
 
 	} catch (JUTException ex) {
 	    throw ex;
@@ -265,8 +269,19 @@ public class MainController implements IGeneratorConstants {
 	this.generatedTestClass = generatedClass;
     }
 
-    protected void openInEditor(Shell shell, IFile generatedTestclass) {
+    private IMethod getGeneratedTestMethod() {
+	return this.generatedTestMethod;
+    }
+
+    protected void setGeneratedTestMethod(IMethod generatedMethod) {
+	this.generatedTestMethod = generatedMethod;
+    }
+
+    protected void openInEditor(Shell shell, IFile generatedTestclass, IMethod newTestMethod) {
 	EclipseUIUtils.openInEditor(shell, generatedTestclass);
+	if (newTestMethod != null) {
+	    EclipseUIUtils.selectMethodInEditor(newTestMethod);
+	}
     }
 
     /**
