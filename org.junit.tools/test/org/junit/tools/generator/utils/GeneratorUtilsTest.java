@@ -411,8 +411,10 @@ public class GeneratorUtilsTest {
 		.elementName(name)
 		.build();
 	Stream.of(annotations)
+		.map(annotation -> annotation.startsWith("@") ? annotation.substring(1) : annotation)
 		.map(annotation -> MockAnnotation.builder()
 			.elementName(annotation)
+			.exists(true)
 			.build())
 		.forEach(ret::addAnnotation);
 	return ret;

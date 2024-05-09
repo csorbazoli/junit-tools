@@ -379,7 +379,8 @@ public class JDTUtilsTest {
 	if (testMethod) {
 	    type.createMethod("@Test\n\tpublic void " + methodName + "() throws Exception {\n\t}", type, true, null)
 		    .addAnnotation(MockAnnotation.builder()
-			    .elementName("@Test")
+			    .elementName("Test")
+			    .exists(true)
 			    .build())
 		    .setElementName(methodName);
 	} else {

@@ -29,10 +29,11 @@ import lombok.NoArgsConstructor;
 public class MockAnnotation implements IAnnotation {
 
     private String elementName;
+    private boolean exists;
 
     @Override
     public boolean exists() {
-	return true;
+	return exists;
     }
 
     @Override

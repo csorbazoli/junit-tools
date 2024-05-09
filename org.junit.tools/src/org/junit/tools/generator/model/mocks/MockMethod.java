@@ -242,7 +242,10 @@ public class MockMethod implements IMethod {
 	return annotations.stream()
 		.filter(annotation -> annotation.getElementName().startsWith(name))
 		.findFirst()
-		.orElse(null);
+		.orElseGet(() -> MockAnnotation.builder()
+			.elementName(name)
+			.exists(false)
+			.build());
     }
 
     @Override

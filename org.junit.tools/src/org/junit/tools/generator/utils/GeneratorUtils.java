@@ -753,7 +753,7 @@ public class GeneratorUtils implements IGeneratorConstants {
 
     public static IMethod findFirstTestMethod(IType type) throws JavaModelException {
 	for (IMethod method : type.getMethods()) {
-	    if (method.getAnnotation(ANNO_TEST) != null) {
+	    if (hasTestAnnotation(method)) {
 		return method;
 	    }
 	}
@@ -763,11 +763,16 @@ public class GeneratorUtils implements IGeneratorConstants {
     public static IMethod findLastTestMethod(IType type) throws JavaModelException {
 	IMethod ret = null;
 	for (IMethod method : type.getMethods()) {
-	    if (method.getAnnotation(ANNO_TEST) != null) {
+	    if (hasTestAnnotation(method)) {
 		ret = method;
 	    }
 	}
 	return ret;
+    }
+
+    private static boolean hasTestAnnotation(IMethod method) {
+	IAnnotation testAnnotation = method.getAnnotation("Test");
+	return testAnnotation != null && testAnnotation.exists();
     }
 
 }
