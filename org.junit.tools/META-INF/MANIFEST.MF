@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: JUnit Tools For Spring Development
 Bundle-SymbolicName: junit.tools.spring;singleton:=true
 Bundle-Vendor: csorbazoli
-Bundle-Version: 1.3.6
+Bundle-Version: 1.3.7
 Bundle-Activator: org.junit.tools.Activator
 Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.eclipse.core.runtime;visibility:=reexport,
