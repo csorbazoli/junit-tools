@@ -51,6 +51,11 @@ public interface IJUTPreferenceConstants {
 
     public static final String MOCKFW_MOCKITO = "mockito";
     public static final String MOCKFW_EASYMOCK = "easymock";
+    // could support the usage of nullables (i.e. call createNull() for
+    // initialization in case that method exists
+    // no need to create fields for injectable dependencies
+    // public static final String MOCKFW_NULLABLES = "nullables"
+    public static final String MOCKFW_NONE = "none";
 
     public static final String POSITION_BEFORE = "BEFORE";
     public static final String POSITION_AFTER = "AFTER";
@@ -65,6 +70,7 @@ public interface IJUTPreferenceConstants {
     public static final String TESTUTILS_ENABLED = "TestUtilsSelection";
     public static final String THROWS_DECLARATION_ENABLED = "ThrowsDeclaration";
     public static final String REPLAYALL_VERIFYALL_ENABLED = "ReplayAllVerifyAll";
+    public static final String USE_MOCK_RUNNER = "UseMockRunner";
 
     // other settings
     public static final String BEFORE_METHOD_BODY = "SetupBody";

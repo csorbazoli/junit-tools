@@ -145,6 +145,7 @@ public class Messages extends NLS {
     public static String JUTPreferenceMainPage_Test_Method_Position_before;
     public static String JUTPreferenceMainPage_Test_Method_Position_after;
     public static String JUTPreferenceMainPage_Test_Method_Position_last;
+    public static String JUTPreferenceMainPage_UseMockRunner_Enabled;
 
     public static String GeneratorWizard_description_main;
     public static String GeneratorWizard_description_testbases;

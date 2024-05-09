@@ -233,8 +233,13 @@ public class GeneratorUtils implements IGeneratorConstants {
 	if (springTest) {
 	    return ANNO_AUTOWIRED + RETURN;
 	}
-	return (isUsingEasyMock() ? ANNO_TESTSUBJECT : ANNO_INJECTMOCKS)
-		+ RETURN;
+	if (isUsingEasyMock()) {
+	    return ANNO_TESTSUBJECT + RETURN;
+	}
+	if (isUsingMockito()) {
+	    return ANNO_INJECTMOCKS + RETURN;
+	}
+	return ""; // none
     }
 
     public static String createAnnoForDependency(boolean springTest) {
@@ -685,6 +690,10 @@ public class GeneratorUtils implements IGeneratorConstants {
 	    }
 	}
 	return false;
+    }
+
+    public static boolean isUsingAnyMock() {
+	return !IJUTPreferenceConstants.MOCKFW_NONE.equals(JUTPreferences.getMockFramework());
     }
 
     public static boolean isUsingMockito() {

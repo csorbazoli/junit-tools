@@ -43,6 +43,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static Boolean replayAllVerifyAllEnabled = null;
     private static Boolean repeatingTestMethodsEnabled = null;
     private static Boolean showSettingsBeforeGenerate = null;
+    private static Boolean useMockRunner = null;
     private static String mockFramework = null;
     private static int junitVersion = 0;
     private static String testMethodPosition = null;
@@ -460,6 +461,13 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	return showSettingsBeforeGenerate;
     }
 
+    public static boolean isUseMockRunner() {
+	if (useMockRunner == null) {
+	    useMockRunner = getPreferenceBoolean(USE_MOCK_RUNNER, true);
+	}
+	return useMockRunner;
+    }
+
     public static String getMockFramework() {
 	if (mockFramework == null) {
 	    mockFramework = getPreference(MOCK_FRAMEWORK);
@@ -500,6 +508,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setShowSettingsBeforeGenerate(Boolean enabled) {
 	JUTPreferences.showSettingsBeforeGenerate = enabled;
+    }
+
+    public static void setUseMockRunner(Boolean enabled) {
+	JUTPreferences.useMockRunner = enabled;
     }
 
     public static void setMockFramework(String mockFramework) {
@@ -572,6 +584,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 	booleanPropertyHandlers.put(SHOW_SETTINGS_BEFORE_GENERATE, JUTPreferences::setShowSettingsBeforeGenerate);
 	booleanPropertyHandlers.put(REPLAYALL_VERIFYALL_ENABLED, JUTPreferences::setReplayAllVerifyAllEnabled);
 	booleanPropertyHandlers.put(TEST_RESOURCE_FULL_PATH_ENABLED, JUTPreferences::setTestResurceFullPathEnabled);
+	booleanPropertyHandlers.put(USE_MOCK_RUNNER, JUTPreferences::setUseMockRunner);
 
 	Map<String, Consumer<Integer>> intPropertyHandlers = new HashMap<>();
 	// intPropertyHandlers.put(JUNIT_VERSION, JUTPreferences::setJUnitVersion);

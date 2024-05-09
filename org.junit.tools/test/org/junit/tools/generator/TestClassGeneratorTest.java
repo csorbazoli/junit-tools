@@ -53,6 +53,7 @@ public class TestClassGeneratorTest {
 	JUTPreferences.setGherkinStyleEnabled(true);
 	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
 	JUTPreferences.setAssertJEnabled(true);
+	JUTPreferences.setUseMockRunner(true);
 	JUTPreferences.setReplayAllVerifyAllEnabled(false);
 	JUTPreferences.setTestResurceFullPathEnabled(true);
 	JUTPreferences.setAdditionalFields(new String[] { "@Rule public ExpectedException expected = ExpectedException.none()" });

@@ -182,7 +182,11 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		    isUsingJunit4() ? ANNO_JUNIT_BEFORE : "@BeforeEach");
 	} else if (tmlSettings.isSetUp()) {
 	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION, null,
-		    JUTPreferences.getPreference(IJUTPreferenceConstants.BEFORE_METHOD_BODY), false,
+		    getBeforeMethodBodyWithInitMocks(), false,
+		    isUsingJunit4() ? ANNO_JUNIT_BEFORE : "@BeforeEach");
+	} else if (!isMockRunnerEnabled() && GeneratorUtils.isUsingAnyMock()) {
+	    JDTUtils.createMethod(type, getPublicModifierIfNeeded(), TYPE_VOID, STANDARD_METHOD_BEFORE, EXCEPTION, null,
+		    getInitMocksStatement(), false,
 		    isUsingJunit4() ? ANNO_JUNIT_BEFORE : "@BeforeEach");
 	}
 
@@ -211,6 +215,26 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		    createVerifyAllInstruction(baseClass), false,
 		    isUsingJunit4() ? ANNO_JUNIT_AFTER : "@AfterEach");
 	}
+    }
+
+    private String getBeforeMethodBodyWithInitMocks() {
+	String ret = JUTPreferences.getPreference(IJUTPreferenceConstants.BEFORE_METHOD_BODY);
+	if (!isMockRunnerEnabled()) {
+	    String initMockStatement = getInitMocksStatement();
+	    if (!ret.contains("openMocks") && !ret.contains("injectMocks") && !ret.contains("initMocks")) {
+		ret = initMockStatement + RETURN + ret;
+	    }
+	}
+	return ret;
+    }
+
+    private String getInitMocksStatement() {
+	if (GeneratorUtils.isUsingEasyMock()) {
+	    return "EasyMockSupport.injectMocks(this);";
+	} else if (GeneratorUtils.isUsingMockito()) {
+	    return "MockitoAnnotations.openMocks(this);";
+	}
+	return "";
     }
 
     private String createReplayAllInstruction(ICompilationUnit baseClass) throws JavaModelException {
@@ -315,16 +339,20 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 		annotations.append("@SpringBootTest").append(RETURN);
 		annotations.append("@ActiveProfiles(\"test\")").append(RETURN);
 		annotations.append("@ContextConfiguration(classes = { ").append(baseClassName).append(".class })").append(RETURN);
-	    } else if (GeneratorUtils.isUsingEasyMock()) {
-		if (isUsingJunit4()) {
-		    annotations.append(GeneratorUtils.createAnnoRunWith("EasyMockRunner"));
-		} else {
-		    annotations.append(GeneratorUtils.createAnnoExtendWith("EasyMockExtension"));
+	    } else if (isMockRunnerEnabled()) {
+		if (GeneratorUtils.isUsingEasyMock()) {
+		    if (isUsingJunit4()) {
+			annotations.append(GeneratorUtils.createAnnoRunWith("EasyMockRunner"));
+		    } else {
+			annotations.append(GeneratorUtils.createAnnoExtendWith("EasyMockExtension"));
+		    }
+		} else if (GeneratorUtils.isUsingMockito()) {
+		    if (isUsingJunit4()) {
+			annotations.append(GeneratorUtils.createAnnoRunWith("MockitoJUnitRunner"));
+		    } else {
+			annotations.append(GeneratorUtils.createAnnoExtendWith("MockitoExtension"));
+		    }
 		}
-	    } else if (isUsingJunit4()) {
-		annotations.append(GeneratorUtils.createAnnoRunWith("MockitoJUnitRunner"));
-	    } else {
-		annotations.append(GeneratorUtils.createAnnoExtendWith("MockitoExtension"));
 	    }
 	}
 
@@ -354,28 +382,20 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	if (isUsingJunit4()) {
 	    compilationUnit.createImport("org.junit.*", null, null);
 	    compilationUnit.createImport("org.junit.runner.RunWith", null, null);
-	    if (GeneratorUtils.isUsingEasyMock()) {
-		compilationUnit.createImport("org.easymock.*", null, null);
-		// prefer EasyMockRunner instead of Rule
-	    } else {
+	    if (isMockRunnerEnabled() && GeneratorUtils.isUsingMockito()) {
 		compilationUnit.createImport("org.mockito.junit.runner.MockitoJUnitRunner", null, null);
 	    }
 	} else { // default to JUnit5
 	    compilationUnit.createImport("org.junit.jupiter.api.Test", null, null);
 	    compilationUnit.createImport("org.junit.jupiter.api.extension.ExtendWith", null, null);
-	    if (GeneratorUtils.isUsingEasyMock()) {
-		compilationUnit.createImport("org.easymock.*", null, null);
-		// compilationUnit.createImport("org.easymock.EasyMockExtension", null, null)
-	    } else {
+	    if (isMockRunnerEnabled() && GeneratorUtils.isUsingMockito()) {
 		compilationUnit.createImport("org.mockito.junit.jupiter.MockitoExtension", null, null);
 	    }
 	}
 	if (GeneratorUtils.isUsingMockito()) {
-	    compilationUnit.createImport("org.mockito.InjectMocks", null, null);
-	    compilationUnit.createImport("org.mockito.Mock", null, null);
+	    compilationUnit.createImport("org.mockito.*", null, null);
 	} else if (GeneratorUtils.isUsingEasyMock()) {
-	    compilationUnit.createImport("org.easymock.TestSubject", null, null);
-	    compilationUnit.createImport("org.easymock.Mock", null, null);
+	    compilationUnit.createImport("org.easymock.*", null, null);
 	}
 
 	if (tmlTest.isSpring()) {
@@ -453,7 +473,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	String indent = JDTUtils.getIndentation(1);
 	if (!tmlTest.isOnlyStaticMethods() && GeneratorUtils.findField(type, UNDER_TEST) == null) {
 	    String initializer = "";
-	    if (GeneratorUtils.isUsingEasyMock()) {
+	    if (!GeneratorUtils.isUsingMockito()) {
 		initializer = " = new " + testClassName + "()";
 	    }
 	    type.createField(indent + GeneratorUtils.createAnnoForUnderTest(tmlTest.isSpring()) + indent + getPublicModifierIfNeeded() +
@@ -837,8 +857,8 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    sbTestMethodBody.append(RETURN)
 		    .append("// TODO check for expected side effect (i.e. service call, changed parameter or exception thrown)")
 		    .append(RETURN)
-		    .append(GeneratorUtils.isUsingEasyMock() ? "// verify(mock);" : "// verify(mock).methodcall();")
-		    .append(RETURN)
+		    .append(GeneratorUtils.isUsingEasyMock() ? "// verify(mock);" + RETURN
+			    : GeneratorUtils.isUsingMockito() ? "// verify(mock).methodcall();" + RETURN : "")
 		    .append("// TestUtils.assertTestFileEquals(\"someMethod/ParamType_updated.json\", TestUtils.objectToJson(param));")
 		    .append(RETURN)
 		    .append("// assertThrows(SomeException.class, () -> underTest.someMethod());");
@@ -899,6 +919,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 
     private boolean isGherkinStyle() {
 	return JUTPreferences.isGherkinStyleEnabled();
+    }
+
+    private boolean isMockRunnerEnabled() {
+	return JUTPreferences.isUseMockRunner();
     }
 
     private boolean isAssertjEnabled() {

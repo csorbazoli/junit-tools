@@ -233,7 +233,8 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 	addField(new RadioGroupFieldEditor(MOCK_FRAMEWORK, Messages.JUTPreferenceMainPage_Mock_Framework, 1,
 		new String[][] {
 			{ "Mockito", MOCKFW_MOCKITO },
-			{ "EasyMock", MOCKFW_EASYMOCK }
+			{ "EasyMock", MOCKFW_EASYMOCK },
+			{ "None", MOCKFW_NONE }
 		},
 		getFieldEditorParent(),
 		true));
@@ -263,6 +264,9 @@ public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
 		getFieldEditorParent()));
 
 	addField(new BooleanFieldEditor(ASSERTJ_ENABLED, Messages.JUTPreferenceMainPage_AssertJ_Enabled,
+		getFieldEditorParent()));
+
+	addField(new BooleanFieldEditor(USE_MOCK_RUNNER, Messages.JUTPreferenceMainPage_UseMockRunner_Enabled,
 		getFieldEditorParent()));
 
 	addField(new BooleanFieldEditor(REPLAYALL_VERIFYALL_ENABLED, Messages.JUTPreferenceMainPage_ReplayAllVerifyAll_Enabled,
