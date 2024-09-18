@@ -841,6 +841,20 @@ public class TestClassGeneratorTest {
     }
 
     @Test
+    public void testCreateStandardClassFields_junit4() throws Exception {
+        // given
+        IType type = Mockito.mock(IType.class);
+        org.junit.tools.generator.model.tml.Test tmlTest = new org.junit.tools.generator.model.tml.Test();
+        JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
+        JUTPreferences.setJUnitVersion("4");
+        // when
+        underTest.createStandardClassFields(type, "SomeClass", tmlTest);
+        // then
+        verify(type).createField("\t@InjectMocks\n"
+                + "\tprivate SomeClass underTest;", null, false, null);
+    }
+
+    @Test
     public void testCreateStandardClassFields_shouldNotCreateUnderTestForStaticMethods() throws Exception {
 	// given
 	IType type = Mockito.mock(IType.class);

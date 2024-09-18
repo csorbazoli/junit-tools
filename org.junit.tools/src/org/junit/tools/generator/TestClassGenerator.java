@@ -316,6 +316,10 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	return isUsingJunit4() ? MOD_PUBLIC_WITH_BLANK : "";
     }
 
+    private String getPrivateModifierIfNeeded() {
+        return isUsingJunit4() ? MOD_PRIVATE_WITH_BLANK : "";
+    }
+    
     protected String getTestClassComment() {
 	return "";
     }
@@ -476,7 +480,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
 	    if (!GeneratorUtils.isUsingMockito()) {
 		initializer = " = new " + testClassName + "()";
 	    }
-	    type.createField(indent + GeneratorUtils.createAnnoForUnderTest(tmlTest.isSpring()) + indent + getPublicModifierIfNeeded() +
+	    type.createField(indent + GeneratorUtils.createAnnoForUnderTest(tmlTest.isSpring()) + indent + getPrivateModifierIfNeeded() +
 		    testClassName + " " + UNDER_TEST + initializer + ";", null, false, null);
 	}
 	for (FieldDeclaration additionalField : JUTPreferences.getAdditionalFields()) {

@@ -15,6 +15,7 @@ public interface IGeneratorConstants {
 
     public static final String MOD_PUBLIC_WITH_BLANK = "public ";
     public static final String MOD_PROTECTED = "protected";
+    public static final String MOD_PRIVATE_WITH_BLANK = "private ";
     public static final String MOD_PRIVATE = "private";
     public static final String MOD_PACKAGE = "";
     public static final String MOD_STATIC_WITH_BLANK = " static";
