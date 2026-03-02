@@ -2,13 +2,14 @@ package org.junit.tools.preferences;
 
 /**
  * Constants for the JUnit-Tools-preferences.
- * 
+ *
  * @author Robert Streng
- * 
+ *
  */
 public interface IJUTPreferenceConstants {
 
     // USEFUL
+    public static final String JAVA_SOURCE_FOLDER_NAME = "JAVA_SOURCE_FOLDER_NAME";
     public static final String TEST_SOURCE_FOLDER_NAME = "TEST_SOURCE_FOLDER_NAME";
     public static final String TEST_CLASS_PREFIX = "TEST_CLASS_PREFIX";
     public static final String TEST_CLASS_POSTFIX = "TEST_CLASS_POSTFIX";

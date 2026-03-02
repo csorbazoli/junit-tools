@@ -4,9 +4,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Messages for JUnit-Tools.
- * 
+ *
  * @author Robert Streng
- * 
+ *
  */
 public class Messages extends NLS {
     private static final String BUNDLE_NAME = "org.junit.tools.messages.messages"; //$NON-NLS-1$
@@ -125,6 +125,7 @@ public class Messages extends NLS {
     public static String JUTPreferenceMainPage_Test_Method_postfix;
     public static String JUTPreferenceMainPage_Test_Mvc_Method_postfix;
     public static String JUTPreferenceMainPage_Test_method_prefix;
+    public static String JUTPreferenceMainPage_Java_source_folder_name;
     public static String JUTPreferenceMainPage_Test_source_folder_name;
     public static String JUTPreferenceMainPage_Test_package_postfix;
     public static String JUTPreferenceMainPage_Test_project_postfix;
@@ -164,8 +165,8 @@ public class Messages extends NLS {
     public static String TableViewerBase_Delete;
 
     static {
-	// initialize resource bundle
-	NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+        // initialize resource bundle
+        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
     }
 
     private Messages() {
