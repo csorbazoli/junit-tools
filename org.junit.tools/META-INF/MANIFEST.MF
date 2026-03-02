@@ -37,4 +37,6 @@ Export-Package: org.junit.tools,
 Bundle-ClassPath: .,
  lib/lombok-1.18.24.jar,
  lib/jackson-annotations-2.14.1.jar,
- lib/jackson-core-2.14.1.jar
+ lib/jackson-core-2.14.1.jar,
+ lib/spring-core-5.3.25.jar,
+ lib/spring-web-5.3.25.jar

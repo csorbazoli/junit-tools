@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/spring-web-5.3.25.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-core-5.3.25.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jackson-core-2.14.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
@@ -22,8 +24,6 @@
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.14.1.jar"/>
 	<classpathentry kind="lib" path="lib/assertj-core-3.23.1.jar"/>
 	<classpathentry kind="lib" path="lib/mockito-core-2.23.4.jar"/>
-	<classpathentry kind="lib" path="lib/spring-web-6.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/spring-core-6.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/lombok-1.18.24.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
