@@ -48,98 +48,94 @@ import org.junit.tools.messages.Messages;
 /**
  * Utils for the selection and manipulation of java-elements with the Eclipse
  * UI.
- * 
+ *
  * @author JUnit-Tools-Team
- * 
+ *
  */
 public class EclipseUIUtils {
 
     public static Logger logger = Logger.getLogger(EclipseUIUtils.class
-	    .getName());
+            .getName());
 
     /**
      * Open the editor with the file.
-     * 
+     *
      * @param shell
      * @param file
      */
     public static void openInEditor(Shell shell, final IFile file) {
-	shell.getDisplay().asyncExec(new Runnable() {
-
-	    @Override
-	    public void run() {
-		IWorkbenchPage page = PlatformUI.getWorkbench()
-			.getActiveWorkbenchWindow().getActivePage();
-		try {
-		    if (file != null) {
-			IDE.openEditor(page, file, true);
-		    }
-		} catch (PartInitException e) {
-		    logger.severe(ExceptionUtils.getStackTrace(e));
-		}
-	    }
-	});
+        shell.getDisplay().asyncExec(() -> {
+            IWorkbenchPage page = PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow().getActivePage();
+            try {
+                if (file != null) {
+                    IDE.openEditor(page, file, true);
+                }
+            } catch (PartInitException e) {
+                logger.severe(ExceptionUtils.getStackTrace(e));
+            }
+        });
     }
 
     /**
      * Formats the compilation unit.
-     * 
+     *
      * @param site
      * @param cus
      */
     public static void format(IWorkbenchPartSite site, ICompilationUnit... cus) {
-	if (site == null) {
-	    return;
-	}
+        if (site == null) {
+            return;
+        }
 
-	FormatAllAction faa = new FormatAllAction(site);
-	faa.runOnMultiple(cus);
+        FormatAllAction faa = new FormatAllAction(site);
+        faa.runOnMultiple(cus);
     }
 
     /**
      * Save the file in the active editor and close it.
-     * 
+     *
      * @param className
      */
     public static void saveAndCloseEditor(String className) {
-	IWorkbenchPage page = PlatformUI.getWorkbench()
-		.getActiveWorkbenchWindow().getActivePage();
+        IWorkbenchPage page = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getActivePage();
 
-	IEditorPart activeEditor = getActiveEditor();
+        IEditorPart activeEditor = getActiveEditor();
 
-	if (activeEditor == null) {
-	    return;
-	}
+        if (activeEditor == null) {
+            return;
+        }
 
-	String title = activeEditor.getTitle();
-	title = title.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
-	className = className.replace(".java", "");
-	if (title.equals(className)) {
-	    activeEditor.doSave(null);
-	    page.closeEditor(activeEditor, false);
-	}
+        String title = activeEditor.getTitle();
+        title = title.replace(".java", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        className = className.replace(".java", "");
+        if (title.equals(className)) {
+            activeEditor.doSave(null);
+            page.closeEditor(activeEditor, false);
+        }
     }
 
     public static IWorkbenchWindow getActiveWorkbenchWindow() {
-	return PlatformUI.getWorkbench()
-		.getActiveWorkbenchWindow();
+        return PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow();
     }
 
     /**
      * @return active editor
      */
     public static IEditorPart getActiveEditor() {
-	IWorkbenchPage page = getActiveWorkbenchWindow().getActivePage();
-	return page.getActiveEditor();
+        IWorkbenchPage page = getActiveWorkbenchWindow().getActivePage();
+        return page.getActiveEditor();
     }
 
     public static IEditorInput getEditorInput() {
-	IEditorPart activeEditor = getActiveEditor();
-	if (activeEditor != null) {
-	    return activeEditor.getEditorInput();
-	}
+        IEditorPart activeEditor = getActiveEditor();
+        if (activeEditor != null) {
+            return activeEditor.getEditorInput();
+        }
 
-	return null;
+        return null;
     }
 
     /**
@@ -147,159 +143,152 @@ public class EclipseUIUtils {
      * @return first element of the selection
      */
     public static Object getFirstSelectedElement(ISelection selection) {
-	if (selection instanceof TreeSelection) {
-	    TreeSelection treeSelection = (TreeSelection) selection;
-	    return treeSelection.getFirstElement();
-	} else if (selection instanceof StructuredSelection) {
-	    StructuredSelection structuredSelection = (StructuredSelection) selection;
-	    return structuredSelection.getFirstElement();
-	} else if (selection instanceof IFileEditorInput) {
-	    IFileEditorInput editorInput = (FileEditorInput) selection;
-	    return editorInput.getFile();
-	} else if (selection instanceof TextSelection) {
-	    return null;
-	} else {
-	    throw new RuntimeException(
-		    Messages.GeneratorUtils_SelectionNotSupported);
-	}
+        if (selection instanceof TreeSelection) {
+            TreeSelection treeSelection = (TreeSelection) selection;
+            return treeSelection.getFirstElement();
+        } else if (selection instanceof StructuredSelection) {
+            StructuredSelection structuredSelection = (StructuredSelection) selection;
+            return structuredSelection.getFirstElement();
+        } else if (selection instanceof IFileEditorInput) {
+            IFileEditorInput editorInput = (FileEditorInput) selection;
+            return editorInput.getFile();
+        } else if (selection instanceof TextSelection) {
+            return null;
+        } else {
+            throw new RuntimeException(
+                    Messages.GeneratorUtils_SelectionNotSupported);
+        }
     }
 
     /**
      * Organize the imports of a compilation unit.
-     * 
+     *
      */
     public static void organizeImports(IWorkbenchPartSite site, ICompilationUnit cu) {
-	if (cu == null) {
-	    return;
-	}
+        if (cu == null) {
+            return;
+        }
 
-	if (site == null) {
-	    return;
-	}
+        if (site == null) {
+            return;
+        }
 
-	OrganizeImportsAction importAction = new OrganizeImportsAction(site);
-	importAction.setSpecialSelectionProvider(new ISelectionProvider() {
+        OrganizeImportsAction importAction = new OrganizeImportsAction(site);
+        importAction.setSpecialSelectionProvider(new ISelectionProvider() {
 
-	    private ISelection selection;
+            private ISelection selection;
 
-	    private final List<ISelectionChangedListener> listener = new ArrayList<ISelectionChangedListener>();
+            private final List<ISelectionChangedListener> listener = new ArrayList<ISelectionChangedListener>();
 
-	    @Override
-	    public void setSelection(ISelection selection) {
-		this.selection = selection;
-	    }
+            @Override
+            public void setSelection(ISelection selection) {
+                this.selection = selection;
+            }
 
-	    @Override
-	    public ISelection getSelection() {
-		return this.selection;
-	    }
+            @Override
+            public ISelection getSelection() {
+                return selection;
+            }
 
-	    @Override
-	    public void addSelectionChangedListener(
-		    ISelectionChangedListener arg0) {
-		listener.add(arg0);
-	    }
+            @Override
+            public void addSelectionChangedListener(
+                    ISelectionChangedListener arg0) {
+                listener.add(arg0);
+            }
 
-	    @Override
-	    public void removeSelectionChangedListener(
-		    ISelectionChangedListener arg0) {
-		listener.remove(arg0);
-	    }
+            @Override
+            public void removeSelectionChangedListener(
+                    ISelectionChangedListener arg0) {
+                listener.remove(arg0);
+            }
 
-	});
-	importAction.run(cu);
+        });
+        importAction.run(cu);
     }
 
     public static void selectMethodInEditor(final MethodRef methodRef) {
-	PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
-		.getDisplay().asyncExec(new Runnable() {
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
+                .getDisplay().asyncExec(() -> {
+                    if (methodRef == null) {
+                        return;
+                    }
 
-		    @Override
-		    public void run() {
-			if (methodRef == null) {
-			    return;
-			}
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    IEditorPart activeEditor = page.getActiveEditor();
+                    if (activeEditor == null || !(activeEditor instanceof ITextEditor)) {
+                        return;
+                    }
 
-			IEditorPart activeEditor = page.getActiveEditor();
-			if (activeEditor == null || !(activeEditor instanceof ITextEditor)) {
-			    return;
-			}
+                    ITextEditor editor = (ITextEditor) activeEditor;
 
-			ITextEditor editor = (ITextEditor) activeEditor;
+                    ITypeRoot typeRoot = JavaUI.getEditorInputTypeRoot(editor.getEditorInput());
+                    ICompilationUnit icu = typeRoot.getAdapter(ICompilationUnit.class);
 
-			ITypeRoot typeRoot = JavaUI.getEditorInputTypeRoot(editor.getEditorInput());
-			ICompilationUnit icu = typeRoot.getAdapter(ICompilationUnit.class);
+                    IType type = icu.findPrimaryType();
+                    IMethod method = null;
 
-			IType type = icu.findPrimaryType();
-			IMethod method = null;
+                    try {
+                        method = GeneratorUtils.findMethod(Arrays.asList(type.getMethods()), methodRef);
 
-			try {
-			    method = GeneratorUtils.findMethod(Arrays.asList(type.getMethods()), methodRef);
+                        if (method != null) {
+                            // get the already selected method in the editor
+                            // if it is the same method, select nothing
+                            ISelection selection = editor.getSelectionProvider().getSelection();
+                            if (selection != null && selection instanceof ITextSelection) {
+                                ITextSelection txtSelection = (ITextSelection) selection;
+                                IJavaElement selectedElement = typeRoot.getElementAt(txtSelection.getOffset());
+                                if (selectedElement != null && selectedElement.equals(method)) {
+                                    return;
+                                }
+                            }
+                        }
+                    } catch (JavaModelException e1) {
+                        // not found
+                        return;
+                    }
 
-			    if (method != null) {
-				// get the already selected method in the editor
-				// if it is the same method, select nothing
-				ISelection selection = editor.getSelectionProvider().getSelection();
-				if (selection != null && selection instanceof ITextSelection) {
-				    ITextSelection txtSelection = (ITextSelection) selection;
-				    IJavaElement selectedElement = typeRoot.getElementAt(txtSelection.getOffset());
-				    if (selectedElement != null && selectedElement.equals(method)) {
-					return;
-				    }
-				}
-			    }
-			} catch (JavaModelException e1) {
-			    // not found
-			    return;
-			}
-
-			// select method
-			IJavaElement element = method;
-			JavaUI.revealInEditor(editor, element);
-		    }
-		});
+                    // select method
+                    IJavaElement element = method;
+                    JavaUI.revealInEditor(editor, element);
+                });
     }
 
     public static void selectMethodInEditor(final IMethod method) {
-	PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
-		.getDisplay().asyncExec(new Runnable() {
-
-		    @Override
-		    public void run() {
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			ITextEditor editor = (ITextEditor) page.getActiveEditor();
-			IJavaElement element = method;
-			JavaUI.revealInEditor(editor, element);
-		    }
-		});
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
+                .getDisplay().asyncExec(() -> {
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    ITextEditor editor = (ITextEditor) page.getActiveEditor();
+                    IJavaElement element = method;
+                    JavaUI.revealInEditor(editor, element);
+                });
     }
 
     public static IJavaProject getJavaProjectFromDialog(Shell shell) {
-	List<IJavaProject> javaProjects = JDTUtils.getJavaProjects();
-	Set<IJavaProject> allProjects = new HashSet<IJavaProject>(javaProjects);
+        List<IJavaProject> javaProjects = JDTUtils.getJavaProjects();
+        Set<IJavaProject> allProjects = new HashSet<IJavaProject>(javaProjects);
 
-	@SuppressWarnings("restriction")
-	ProjectSelectionDialog dialog = new ProjectSelectionDialog(shell,
-		allProjects);
+        @SuppressWarnings("restriction")
+        ProjectSelectionDialog dialog = new ProjectSelectionDialog(shell,
+                allProjects);
 
-	if (dialog.open() == Window.OK) {
-	    Object[] results = dialog.getResult();
-	    if (results.length > 0) {
-		for (Object result : results) {
-		    if (result instanceof IJavaProject) {
-			return (IJavaProject) result;
-		    }
-		}
-	    }
-	}
+        if (dialog.open() == Window.OK) {
+            Object[] results = dialog.getResult();
+            if (results.length > 0) {
+                for (Object result : results) {
+                    if (result instanceof IJavaProject) {
+                        return (IJavaProject) result;
+                    }
+                }
+            }
+        }
 
-	return null;
+        return null;
     }
 
     public static Shell getShell() {
-	return getActiveWorkbenchWindow().getShell();
+        IWorkbenchWindow activeWindow = getActiveWorkbenchWindow();
+        return activeWindow == null ? null : activeWindow.getShell();
     }
 
 }

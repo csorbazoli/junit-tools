@@ -22,9 +22,9 @@ import org.junit.tools.ui.utils.EclipseUIUtils;
 
 /**
  * General JUT handler
- * 
+ *
  * @author JUnit-Tools-Team
- * 
+ *
  */
 public abstract class JUTHandler implements IHandler {
 
@@ -32,17 +32,17 @@ public abstract class JUTHandler implements IHandler {
 
     protected static String pluginId = Activator.PLUGIN_ID;
 
-    protected String information = Messages.General_information;
-    protected String warning = Messages.General_warning;
-    protected String error = Messages.General_error;
-    protected String errorMsg = Messages.General_error_processing;
+    protected static String information = Messages.General_information;
+    protected static String warning = Messages.General_warning;
+    protected static String error = Messages.General_error;
+    protected static String errorMsg = Messages.General_error_processing;
 
     /**
      * {@link Inherited}
      */
     @Override
     public void addHandlerListener(IHandlerListener handlerListener) {
-	// nothing
+        // nothing
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class JUTHandler implements IHandler {
      */
     @Override
     public void dispose() {
-	// nothing
+        // nothing
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class JUTHandler implements IHandler {
      */
     @Override
     public boolean isEnabled() {
-	return true;
+        return true;
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class JUTHandler implements IHandler {
      */
     @Override
     public boolean isHandled() {
-	return true;
+        return true;
     }
 
     /**
@@ -74,47 +74,53 @@ public abstract class JUTHandler implements IHandler {
      */
     @Override
     public void removeHandlerListener(IHandlerListener handlerListener) {
-	// nothing
+        // nothing
     }
 
-    protected void handleError(Exception e) {
-	Shell shell = EclipseUIUtils.getShell();
+    public static void handleError(Exception e) {
+        handleError(e, true);
+    }
 
-	// log to error log
-	Status status = new Status(Status.ERROR, pluginId, e.getMessage(), e);
-	log.log(status);
+    public static void handleError(Exception e, boolean showStackTrace) {
+        Shell shell = EclipseUIUtils.getShell();
 
-	// open error dialog
-	try {
-	    StringWriter sw = new StringWriter();
-	    PrintWriter pw = new PrintWriter(sw);
-	    e.printStackTrace(pw);
+        // log to error log
+        Status status = new Status(Status.ERROR, pluginId, e.getMessage(), e);
+        log.log(status);
 
-	    // convert stack trace lines to status objects
-	    final String trace = sw.toString();
-	    List<Status> stackStatus = new ArrayList<Status>();
-	    for (String line : trace.split(System.getProperty("line.separator"))) {
-		stackStatus.add(new Status(IStatus.ERROR, Activator.PLUGIN_ID, line));
-	    }
+        // open error dialog
+        try {
+            List<Status> stackStatus = new ArrayList<Status>();
+            if (showStackTrace) {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                String trace = sw.toString();
+                // convert stack trace lines to status objects
+                for (String line : trace.split(System.getProperty("line.separator"))) {
+                    stackStatus.add(new Status(IStatus.ERROR, Activator.PLUGIN_ID, line));
+                }
 
-	    MultiStatus ms = new MultiStatus(Activator.PLUGIN_ID, IStatus.ERROR, stackStatus.toArray(new Status[] {}),
-		    e.getLocalizedMessage(), e);
+            }
 
-	    // open error dialog
-	    ErrorDialog.openError(shell, error, errorMsg, ms);
-	} catch (Exception ex2) {
-	    ErrorDialog.openError(shell, error, errorMsg, status);
-	}
+            MultiStatus ms = new MultiStatus(Activator.PLUGIN_ID, IStatus.ERROR, stackStatus.toArray(new Status[] {}),
+                    e.getLocalizedMessage(), e);
+
+            // open error dialog
+            ErrorDialog.openError(shell, error, errorMsg, ms);
+        } catch (Exception ex2) {
+            ErrorDialog.openError(shell, error, errorMsg, status);
+        }
 
     }
 
-    protected void handleWarning(JUTWarning e) {
-	Shell shell = EclipseUIUtils.getShell();
+    public static void handleWarning(JUTWarning e) {
+        Shell shell = EclipseUIUtils.getShell();
 
-	String warningMsg = e.getMessage();
+        String warningMsg = e.getMessage();
 
-	// open error dialog
-	MessageDialog.openWarning(shell, warning, warningMsg);
+        // open error dialog
+        MessageDialog.openWarning(shell, warning, warningMsg);
     }
 
 }

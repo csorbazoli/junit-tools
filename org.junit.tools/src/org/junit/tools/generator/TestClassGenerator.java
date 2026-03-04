@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.junit.tools.base.JUTWarning;
 import org.junit.tools.generator.model.GeneratorModel;
 import org.junit.tools.generator.model.JUTElements.JUTClassesAndPackages;
 import org.junit.tools.generator.model.tml.Annotation;
@@ -155,10 +156,14 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
         }
 
         // save test-class
-        testClass.save(null, true);
-        testClass.makeConsistent(null);
-        if (testClass.hasUnsavedChanges()) {
-            testClass.commitWorkingCopy(true, null);
+        try {
+            testClass.save(null, true);
+            testClass.makeConsistent(null);
+            if (testClass.hasUnsavedChanges()) {
+                testClass.commitWorkingCopy(true, null);
+            }
+        } catch (Exception e) {
+            throw new JUTWarning("Failed to save working copy: " + e.getMessage());
         }
 
         return lastTestMethodCreated;
