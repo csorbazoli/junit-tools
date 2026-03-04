@@ -109,7 +109,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
         if (javaSourceFolderName == null) {
             javaSourceFolderName = getPreference(JAVA_SOURCE_FOLDER_NAME);
         }
-        if ("".equals(javaSourceFolderName)) {
+        if (javaSourceFolderName == null || javaSourceFolderName.isEmpty()) {
             javaSourceFolderName = "src/main/java";
         }
         return javaSourceFolderName;
@@ -254,7 +254,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
         LinkedList<FieldDeclaration> ret = new LinkedList<>();
         for (String item : items) {
             FieldDeclaration.fromConfigString(item)
-            .ifPresent(ret::add);
+                    .ifPresent(ret::add);
         }
         return ret;
     }
@@ -563,8 +563,8 @@ public class JUTPreferences implements IJUTPreferenceConstants {
      */
     public static String convertFromArray(String[] values) {
         StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < values.length; i++) {
-            buffer.append(values[i]);
+        for (String value : values) {
+            buffer.append(value);
             buffer.append(LIST_DELIMITER);
         }
 
@@ -639,7 +639,8 @@ public class JUTPreferences implements IJUTPreferenceConstants {
                     } else if (booleanPropertyHandlers.containsKey(event.getProperty())) {
                         booleanPropertyHandlers.get(event.getProperty()).accept((Boolean) event.getNewValue());
                     } else if (arrayPropertyHandlers.containsKey(event.getProperty())) {
-                        arrayPropertyHandlers.get(event.getProperty()).accept(convertToArray((String) event.getNewValue()));
+                        arrayPropertyHandlers.get(event.getProperty())
+                                .accept(convertToArray((String) event.getNewValue()));
                     } else if (mapPropertyHandlers.containsKey(event.getProperty())) {
                         mapPropertyHandlers.get(event.getProperty()).accept(convertToMap((String) event.getNewValue()));
                     }
