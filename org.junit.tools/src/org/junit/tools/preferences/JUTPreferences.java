@@ -613,6 +613,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
         booleanPropertyHandlers.put(SHOW_SETTINGS_BEFORE_GENERATE, JUTPreferences::setShowSettingsBeforeGenerate);
         booleanPropertyHandlers.put(REPLAYALL_VERIFYALL_ENABLED, JUTPreferences::setReplayAllVerifyAllEnabled);
         booleanPropertyHandlers.put(TEST_RESOURCE_FULL_PATH_ENABLED, JUTPreferences::setTestResurceFullPathEnabled);
+        booleanPropertyHandlers.put(APPROVALTESTS_ENABLED, JUTPreferences::setApprovalTestsEnabled);
         booleanPropertyHandlers.put(USE_MOCK_RUNNER, JUTPreferences::setUseMockRunner);
 
         Map<String, Consumer<Integer>> intPropertyHandlers = new HashMap<>();
