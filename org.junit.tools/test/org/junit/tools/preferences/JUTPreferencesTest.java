@@ -53,7 +53,7 @@ public class JUTPreferencesTest {
     }
 
     @Test
-    void testGetAssertTypeForFiles() throws Exception {
+    public void testGetAssertTypeForFiles() throws Exception {
         // given
         JUTPreferences.setApprovalTestsEnabled(false);
         // when
@@ -63,7 +63,7 @@ public class JUTPreferencesTest {
     }
 
     @Test
-    void testGetAssertTypeForFiles_approvals() throws Exception {
+    public void testGetAssertTypeForFiles_approvals() throws Exception {
         // given
         JUTPreferences.setApprovalTestsEnabled(true);
         // when
