@@ -196,10 +196,33 @@ public class TestClassGeneratorTest {
         testCase.setName("testedMethod");
         testCase.setTestBase("testBaseProperty");
         Assertion assertion = new Assertion();
-        assertion.setBase("TestUtils.objectToJson({result})");
+        assertion.setBase("{result}");
         assertion.setBaseType("TestBean");
         assertion.setMessage("test message");
         assertion.setType(AssertionType.TESTFILEEQUALS);
+        assertion.setValue("\"testedMethod_TestBean.json\"");
+        testCase.getAssertion().add(assertion);
+        // when
+        underTest.createAssertionsMethodBody(sbTestMethodBody, "actual", "TestBean", "actual", testCase);
+        // then
+        assertEquals("\n"
+                + "// then\n" +
+                "TestUtils.assertTestFileEquals(\"testedMethod_TestBean.json\", actual);",
+                sbTestMethodBody.toString());
+    }
+
+    @Test
+    public void testCreateAssertionsMethodBody_complexExpectedValue_approvalTest() {
+        // given
+        StringBuilder sbTestMethodBody = new StringBuilder();
+        TestCase testCase = new TestCase();
+        testCase.setName("testedMethod");
+        testCase.setTestBase("testBaseProperty");
+        Assertion assertion = new Assertion();
+        assertion.setBase("{result}");
+        assertion.setBaseType("TestBean");
+        assertion.setMessage("test message");
+        assertion.setType(AssertionType.APPROVALS);
         assertion.setValue("\"testedMethod/TestBean.json\"");
         testCase.getAssertion().add(assertion);
         // when
@@ -207,7 +230,7 @@ public class TestClassGeneratorTest {
         // then
         assertEquals("\n"
                 + "// then\n" +
-                "TestUtils.assertTestFileEquals(\"testedMethod/TestBean.json\", TestUtils.objectToJson(actual));",
+                "Approvals.verify(actual);",
                 sbTestMethodBody.toString());
     }
 

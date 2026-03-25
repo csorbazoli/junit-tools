@@ -23,7 +23,7 @@ import org.junit.tools.preferences.IJUTPreferenceConstants;
  *
  */
 public class JUTPreferenceMainPage extends FieldEditorPreferencePage implements
-IWorkbenchPreferencePage, IJUTPreferenceConstants {
+        IWorkbenchPreferencePage, IJUTPreferenceConstants {
 
     private Label folderExample;
     private Label classExample;
@@ -238,32 +238,33 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
         // mock framework
         addField(new RadioGroupFieldEditor(MOCK_FRAMEWORK, Messages.JUTPreferenceMainPage_Mock_Framework, 1,
                 new String[][] {
-            { "Mockito", MOCKFW_MOCKITO },
-            { "EasyMock", MOCKFW_EASYMOCK },
-            { "None", MOCKFW_NONE }
-        },
+                        { "Mockito", MOCKFW_MOCKITO },
+                        { "EasyMock", MOCKFW_EASYMOCK },
+                        { "None", MOCKFW_NONE }
+                },
                 getFieldEditorParent(),
                 true));
 
         // JUnit version
         addField(new RadioGroupFieldEditor(JUNIT_VERSION, Messages.JUTPreferenceMainPage_JUnit_Version, 1,
                 new String[][] {
-            { "JUnit4", "4" },
-            { "JUnit5", "5" }
-        },
+                        { "JUnit4", "4" },
+                        { "JUnit5", "5" }
+                },
                 getFieldEditorParent(),
                 true));
 
         addField(new RadioGroupFieldEditor(TEST_METHOD_POSITION, Messages.JUTPreferenceMainPage_Test_Method_Position, 1,
                 new String[][] {
-            { Messages.JUTPreferenceMainPage_Test_Method_Position_before, POSITION_BEFORE },
-            { Messages.JUTPreferenceMainPage_Test_Method_Position_after, POSITION_AFTER },
-            { Messages.JUTPreferenceMainPage_Test_Method_Position_last, POSITION_LAST },
-        },
+                        { Messages.JUTPreferenceMainPage_Test_Method_Position_before, POSITION_BEFORE },
+                        { Messages.JUTPreferenceMainPage_Test_Method_Position_after, POSITION_AFTER },
+                        { Messages.JUTPreferenceMainPage_Test_Method_Position_last, POSITION_LAST },
+                },
                 getFieldEditorParent(),
                 true));
 
-        addField(new BooleanFieldEditor(SHOW_SETTINGS_BEFORE_GENERATE, Messages.JUTPreferenceMainPage_Show_Settings_Before_Generate,
+        addField(new BooleanFieldEditor(SHOW_SETTINGS_BEFORE_GENERATE,
+                Messages.JUTPreferenceMainPage_Show_Settings_Before_Generate,
                 getFieldEditorParent()));
 
         addField(new BooleanFieldEditor(GHERKIN_STYLE_ENABLED, Messages.JUTPreferenceMainPage_Gherkin_Style_Enabled,
@@ -275,13 +276,19 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
         addField(new BooleanFieldEditor(USE_MOCK_RUNNER, Messages.JUTPreferenceMainPage_UseMockRunner_Enabled,
                 getFieldEditorParent()));
 
-        addField(new BooleanFieldEditor(REPLAYALL_VERIFYALL_ENABLED, Messages.JUTPreferenceMainPage_ReplayAllVerifyAll_Enabled,
+        addField(new BooleanFieldEditor(REPLAYALL_VERIFYALL_ENABLED,
+                Messages.JUTPreferenceMainPage_ReplayAllVerifyAll_Enabled,
                 getFieldEditorParent()));
 
-        addField(new BooleanFieldEditor(REPEATING_TEST_METHODS_ENABLED, Messages.JUTPreferenceMainPage_Repeating_Test_Methods_Enabled,
+        addField(new BooleanFieldEditor(REPEATING_TEST_METHODS_ENABLED,
+                Messages.JUTPreferenceMainPage_Repeating_Test_Methods_Enabled,
                 getFieldEditorParent()));
 
-        addField(new BooleanFieldEditor(TEST_RESOURCE_FULL_PATH_ENABLED, Messages.JUTPreferenceMainPage_TestResourceFullPath_Enabled,
+        addField(new BooleanFieldEditor(TEST_RESOURCE_FULL_PATH_ENABLED,
+                Messages.JUTPreferenceMainPage_TestResourceFullPath_Enabled,
+                getFieldEditorParent()));
+
+        addField(new BooleanFieldEditor(APPROVALTESTS_ENABLED, Messages.JUTPreferenceMainPage_ApprovalTests_Enabled,
                 getFieldEditorParent()));
 
         adjustGridLayout();
@@ -299,8 +306,8 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
             srcFolderIsEqual = false;
 
             folderExample
-            .setText("The source folder target for the test elements is \""
-                    + fieldTestSrcFolder.getStringValue() + "\"");
+                    .setText("The source folder target for the test elements is \""
+                            + fieldTestSrcFolder.getStringValue() + "\"");
         }
 
         folderExample.getParent().layout();
@@ -316,16 +323,16 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
                 classExample.setText("Class for base and test is equal");
             } else {
                 classExample
-                .setText("The base and test name for the class is equal");
+                        .setText("The base and test name for the class is equal");
             }
         } else {
             classIsEqual = false;
 
             classExample
-            .setText("If the class under test is \"Calculator\" the test class is \""
-                    + fieldClassPre.getStringValue()
-                    + "Calculator"
-                    + fieldClassPost.getStringValue() + "\"");
+                    .setText("If the class under test is \"Calculator\" the test class is \""
+                            + fieldClassPre.getStringValue()
+                            + "Calculator"
+                            + fieldClassPost.getStringValue() + "\"");
         }
 
         classExample.getParent().layout();
@@ -344,16 +351,16 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
                 springClassExample.setText("Class for base and test is equal");
             } else {
                 springClassExample
-                .setText("The base and test name for the class is equal");
+                        .setText("The base and test name for the class is equal");
             }
         } else {
             classIsEqual = false;
 
             springClassExample
-            .setText("If the class under test is \"Calculator\" the test class is \""
-                    + fieldClassPre.getStringValue()
-                    + "Calculator"
-                    + fieldSpringClassPost.getStringValue() + "\"");
+                    .setText("If the class under test is \"Calculator\" the test class is \""
+                            + fieldClassPre.getStringValue()
+                            + "Calculator"
+                            + fieldSpringClassPost.getStringValue() + "\"");
         }
 
         springClassExample.getParent().layout();
@@ -372,7 +379,7 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
                 methodExample.setText("Base and test method is equal");
             } else {
                 methodExample
-                .setText("Base method name and test method name are equal");
+                        .setText("Base method name and test method name are equal");
             }
         } else {
             String methodName = "";
@@ -383,12 +390,12 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
             }
 
             methodExample
-            .setText("If the method under test is \"calculate\" the test method is \""
-                    + fieldMethodPre.getStringValue()
-                    + methodName
-                    + GeneratorUtils.firstCharToUpper(fieldMethodPost
-                            .getStringValue())
-                    + "\"");
+                    .setText("If the method under test is \"calculate\" the test method is \""
+                            + fieldMethodPre.getStringValue()
+                            + methodName
+                            + GeneratorUtils.firstCharToUpper(fieldMethodPost
+                                    .getStringValue())
+                            + "\"");
         }
 
         methodExample.getParent().layout();
@@ -405,7 +412,7 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
                 mvcMethodExample.setText("Base and test method is equal");
             } else {
                 mvcMethodExample
-                .setText("Base method name and test method name are equal");
+                        .setText("Base method name and test method name are equal");
             }
         } else {
             String methodName = "";
@@ -416,12 +423,12 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
             }
 
             mvcMethodExample
-            .setText("If the method under test is \"calculate\" the test method is \""
-                    + fieldMethodPre.getStringValue()
-                    + methodName
-                    + GeneratorUtils.firstCharToUpper(fieldMvcMethodPost
-                            .getStringValue())
-                    + "\"");
+                    .setText("If the method under test is \"calculate\" the test method is \""
+                            + fieldMethodPre.getStringValue()
+                            + methodName
+                            + GeneratorUtils.firstCharToUpper(fieldMvcMethodPost
+                                    .getStringValue())
+                            + "\"");
         }
 
         mvcMethodExample.getParent().layout();
@@ -430,7 +437,8 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
 
     private void checkValid() {
         if (srcFolderIsEqual && classIsEqual) {
-            setErrorMessage("Between the elements under test and the corresponding test elements must be a difference!");
+            setErrorMessage(
+                    "Between the elements under test and the corresponding test elements must be a difference!");
             setValid(false);
         } else {
             // reset error message
@@ -446,8 +454,8 @@ IWorkbenchPreferencePage, IJUTPreferenceConstants {
             superTypeExample.setText("No super type is defined");
         } else {
             superTypeExample
-            .setText("The default super class for the test class is \""
-                    + fieldSuperType.getStringValue() + "\"");
+                    .setText("The default super class for the test class is \""
+                            + fieldSuperType.getStringValue() + "\"");
         }
 
         superTypeExample.getParent().layout();

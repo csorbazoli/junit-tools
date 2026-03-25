@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.junit.tools.Activator;
+import org.junit.tools.generator.model.tml.AssertionType;
 
 /**
  * Preference-class for the junit-tools-processing.
@@ -39,6 +40,7 @@ public class JUTPreferences implements IJUTPreferenceConstants {
     private static Boolean gherkinStyleEnabled = null;
     private static Boolean assertjEnabled = null;
     private static Boolean testResurceFullPathEnabled = null;
+    private static Boolean approvalTestsEnabled = null;
     private static Boolean replayAllVerifyAllEnabled = null;
     private static Boolean repeatingTestMethodsEnabled = null;
     private static Boolean showSettingsBeforeGenerate = null;
@@ -445,6 +447,17 @@ public class JUTPreferences implements IJUTPreferenceConstants {
         return testResurceFullPathEnabled;
     }
 
+    public static boolean isApprovalTestsEnabled() {
+        if (approvalTestsEnabled == null) {
+            approvalTestsEnabled = getPreferenceBoolean(APPROVALTESTS_ENABLED, false);
+        }
+        return approvalTestsEnabled;
+    }
+
+    public static AssertionType getAssertTypeForFiles() {
+        return isApprovalTestsEnabled() ? AssertionType.APPROVALS : AssertionType.TESTFILEEQUALS;
+    }
+
     public static boolean isReplayAllVerifyAllEnabled() {
         if (replayAllVerifyAllEnabled == null) {
             replayAllVerifyAllEnabled = getPreferenceBoolean(REPLAYALL_VERIFYALL_ENABLED, false);
@@ -504,6 +517,10 @@ public class JUTPreferences implements IJUTPreferenceConstants {
 
     public static void setTestResurceFullPathEnabled(Boolean enabled) {
         JUTPreferences.testResurceFullPathEnabled = enabled;
+    }
+
+    public static void setApprovalTestsEnabled(Boolean enabled) {
+        JUTPreferences.approvalTestsEnabled = enabled;
     }
 
     public static void setReplayAllVerifyAllEnabled(Boolean enabled) {

@@ -140,6 +140,7 @@ public class Messages extends NLS {
     public static String JUTPreferenceMainPage_Gherkin_Style_Enabled;
     public static String JUTPreferenceMainPage_AssertJ_Enabled;
     public static String JUTPreferenceMainPage_TestResourceFullPath_Enabled;
+    public static String JUTPreferenceMainPage_ApprovalTests_Enabled;
     public static String JUTPreferenceMainPage_ReplayAllVerifyAll_Enabled;
     public static String JUTPreferenceMainPage_Repeating_Test_Methods_Enabled;
     public static String JUTPreferenceMainPage_Test_Method_Position;

@@ -31,321 +31,324 @@ public class TestCasesGeneratorTest {
 
     @Before
     public void setupTest() {
-	JUTPreferences.setJUnitVersion(5);
-	JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
-	JUTPreferences.setAssertJEnabled(true);
-	JUTPreferences.setTestResurceFullPathEnabled(false);
+        JUTPreferences.setJUnitVersion(5);
+        JUTPreferences.setMockFramework(JUTPreferences.MOCKFW_MOCKITO);
+        JUTPreferences.setAssertJEnabled(true);
+        JUTPreferences.setApprovalTestsEnabled(false);
+        JUTPreferences.setTestResurceFullPathEnabled(false);
     }
 
     @Test
     public void testGenerateTestCases() throws Exception {
-	GeneratorModel model = createModel();
-	IMethod methodKey = Mockito.mock(IMethod.class);
-	model.setMethodsToCreate(Arrays.asList(methodKey));
-	HashMap<IMethod, Method> methodMap = new HashMap<>();
-	Method method = new Method();
-	method.setModifier("public");
-	method.setStatic(false);
-	Result result = new Result();
-	result.setType("String");
-	method.setResult(result);
-	method.setName("someMethod");
-	Param param = new Param();
-	param.setName("someParam");
-	method.getParam().add(param);
-	param.setType("String");
-	methodMap.put(methodKey, method);
-	model.setMethodMap(methodMap);
-	TestHelper.initDefaultValueMapping();
-	// when
-	underTest.generateTestCases(model);
-	// then
-	assertThat(method.getTestCase()).hasSize(1);
-	TestCase firstTestCase = method.getTestCase().get(0);
-	assertThat(firstTestCase.getAssertion().stream()
-		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining("\n")))
-		.isEqualTo("String {result}#EQUALS#\"TestExpected\"");
-	assertThat(firstTestCase.getParamAssignments().stream()
-		.map(ass -> ass.getParamType() + " " + ass.getParamName() + " = " + ass.getAssignment())
-		.collect(Collectors.joining("\n")))
-		.isEqualTo("String someParam = \"TestSomeParam\"");
+        GeneratorModel model = createModel();
+        IMethod methodKey = Mockito.mock(IMethod.class);
+        model.setMethodsToCreate(Arrays.asList(methodKey));
+        HashMap<IMethod, Method> methodMap = new HashMap<>();
+        Method method = new Method();
+        method.setModifier("public");
+        method.setStatic(false);
+        Result result = new Result();
+        result.setType("String");
+        method.setResult(result);
+        method.setName("someMethod");
+        Param param = new Param();
+        param.setName("someParam");
+        method.getParam().add(param);
+        param.setType("String");
+        methodMap.put(methodKey, method);
+        model.setMethodMap(methodMap);
+        TestHelper.initDefaultValueMapping();
+        // when
+        underTest.generateTestCases(model);
+        // then
+        assertThat(method.getTestCase()).hasSize(1);
+        TestCase firstTestCase = method.getTestCase().get(0);
+        assertThat(firstTestCase.getAssertion().stream()
+                .map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+                .collect(Collectors.joining("\n")))
+                        .isEqualTo("String {result}#EQUALS#\"TestExpected\"");
+        assertThat(firstTestCase.getParamAssignments().stream()
+                .map(ass -> ass.getParamType() + " " + ass.getParamName() + " = " + ass.getAssignment())
+                .collect(Collectors.joining("\n")))
+                        .isEqualTo("String someParam = \"TestSomeParam\"");
     }
 
     @Test
     public void testGenerateTestCases_shouldCompareJsonForComplexReturnTypes() throws Exception {
-	GeneratorModel model = createModel();
-	IMethod methodKey = Mockito.mock(IMethod.class);
-	model.setMethodsToCreate(Arrays.asList(methodKey));
-	HashMap<IMethod, Method> methodMap = new HashMap<>();
-	Method method = new Method();
-	method.setModifier("public");
-	method.setStatic(false);
-	Result result = new Result();
-	result.setType("TestBean");
-	method.setResult(result);
-	method.setName("someMethod");
-	Param param = new Param();
-	param.setName("someParam");
-	method.getParam().add(param);
-	param.setType("TestBean");
-	methodMap.put(methodKey, method);
-	model.setMethodMap(methodMap);
-	TestHelper.initDefaultValueMapping();
-	// when
-	underTest.generateTestCases(model);
-	// then
-	assertThat(method.getTestCase()).hasSize(1);
-	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("TestBean TestUtils.objectToJson({result})#TESTFILEEQUALS#\"SomeClass/someMethod.json\"",
-		firstTestCase.getAssertion().stream()
-			.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-			.collect(Collectors.joining("\n")));
-	assertEquals("TestBean someParam = TestValueFactory.fillFields(new TestBean())", firstTestCase.getParamAssignments().stream()
-		.map(ass -> ass.getParamType() + " " + ass.getParamName() + " = " + ass.getAssignment())
-		.collect(Collectors.joining("\n")));
+        GeneratorModel model = createModel();
+        IMethod methodKey = Mockito.mock(IMethod.class);
+        model.setMethodsToCreate(Arrays.asList(methodKey));
+        HashMap<IMethod, Method> methodMap = new HashMap<>();
+        Method method = new Method();
+        method.setModifier("public");
+        method.setStatic(false);
+        Result result = new Result();
+        result.setType("TestBean");
+        method.setResult(result);
+        method.setName("someMethod");
+        Param param = new Param();
+        param.setName("someParam");
+        method.getParam().add(param);
+        param.setType("TestBean");
+        methodMap.put(methodKey, method);
+        model.setMethodMap(methodMap);
+        TestHelper.initDefaultValueMapping();
+        // when
+        underTest.generateTestCases(model);
+        // then
+        assertThat(method.getTestCase()).hasSize(1);
+        TestCase firstTestCase = method.getTestCase().get(0);
+        assertEquals("TestBean {result}#TESTFILEEQUALS#\"SomeClass_someMethod.json\"",
+                firstTestCase.getAssertion().stream()
+                        .map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#"
+                                + ass.getValue())
+                        .collect(Collectors.joining("\n")));
+        assertEquals("TestBean someParam = TestValueFactory.fillFields(new TestBean())",
+                firstTestCase.getParamAssignments().stream()
+                        .map(ass -> ass.getParamType() + " " + ass.getParamName() + " = " + ass.getAssignment())
+                        .collect(Collectors.joining("\n")));
     }
 
     @Test
     public void testGenerateTestCases_noAssertionForVoidMethods() throws Exception {
-	GeneratorModel model = createModel();
-	IMethod methodKey = Mockito.mock(IMethod.class);
-	model.setMethodsToCreate(Arrays.asList(methodKey));
-	HashMap<IMethod, Method> methodMap = new HashMap<>();
-	Method method = new Method();
-	method.setModifier("public");
-	method.setStatic(false);
-	method.setResult(null);
-	method.setName("someMethod");
-	Param param = new Param();
-	param.setName("someParam");
-	method.getParam().add(param);
-	param.setType("String");
-	methodMap.put(methodKey, method);
-	model.setMethodMap(methodMap);
-	TestHelper.initDefaultValueMapping();
-	// when
-	underTest.generateTestCases(model);
-	// then
-	assertThat(method.getTestCase()).hasSize(1);
-	TestCase firstTestCase = method.getTestCase().get(0);
-	assertThat(firstTestCase.getAssertion()).isEmpty();
-	assertThat(firstTestCase.getParamAssignments().stream()
-		.map(ass -> ass.getParamType() + " " + ass.getParamName() + " = " + ass.getAssignment())
-		.collect(Collectors.joining("\n"))).isEqualTo("String someParam = \"TestSomeParam\"");
+        GeneratorModel model = createModel();
+        IMethod methodKey = Mockito.mock(IMethod.class);
+        model.setMethodsToCreate(Arrays.asList(methodKey));
+        HashMap<IMethod, Method> methodMap = new HashMap<>();
+        Method method = new Method();
+        method.setModifier("public");
+        method.setStatic(false);
+        method.setResult(null);
+        method.setName("someMethod");
+        Param param = new Param();
+        param.setName("someParam");
+        method.getParam().add(param);
+        param.setType("String");
+        methodMap.put(methodKey, method);
+        model.setMethodMap(methodMap);
+        TestHelper.initDefaultValueMapping();
+        // when
+        underTest.generateTestCases(model);
+        // then
+        assertThat(method.getTestCase()).hasSize(1);
+        TestCase firstTestCase = method.getTestCase().get(0);
+        assertThat(firstTestCase.getAssertion()).isEmpty();
+        assertThat(firstTestCase.getParamAssignments().stream()
+                .map(ass -> ass.getParamType() + " " + ass.getParamName() + " = " + ass.getAssignment())
+                .collect(Collectors.joining("\n"))).isEqualTo("String someParam = \"TestSomeParam\"");
     }
 
     @Test
     public void testGenerateTestCases_shouldAssertIsTrueForBooleanResultType() throws Exception {
-	GeneratorModel model = createModel();
-	IMethod methodKey = Mockito.mock(IMethod.class);
-	model.setMethodsToCreate(Arrays.asList(methodKey));
-	HashMap<IMethod, Method> methodMap = new HashMap<>();
-	Method method = new Method();
-	method.setModifier("public");
-	method.setStatic(false);
-	Result result = new Result();
-	result.setType("Boolean");
-	method.setResult(result);
-	method.setName("someMethod");
-	Param param = new Param();
-	param.setName("someParam");
-	method.getParam().add(param);
-	param.setType("String");
-	methodMap.put(methodKey, method);
-	model.setMethodMap(methodMap);
-	TestHelper.initDefaultValueMapping();
-	// when
-	underTest.generateTestCases(model);
-	// then
-	assertThat(method.getTestCase()).hasSize(1);
-	TestCase firstTestCase = method.getTestCase().get(0);
-	assertEquals("Boolean {result}#IS_TRUE#", firstTestCase.getAssertion().stream()
-		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining("\n")));
+        GeneratorModel model = createModel();
+        IMethod methodKey = Mockito.mock(IMethod.class);
+        model.setMethodsToCreate(Arrays.asList(methodKey));
+        HashMap<IMethod, Method> methodMap = new HashMap<>();
+        Method method = new Method();
+        method.setModifier("public");
+        method.setStatic(false);
+        Result result = new Result();
+        result.setType("Boolean");
+        method.setResult(result);
+        method.setName("someMethod");
+        Param param = new Param();
+        param.setName("someParam");
+        method.getParam().add(param);
+        param.setType("String");
+        methodMap.put(methodKey, method);
+        model.setMethodMap(methodMap);
+        TestHelper.initDefaultValueMapping();
+        // when
+        underTest.generateTestCases(model);
+        // then
+        assertThat(method.getTestCase()).hasSize(1);
+        TestCase firstTestCase = method.getTestCase().get(0);
+        assertEquals("Boolean {result}#IS_TRUE#", firstTestCase.getAssertion().stream()
+                .map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+                .collect(Collectors.joining("\n")));
     }
 
     @Test
     public void testGenerateTestCases_shouldAssertIsNotEmptyForOptionalResultType() throws Exception {
-	GeneratorModel model = createModel();
-	IMethod methodKey = Mockito.mock(IMethod.class);
-	model.setMethodsToCreate(Arrays.asList(methodKey));
-	HashMap<IMethod, Method> methodMap = new HashMap<>();
-	Method method = new Method();
-	method.setModifier("public");
-	method.setStatic(false);
-	Result result = new Result();
-	result.setType("Optional<TestObject>");
-	method.setResult(result);
-	method.setName("someMethod");
-	Param param = new Param();
-	param.setName("someParam");
-	method.getParam().add(param);
-	param.setType("String");
-	methodMap.put(methodKey, method);
-	model.setMethodMap(methodMap);
-	TestHelper.initDefaultValueMapping();
-	// when
-	underTest.generateTestCases(model);
-	// then
-	assertThat(method.getTestCase()).hasSize(1);
-	TestCase firstTestCase = method.getTestCase().get(0);
-	assertThat(firstTestCase.getAssertion().stream()
-		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining("\n")))
-		.isEqualTo("Optional<TestObject> {result}#IS_NOT_EMPTY#\n"
-			+ "TestObject TestUtils.objectToJson({result}.get())#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
+        GeneratorModel model = createModel();
+        IMethod methodKey = Mockito.mock(IMethod.class);
+        model.setMethodsToCreate(Arrays.asList(methodKey));
+        HashMap<IMethod, Method> methodMap = new HashMap<>();
+        Method method = new Method();
+        method.setModifier("public");
+        method.setStatic(false);
+        Result result = new Result();
+        result.setType("Optional<TestObject>");
+        method.setResult(result);
+        method.setName("someMethod");
+        Param param = new Param();
+        param.setName("someParam");
+        method.getParam().add(param);
+        param.setType("String");
+        methodMap.put(methodKey, method);
+        model.setMethodMap(methodMap);
+        TestHelper.initDefaultValueMapping();
+        // when
+        underTest.generateTestCases(model);
+        // then
+        assertThat(method.getTestCase()).hasSize(1);
+        TestCase firstTestCase = method.getTestCase().get(0);
+        assertThat(firstTestCase.getAssertion().stream()
+                .map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+                .collect(Collectors.joining("\n")))
+                        .isEqualTo("Optional<TestObject> {result}#IS_NOT_EMPTY#\n"
+                                + "TestObject {result}.get()#TESTFILEEQUALS#\"SomeClass_someMethod.json\"");
     }
 
     @Test
     public void testGenerateTestCases_shouldAssertIsNotEmptyForOptionalResultType_noAssertJ() throws Exception {
-	GeneratorModel model = createModel();
-	IMethod methodKey = Mockito.mock(IMethod.class);
-	model.setMethodsToCreate(Arrays.asList(methodKey));
-	HashMap<IMethod, Method> methodMap = new HashMap<>();
-	Method method = new Method();
-	method.setModifier("public");
-	method.setStatic(false);
-	Result result = new Result();
-	result.setType("Optional<TestObject>");
-	method.setResult(result);
-	method.setName("someMethod");
-	Param param = new Param();
-	param.setName("someParam");
-	method.getParam().add(param);
-	param.setType("String");
-	methodMap.put(methodKey, method);
-	model.setMethodMap(methodMap);
-	TestHelper.initDefaultValueMapping();
-	JUTPreferences.setAssertJEnabled(false);
-	// when
-	underTest.generateTestCases(model);
-	// then
-	assertThat(method.getTestCase()).hasSize(1);
-	TestCase firstTestCase = method.getTestCase().get(0);
-	assertThat(firstTestCase.getAssertion().stream()
-		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining("\n")))
-		.isEqualTo("Optional<TestObject> {result}.isEmpty()#IS_NOT_EMPTY#\n"
-			+ "TestObject TestUtils.objectToJson({result}.get())#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
+        GeneratorModel model = createModel();
+        IMethod methodKey = Mockito.mock(IMethod.class);
+        model.setMethodsToCreate(Arrays.asList(methodKey));
+        HashMap<IMethod, Method> methodMap = new HashMap<>();
+        Method method = new Method();
+        method.setModifier("public");
+        method.setStatic(false);
+        Result result = new Result();
+        result.setType("Optional<TestObject>");
+        method.setResult(result);
+        method.setName("someMethod");
+        Param param = new Param();
+        param.setName("someParam");
+        method.getParam().add(param);
+        param.setType("String");
+        methodMap.put(methodKey, method);
+        model.setMethodMap(methodMap);
+        TestHelper.initDefaultValueMapping();
+        JUTPreferences.setAssertJEnabled(false);
+        // when
+        underTest.generateTestCases(model);
+        // then
+        assertThat(method.getTestCase()).hasSize(1);
+        TestCase firstTestCase = method.getTestCase().get(0);
+        assertThat(firstTestCase.getAssertion().stream()
+                .map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+                .collect(Collectors.joining("\n")))
+                        .isEqualTo("Optional<TestObject> {result}.isEmpty()#IS_NOT_EMPTY#\n"
+                                + "TestObject {result}.get()#TESTFILEEQUALS#\"SomeClass_someMethod.json\"");
     }
 
     @Test
     public void testGenerateTestCases_shouldAssertOonBodyForResponseEntityResultType() throws Exception {
-	GeneratorModel model = createModel();
-	IMethod methodKey = Mockito.mock(IMethod.class);
-	model.setMethodsToCreate(Arrays.asList(methodKey));
-	HashMap<IMethod, Method> methodMap = new HashMap<>();
-	Method method = new Method();
-	method.setModifier("public");
-	method.setStatic(false);
-	Result result = new Result();
-	result.setType("ResponseEntity<TestObject>");
-	method.setResult(result);
-	method.setName("someMethod");
-	Param param = new Param();
-	param.setName("someParam");
-	method.getParam().add(param);
-	param.setType("String");
-	methodMap.put(methodKey, method);
-	model.setMethodMap(methodMap);
-	TestHelper.initDefaultValueMapping();
-	JUTPreferences.setTestResurceFullPathEnabled(true);
-	// when
-	underTest.generateTestCases(model);
-	// then
-	assertThat(method.getTestCase()).hasSize(1);
-	TestCase firstTestCase = method.getTestCase().get(0);
-	assertThat(firstTestCase.getAssertion().stream()
-		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining("\n")))
-		.isEqualTo(
-			"ResponseEntity<TestObject> TestUtils.objectToJson({result}.getBody())#TESTFILEEQUALS#\"com/testutils/somepackage/SomeClass_someMethod.json\"");
+        GeneratorModel model = createModel();
+        IMethod methodKey = Mockito.mock(IMethod.class);
+        model.setMethodsToCreate(Arrays.asList(methodKey));
+        HashMap<IMethod, Method> methodMap = new HashMap<>();
+        Method method = new Method();
+        method.setModifier("public");
+        method.setStatic(false);
+        Result result = new Result();
+        result.setType("ResponseEntity<TestObject>");
+        method.setResult(result);
+        method.setName("someMethod");
+        Param param = new Param();
+        param.setName("someParam");
+        method.getParam().add(param);
+        param.setType("String");
+        methodMap.put(methodKey, method);
+        model.setMethodMap(methodMap);
+        TestHelper.initDefaultValueMapping();
+        JUTPreferences.setTestResurceFullPathEnabled(true);
+        // when
+        underTest.generateTestCases(model);
+        // then
+        assertThat(method.getTestCase()).hasSize(1);
+        TestCase firstTestCase = method.getTestCase().get(0);
+        assertThat(firstTestCase.getAssertion().stream()
+                .map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+                .collect(Collectors.joining("\n")))
+                        .isEqualTo(
+                                "ResponseEntity<TestObject> {result}.getBody()#TESTFILEEQUALS#\"com/testutils/somepackage/SomeClass_someMethod.json\"");
     }
 
     @Test
     public void testGenerateTestCases_shouldAssertIsNotEmptyForCollectionResultType() throws Exception {
-	// given
-	GeneratorModel model = createModel();
-	IMethod methodKey = Mockito.mock(IMethod.class);
-	model.setMethodsToCreate(Arrays.asList(methodKey));
-	HashMap<IMethod, Method> methodMap = new HashMap<>();
-	Method method = new Method();
-	method.setModifier("public");
-	method.setStatic(false);
-	Result result = new Result();
-	result.setType("Collection<TestObject>");
-	method.setResult(result);
-	method.setName("someMethod");
-	Param param = new Param();
-	param.setName("someParam");
-	method.getParam().add(param);
-	param.setType("String");
-	methodMap.put(methodKey, method);
-	model.setMethodMap(methodMap);
-	TestHelper.initDefaultValueMapping();
-	// when
-	underTest.generateTestCases(model);
-	// then
-	assertThat(method.getTestCase()).hasSize(1);
-	TestCase firstTestCase = method.getTestCase().get(0);
-	assertThat(firstTestCase.getAssertion().stream()
-		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining("\n")))
-		.isEqualTo("Collection<TestObject> {result}#IS_NOT_EMPTY#\n"
-			+ "Collection<TestObject> TestUtils.objectToJson({result})#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
+        // given
+        GeneratorModel model = createModel();
+        IMethod methodKey = Mockito.mock(IMethod.class);
+        model.setMethodsToCreate(Arrays.asList(methodKey));
+        HashMap<IMethod, Method> methodMap = new HashMap<>();
+        Method method = new Method();
+        method.setModifier("public");
+        method.setStatic(false);
+        Result result = new Result();
+        result.setType("Collection<TestObject>");
+        method.setResult(result);
+        method.setName("someMethod");
+        Param param = new Param();
+        param.setName("someParam");
+        method.getParam().add(param);
+        param.setType("String");
+        methodMap.put(methodKey, method);
+        model.setMethodMap(methodMap);
+        TestHelper.initDefaultValueMapping();
+        // when
+        underTest.generateTestCases(model);
+        // then
+        assertThat(method.getTestCase()).hasSize(1);
+        TestCase firstTestCase = method.getTestCase().get(0);
+        assertThat(firstTestCase.getAssertion().stream()
+                .map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+                .collect(Collectors.joining("\n")))
+                        .isEqualTo("Collection<TestObject> {result}#IS_NOT_EMPTY#\n"
+                                + "Collection<TestObject> {result}#TESTFILEEQUALS#\"SomeClass_someMethod.json\"");
     }
 
     @Test
     public void testGenerateTestCases_shouldAssertIsNotEmptyForCollectionResultType_noAssertJ() throws Exception {
-	// given
-	GeneratorModel model = createModel();
-	IMethod methodKey = Mockito.mock(IMethod.class);
-	model.setMethodsToCreate(Arrays.asList(methodKey));
-	HashMap<IMethod, Method> methodMap = new HashMap<>();
-	Method method = new Method();
-	method.setModifier("public");
-	method.setStatic(false);
-	Result result = new Result();
-	result.setType("Collection<TestObject>");
-	method.setResult(result);
-	method.setName("someMethod");
-	Param param = new Param();
-	param.setName("someParam");
-	method.getParam().add(param);
-	param.setType("String");
-	methodMap.put(methodKey, method);
-	model.setMethodMap(methodMap);
-	TestHelper.initDefaultValueMapping();
+        // given
+        GeneratorModel model = createModel();
+        IMethod methodKey = Mockito.mock(IMethod.class);
+        model.setMethodsToCreate(Arrays.asList(methodKey));
+        HashMap<IMethod, Method> methodMap = new HashMap<>();
+        Method method = new Method();
+        method.setModifier("public");
+        method.setStatic(false);
+        Result result = new Result();
+        result.setType("Collection<TestObject>");
+        method.setResult(result);
+        method.setName("someMethod");
+        Param param = new Param();
+        param.setName("someParam");
+        method.getParam().add(param);
+        param.setType("String");
+        methodMap.put(methodKey, method);
+        model.setMethodMap(methodMap);
+        TestHelper.initDefaultValueMapping();
 
-	JUTPreferences.setAssertJEnabled(false);
-	// when
-	underTest.generateTestCases(model);
-	// then
-	assertThat(method.getTestCase()).hasSize(1);
-	TestCase firstTestCase = method.getTestCase().get(0);
-	assertThat(firstTestCase.getAssertion().stream()
-		.map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
-		.collect(Collectors.joining("\n")))
-		.isEqualTo("Collection<TestObject> {result}.isEmpty()#IS_NOT_EMPTY#\n"
-			+ "Collection<TestObject> TestUtils.objectToJson({result})#TESTFILEEQUALS#\"SomeClass/someMethod.json\"");
+        JUTPreferences.setAssertJEnabled(false);
+        // when
+        underTest.generateTestCases(model);
+        // then
+        assertThat(method.getTestCase()).hasSize(1);
+        TestCase firstTestCase = method.getTestCase().get(0);
+        assertThat(firstTestCase.getAssertion().stream()
+                .map(ass -> ass.getBaseType() + " " + ass.getBase() + "#" + ass.getType() + "#" + ass.getValue())
+                .collect(Collectors.joining("\n")))
+                        .isEqualTo("Collection<TestObject> {result}.isEmpty()#IS_NOT_EMPTY#\n"
+                                + "Collection<TestObject> {result}#TESTFILEEQUALS#\"SomeClass_someMethod.json\"");
     }
 
     // helper methods
     private GeneratorModel createModel() {
-	JUTElements elements = new JUTElements();
-	JUTClassesAndPackages classesAndPackages = elements.initClassesAndPackages();
-	classesAndPackages.setBaseClassName("SomeClass");
-	ICompilationUnit compilationUnit = mock(ICompilationUnit.class);
-	IJavaElement parentElement = mock(IJavaElement.class);
-	when(compilationUnit.getParent()).thenReturn(parentElement);
-	when(parentElement.getElementName()).thenReturn("com.testutils.somepackage");
-	classesAndPackages.setBaseTest(compilationUnit);
-	org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
-	test.setTestBase("SomeClass");
-	test.setTestClass("SomeClassTest");
-	GeneratorModel model = new GeneratorModel(elements, test);
-	return model;
+        JUTElements elements = new JUTElements();
+        JUTClassesAndPackages classesAndPackages = elements.initClassesAndPackages();
+        classesAndPackages.setBaseClassName("SomeClass");
+        ICompilationUnit compilationUnit = mock(ICompilationUnit.class);
+        IJavaElement parentElement = mock(IJavaElement.class);
+        when(compilationUnit.getParent()).thenReturn(parentElement);
+        when(parentElement.getElementName()).thenReturn("com.testutils.somepackage");
+        classesAndPackages.setBaseTest(compilationUnit);
+        org.junit.tools.generator.model.tml.Test test = new org.junit.tools.generator.model.tml.Test();
+        test.setTestBase("SomeClass");
+        test.setTestClass("SomeClassTest");
+        GeneratorModel model = new GeneratorModel(elements, test);
+        return model;
     }
 
 }

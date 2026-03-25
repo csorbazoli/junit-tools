@@ -899,7 +899,7 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
                     .append(RETURN)
                     .append(GeneratorUtils.isUsingEasyMock() ? "// verify(mock);" + RETURN
                             : GeneratorUtils.isUsingMockito() ? "// verify(mock).methodcall();" + RETURN : "")
-                    .append("// TestUtils.assertTestFileEquals(\"someMethod/ParamType_updated.json\", TestUtils.objectToJson(param));")
+                    .append("// TestUtils.assertTestFileEquals(\"someMethod_ParamType_updated.json\", params);")
                     .append(RETURN)
                     .append("// assertThrows(SomeException.class, () -> underTest.someMethod());");
             return;
@@ -921,13 +921,16 @@ public class TestClassGenerator implements ITestClassGenerator, IGeneratorConsta
             AssertionType type = tmlAssertion.getType();
 
             // Assertion
-            if (AssertionType.TESTFILEEQUALS.equals(type)) {
+            if (AssertionType.APPROVALS.equals(type)) {
+                sbTestMethodBody.append(RETURN + type.getMethod() + "(")
+                        .append(base)
+                        .append(");");
+            } else if (AssertionType.TESTFILEEQUALS.equals(type)) {
                 sbTestMethodBody.append(RETURN + type.getMethod() + "(")
                         .append(tmlAssertion.getValue())
                         .append(", ")
-                        .append(base);
-
-                sbTestMethodBody.append(");");
+                        .append(base)
+                        .append(");");
             } else if (JUTPreferences.isAssertjEnabled()) {
                 String assertionType = type.getMethod();
                 sbTestMethodBody.append(RETURN + "assertThat(" + base + ").");

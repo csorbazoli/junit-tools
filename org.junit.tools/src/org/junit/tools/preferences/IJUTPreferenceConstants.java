@@ -26,6 +26,7 @@ public interface IJUTPreferenceConstants {
     public static final String GHERKIN_STYLE_ENABLED = "GHERKIN_STYLE";
     public static final String ASSERTJ_ENABLED = "ASSERTJ_ENABLED";
     public static final String TEST_RESOURCE_FULL_PATH_ENABLED = "TEST_RESOURCE_FULL_PATH_ENABLED";
+    public static final String APPROVALTESTS_ENABLED = "APPROVALTESTS_ENABLED";
     /**
      * BEFORE, AFTER, LAST
      */

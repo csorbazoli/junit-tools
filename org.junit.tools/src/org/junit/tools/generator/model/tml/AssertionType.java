@@ -35,6 +35,7 @@ public enum AssertionType {
 
     EQUALS("isEqualTo", "assertEquals"),
     TESTFILEEQUALS("TestUtils.assertTestFileEquals", "TestUtils.assertTestFileEquals"),
+    APPROVALS("Approvals.verify", "Approvals.verify"),
     IS_TRUE("isTrue", "assertTrue"),
     IS_NOT_EMPTY("isNotEmpty", "assertFalse"),
     ;
@@ -43,24 +44,24 @@ public enum AssertionType {
     private final String legacyMethod;
 
     AssertionType(String method, String legacyMethod) {
-	this.method = method;
-	this.legacyMethod = legacyMethod;
+        this.method = method;
+        this.legacyMethod = legacyMethod;
     }
 
     public String value() {
-	return name();
+        return name();
     }
 
     public String getMethod() {
-	return method;
+        return method;
     }
 
     public String getLegacyMethod() {
-	return legacyMethod;
+        return legacyMethod;
     }
 
     public static AssertionType fromValue(String v) {
-	return valueOf(v);
+        return valueOf(v);
     }
 
 }
