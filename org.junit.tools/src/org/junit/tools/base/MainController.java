@@ -373,7 +373,7 @@ public class MainController implements IGeneratorConstants {
                 for (IMethod method : type.getMethods()) {
                     if (method.isConstructor()) {
                         baseclassConstructors.add(method);
-                    } else {
+                    } else { // should we filter for non-private?
                         baseclassMethods.add(method);
                     }
                 }

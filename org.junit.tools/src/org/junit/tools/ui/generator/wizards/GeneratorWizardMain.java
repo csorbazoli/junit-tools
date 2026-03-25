@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -393,7 +394,8 @@ public class GeneratorWizardMain extends GeneratorWizardBase implements
                     Vector<IMethod> baseClassMethods = constructorsAndMethods.getBaseClassMethods();
                     for (IMethod method : baseClassMethods) {
                         MethodRef methodRef = new MethodRef(method.getElementName(), method.getSignature());
-                        if (existingMethods.keySet().stream().noneMatch(m -> m.isEquals(methodRef))) {
+                        if (!Flags.isPrivate(method.getFlags())
+                                && existingMethods.keySet().stream().noneMatch(m -> m.isEquals(methodRef))) {
                             checkedMethods.add(method);
                         }
                     }
